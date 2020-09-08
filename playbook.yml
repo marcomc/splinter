@@ -6,7 +6,7 @@
     - config.yml
 
   pre_tasks:
-    - name: Load the Splinter base tasks
+    - name: Load the Splinter base tasks.
       include_role:
         name: marcomc.splinter-toolkit
         tasks_from: main
@@ -73,11 +73,11 @@
       tags: ['dotfiles']
       ignore_errors: yes
 
-    # - role: geerlingguy.dotfiles
-    #   when: configure_dotfiles
-    #   tags: ['dotfiles']
-    #   become: yes
-    #   become_user: "{{ target_user_id }}"
+    - role: geerlingguy.dotfiles
+      when: configure_dotfiles
+      tags: ['dotfiles']
+      become: yes
+      become_user: "{{ target_user_id }}"
 
     - role: marcomc.sophos-endpoint
       when: configure_sophos_endpoint

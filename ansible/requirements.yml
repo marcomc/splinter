@@ -1,6 +1,6 @@
 ---
-# - name: geerlingguy.dotfiles
-#   version: '1.2.1'
+- name: geerlingguy.dotfiles
+  version: '1.2.1'
 # - name: geerlingguy.homebrew
 #   version: '3.1.0'
 #
