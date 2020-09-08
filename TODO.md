@@ -54,26 +54,7 @@
   * [x] !files
   * [x] !profiles
 
-* [ ] Add `update` action to the setup.sh script that will download updated version of:
-  * [ ] make backup and then update all the list below
-  * [ ] requirements.yml
-  * [ ] ansible.cfg
-  * [ ] playbook.yml
-  * [ ] README.md
-  * [ ] CHANGELOG.md
-  * [ ] splinter.sh
-  * [ ] TODO.md
-  * [ ] tools/
-
-* [ ] convert mac-app-install into anible-brew like repo
-  * [ ] leave the option to define your own application configuration
-  * [ ] add the option to have a common database of app with their info
-  * [ ] have the user to simply specify the name and version of the app
-    * if no version is specified will skip if the app is already installed
-    * if 'upgrade' option is provided will install only if the version on the database is newer
-    * if a version is specified it will install it if the version is available in the database
-
-* [ ] setup.sh script BUG: when using the option force the <profile> parameter is ignored
+* [ ] BUG: setup.sh script, when using the option force the <profile> parameter is ignored
 
 * [not really necessary: every user will have its favourite] user custom keyboards shortcuts
 * [not possible?] disable Apps Quarantine: to put virtualbox out of quarantine
@@ -121,3 +102,20 @@
 
 # Future
 * [ ] see if it is possible to prevent Xcode to request confirmation
+* [ ] Add `update` action to the setup.sh script that will download updated version of:
+  * [ ] make backup and then update all the list below
+  * [ ] requirements.yml
+  * [ ] ansible.cfg
+  * [ ] playbook.yml
+  * [ ] README.md
+  * [ ] CHANGELOG.md
+  * [ ] splinter.sh
+  * [ ] TODO.md
+  * [ ] tools/
+* [ ] convert mac-app-install into ansible-brew like repo
+  * [ ] leave the option to define your own application configuration
+  * [ ] add the option to have a common database of app with their info
+  * [ ] have the user to simply specify the name and version of the app
+    * if no version is specified will skip if the app is already installed
+    * if 'upgrade' option is provided will install only if the version on the database is newer
+    * if a version is specified it will install it if the version is available in the database
