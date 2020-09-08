@@ -21,6 +21,11 @@
       tags: ['osx']
       ignore_errors: yes
 
+    - role: marcomc.sophos-endpoint
+      when: configure_sophos_endpoint
+      tags: ['non_mas']
+      ignore_errors: yes
+
     - role: marcomc.macos-new-user
       when: create_new_user
       tags: ['new-user']
