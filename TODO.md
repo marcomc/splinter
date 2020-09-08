@@ -47,14 +47,13 @@
 * [x] create xxxx-extra-packages
 * [x] rename main.yml in something more effective
 * [x] move pyenv with ansible setup inside the project folder so that it can be deployed pre-downloaded
+* [x] add to gitignore
+  * [x] !roles
+  * [x] configs.yml
+  * [x] !env
+  * [x] !files
+  * [x] !profiles
 
-* [ ] add to gitignore
-  * [ ] roles
-  * [ ] basic_configs.yml
-  * [ ] env
-  * [ ] files
-  * [ ] profiles
-  * [ ] sophos_endpoint
 * [ ] Add `update` action to the setup.sh script that will download updated version of:
   * [ ] make backup and then update all the list below
   * [ ] requirements.yml
