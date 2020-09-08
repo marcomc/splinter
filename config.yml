@@ -1,5 +1,4 @@
 ---
-ansible_python_interpreter: "{{ lookup('env','PYENV_ROOT') }}/shims/python"
 verbose: no
 setup_profile_base: example-default
 setup_profile: example # leave empty to use only the `default` profile settings
