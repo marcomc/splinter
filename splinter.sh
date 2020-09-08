@@ -133,8 +133,10 @@ function check_install_path_permissions {
     elif [[ "${DIR_GROUP_PEMISSIONS}" -lt "5" || "${DIR_GROUP_PEMISSIONS}" -eq "6" ]]; then
       _echo "'${DIR_NAME}' does NOT allow the 'staff' group to 'read' AND 'exec'" 'w'
       _echo "(this might lead to issues during the execution of some Ansible tasks)" 'w'
-      _echo "Will add POSIX 'g+rx' permissions to ${THIRD_LEVEL_DIR}" 'a'
+      _echo "Adding POSIX 'g+rx' permissions to ${THIRD_LEVEL_DIR}" 'a'
       chmod g+rx "${THIRD_LEVEL_DIR}"
+      export ORIGINAL_DIR_PEMISSIONS="${DIR_PEMISSIONS}"
+      export THIRD_LEVEL_DIR="${THIRD_LEVEL_DIR}"
     fi
     _echo "Pausing for ${PAUSE_SECONDS} seconds for you to read the above message..." 'a'
     printf ">>>>>>>>> "
@@ -144,6 +146,13 @@ function check_install_path_permissions {
       sleep 1
     done
     printf "\n" # add newline after the countdown
+  fi
+}
+
+function restore_path_permissions {
+  if [ -n "${ORIGINAL_DIR_PEMISSIONS}" ] && [ -n "${THIRD_LEVEL_DIR}" ]; then
+    _echo "Restoring original permissions '${ORIGINAL_DIR_PEMISSIONS}' to the directory '${THIRD_LEVEL_DIR}'" 'a'
+    chmod "${ORIGINAL_DIR_PEMISSIONS}" "${THIRD_LEVEL_DIR}"
   fi
 }
 
@@ -335,6 +344,7 @@ function main {
   eval print_execution_time "${START}"
 
   eval run_ansible_playbook
+  eval restore_path_permissions
   eval disable_passwordless_sudo
   _echo "Ending time $( date )" 'r'
   eval print_execution_time "${START}"
