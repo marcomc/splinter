@@ -58,10 +58,10 @@
   * [ ] make backup and then update all the list below
   * [ ] requirements.yml
   * [ ] ansible.cfg
-  * [ ] main.yml
+  * [ ] playbook.yml
   * [ ] README.md
   * [ ] CHANGELOG.md
-  * [ ] setup.sh
+  * [ ] splinter.sh
   * [ ] TODO.md
   * [ ] tools/
 
