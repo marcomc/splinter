@@ -342,7 +342,7 @@ function main {
   eval upgrade_pip
   eval install_pip_dependencies
   eval update_ansible_galaxy_roles
-  eval run_ansible_playbook
+  # eval run_ansible_playbook
   eval disable_passwordless_sudo
 }
 

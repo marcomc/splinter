@@ -1,6 +1,6 @@
 # Splinter - Ansible Automated macOS Provisioning
 
-<img src="files/profile_pictures/MarcoMC_Apple_Sketch_Round.png" style="height:75px;" CLEAR=”left”>
+![Splinter Logo](files/splinter_logo.png)
 
 ## Pre-Deployment manual steps
 
