@@ -73,7 +73,7 @@ function show_usage (){
 
 function print_execution_time {
   START_SECONDS="${1}"
-  END_SECONDS="${2}"
+  END_SECONDS=$(date +%s)
   TOTAL_SECONDS=$(( END_SECONDS - START_SECONDS ))
   TOTAL_MINUTES=$(( TOTAL_SECONDS / 60 ))
 
@@ -211,21 +211,6 @@ function install_dependencies {
   done
 }
 
-function install_xcode_select {
-  _echo "Xcode: Installing Command Line tools" 'a'
-  # install xcode
-  xcode-select --install
-  eval accept_xcode_license
-}
-
-function accept_xcode_license {
-  _echo "Xcode: Accepting License" 'a'
-  sudo xcodebuild -license accept
-  _echo "Xcode: running first launch" 'a'
-  xcodebuild -runFirstLaunch
-  _echo "${XCODE_PATH}"
-}
-
 function give_terminal_control_access {
   _echo "allow Terminal to control the computer" 'a'
   sudo sqlite3 /Library/Application\ Support/com.apple.TCC/TCC.db \
@@ -235,12 +220,12 @@ function give_terminal_control_access {
 function install_brew {
   # install homebrew
   _echo "Installing Homebrew" 'a'
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)" < /dev/null
 }
 
 function activate_pyenv {
   _echo "USING PROJECT'S OWN PYENV PYTHON VERSION" 'r'
-  # export PATH="${PYENV_ROOT}/shims:${PATH}"
+  export PATH="${PYENV_ROOT}/shims:${PATH}"
   # _echo "PATH: ${PATH}"
   export PYENV_ROOT="${PYENV_ROOT}"
   _echo "PYENV_ROOT: ${PYENV_ROOT}"
@@ -293,6 +278,7 @@ function install_pyenv_python {
 }
 
 function upgrade_pip {
+  _echo "PYENV_ROOT: ${PYENV_ROOT}"
   _echo "Upgrading PIP to the latest version" 'a'
   pip install --upgrade pip
 }
@@ -333,26 +319,26 @@ function ask_for_ansible_sudo_password {
 }
 
 function main {
+  START=$(date +%s)
+  _echo "Starting time $( date )" 'r'
   eval ask_for_ansible_sudo_password
   eval enable_passwordless_sudo
   eval check_install_path_permissions
+  eval print_execution_time "${START}"
+
   eval install_dependencies
   eval activate_pyenv
   eval install_pyenv_python
   eval upgrade_pip
   eval install_pip_dependencies
   eval update_ansible_galaxy_roles
-  # eval run_ansible_playbook
+  eval print_execution_time "${START}"
+
+  eval run_ansible_playbook
   eval disable_passwordless_sudo
+  _echo "Ending time $( date )" 'r'
+  eval print_execution_time "${START}"
 }
 
 eval check_command_line_parameters "${@}"
-
-START=$(date +%s)
-_echo "Starting time $( date )" 'r'
-
 eval main
-
-END=$(date +%s)
-_echo "Ending time $( date )" 'r'
-eval print_execution_time "${START}" "${END}"
