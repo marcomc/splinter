@@ -1,0 +1,9 @@
+
+.DS_Store
+ansible/roles
+env
+files
+profiles
+!profiles/default-example
+!profiles/example
+pyenv

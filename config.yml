@@ -1,0 +1,17 @@
+---
+ansible_python_interpreter: "{{ lookup('env','PYENV_ROOT') }}/shims/python"
+verbose: yes
+setup_profile_base: inviqa-default
+setup_profile: test2 # leave empty to use only the `default` profile settings
+                    # custom profiles can be created inside the './profiles' directory
+computer_name: ASSET-123
+create_new_user: no    # 'yes' or 'no'
+new_user_username: 'developer' # leave empty '' to prevent the new user to be created
+new_user_fullname: 'New Developer'
+new_user_password_cleartext: 'password'
+#target_user_id: "{{ new_user_username }}" # The user we will configure
+# current_user_profile_picture: "files/profile_pictures/Inviqa Logo.jpg"
+# current_user_profile_picture: "files/profile_pictures/MarcoMC_Apple_Sketch_Round.png"
+# DO NOT ADD MORE OPTIONS HERE
+# ANY OTHER OPTION IN THIS FILE WILL BE OVERRIDDEN
+# BY THE PROFILE SETTINGS IN the `./profiles/*` directories

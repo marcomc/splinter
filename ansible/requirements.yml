@@ -1,0 +1,71 @@
+---
+# - name: geerlingguy.dotfiles
+#   version: '1.2.1'
+# - name: geerlingguy.homebrew
+#   version: '3.1.0'
+#
+
+- name: ctorgalson.macos_hostname
+  version: 'v0.2.3'
+
+- name: geerlingguy.homebrew
+  src: https://github.com/marcomc/ansible-role-homebrew.git
+  version: 'feature/retry-failed-cask'
+
+- name: geerlingguy.mas
+  src: https://github.com/marcomc/ansible-role-mas
+  #version: '1.3.2'
+
+- name: juju4.macos_apps_install
+  src: https://github.com/juju4/ansible-macos-apps-install.git
+  version: '1e52c49'
+
+- name: lafarer.osx-defaults
+  version: 'marcomc/lint-compliance'
+
+- name: macstadium.xcode
+  version: '501d7ac'
+
+- name: marcomc.filevault2
+  src: https://github.com/marcomc/ansible-role-filevault2.git
+  version: 'master'
+
+- name: marcomc.homebrew-autoupdate
+  src: https://github.com/marcomc/ansible-role-homebrew-autoupdate.git
+  version: 'master'
+
+- name: marcomc.homebrew-multi-user
+  src: https://github.com/marcomc/ansible-role-homebrew-multi-user.git
+  version: 'master'
+
+- name: marcomc.macos-new-user
+  src: https://github.com/marcomc/ansible-role-macos-new-user.git
+  version: 'master'
+
+- name: marcomc.macprefs-restore
+  src: https://github.com/marcomc/ansible-role-macprefs-restore.git
+  version: 'master'
+
+- name: marcomc.mackup
+  src: https://github.com/marcomc/ansible-role-mackup.git
+  version: 'master'
+
+- name: marcomc.setapp
+  src: https://github.com/marcomc/ansible-role-setapp.git
+  version: 'master'
+
+- name: marcomc.sophos-endpoint
+  src: https://github.com/marcomc/ansible-role-sophos-endpoint.git
+  version: 'master'
+
+- name: marcomc.splinter-toolkit
+  src: https://github.com/marcomc/ansible-role-splinter-toolkit.git
+  version: 'master'
+
+- name: marcomc.splinter-extra-packages
+  src: https://github.com/marcomc/ansible-role-splinter-extra-packages.git
+  version: 'master'
+
+- name: marcomc.user-ssh-config
+  src: https://github.com/marcomc/ansible-role-user-ssh-config.git
+  version: 'master'

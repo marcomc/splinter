@@ -1,0 +1,114 @@
+---
+- hosts: localhost
+  connection: local
+
+  vars_files:
+    - config.yml
+
+  pre_tasks:
+    - name: Load the Splinter base tasks
+      include_role:
+        name: marcomc.splinter-toolkit
+        tasks_from: main
+      tags: ['always']
+
+  roles:
+    - role: ctorgalson.macos_hostname
+      when: configure_system
+      tags: ['osx']
+      ignore_errors: yes
+
+    - role: marcomc.macos-new-user
+      when: create_new_user
+      tags: ['new-user']
+      ignore_errors: yes
+
+    - role: marcomc.user-ssh-config
+      when: create_new_user
+      tags: ['new-user']
+      ignore_errors: yes
+
+    - role: marcomc.filevault2
+      when: configure_filevault
+      tags: ['osx']
+      ignore_errors: yes
+
+    - role: marcomc.sophos-endpoint
+      when: configure_sophos_endpoint
+      tags: ['non_mas']
+      ignore_errors: yes
+
+    - role: marcomc.homebrew-multi-user
+      when: configure_homebrew
+      tags: ['homebrew']
+      ignore_errors: yes
+
+    - role: geerlingguy.homebrew
+      when: configure_homebrew
+      tags: ['homebrew']
+      ignore_errors: yes
+
+    - role: marcomc.homebrew-autoupdate
+      when: configure_homebrew
+      tags: ['homebrew']
+      ignore_errors: yes
+
+    - role: marcomc.splinter-extra-packages
+      when: configure_extra_packages
+      tags: ['extra-packages']
+      ignore_errors: yes
+
+    - role: lafarer.osx-defaults
+      when: configure_system
+      tags: ['osx']
+      ignore_errors: yes
+
+    - role: marcomc.macprefs-restore
+      when: restore_dotfiles_with_macprefs
+      tags: ['dotfiles']
+      ignore_errors: yes
+
+    - role: marcomc.mackup
+      when: restore_dotfiles_with_mackup
+      tags: ['dotfiles']
+      ignore_errors: yes
+
+    # - role: geerlingguy.dotfiles
+    #   when: configure_dotfiles
+    #   tags: ['dotfiles']
+    #   become: yes
+    #   become_user: "{{ target_user_id }}"
+
+    - role: marcomc.sophos-endpoint
+      when: configure_sophos_endpoint
+      tags: ['non_mas']
+      ignore_errors: yes
+
+    - role: juju4.macos_apps_install
+      when: install_macos_apps
+      tags: ['non_mas']
+      ignore_errors: yes
+      environments:
+        PATH: "{{ gnubin_path }}:{{ ansible_env.PATH }}"
+
+    - role: marcomc.setapp
+      when: configure_setapp
+      ignore_errors: yes
+
+    - role: geerlingguy.mas
+      when: install_mas_apps
+      tags: ['mas']
+      ignore_errors: yes
+
+  tasks:
+    - name: Load the Splinter post provision tasks.
+      include_role:
+        name: marcomc.splinter-toolkit
+        tasks_from: post-provision
+      tags: ['always']
+
+    - name: Run custom post-provision tasks.
+      include_tasks: "{{ outer_item }}"
+      loop_control:
+        loop_var: outer_item
+      with_fileglob: "{{ post_provision_tasks|default(omit) }}"
