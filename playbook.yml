@@ -41,11 +41,6 @@
       tags: ['osx']
       ignore_errors: yes
 
-    - role: marcomc.sophos-endpoint
-      when: configure_sophos_endpoint
-      tags: ['non_mas']
-      ignore_errors: yes
-
     - role: marcomc.homebrew-multi-user
       when: configure_homebrew
       tags: ['homebrew']
@@ -86,11 +81,6 @@
       tags: ['dotfiles']
       become: yes
       become_user: "{{ target_user_id }}"
-
-    - role: marcomc.sophos-endpoint
-      when: configure_sophos_endpoint
-      tags: ['non_mas']
-      ignore_errors: yes
 
     - role: juju4.macos_apps_install
       when: install_macos_apps
