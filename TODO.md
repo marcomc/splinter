@@ -54,7 +54,8 @@
   * [x] !files
   * [x] !profiles
 
-* [ ] BUG: setup.sh script, when using the option force the <profile> parameter is ignored
+* [ ] BUG: splinter.sh script, when using the option force the <profile> parameter is ignored
+* [ ] recover the definition of non_mas_apps from old installations
 
 * [not really necessary: every user will have its favourite] user custom keyboards shortcuts
 * [not possible?] disable Apps Quarantine: to put virtualbox out of quarantine
@@ -102,7 +103,7 @@
 
 # Future
 * [ ] see if it is possible to prevent Xcode to request confirmation
-* [ ] Add `update` action to the setup.sh script that will download updated version of:
+* [ ] Add `update` action to the splinter.sh script that will download updated version of:
   * [ ] make backup and then update all the list below
   * [ ] requirements.yml
   * [ ] ansible.cfg
