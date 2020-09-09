@@ -287,7 +287,6 @@ function install_pyenv_python {
 }
 
 function upgrade_pip {
-  _echo "PYENV_ROOT: ${PYENV_ROOT}"
   _echo "Upgrading PIP to the latest version" 'a'
   pip install --upgrade pip
 }
@@ -308,10 +307,11 @@ function update_ansible_galaxy_roles {
 }
 
 function run_ansible_playbook {
+  _echo "Running Ansible provisioning"'a'
   export ANSIBLE_CONFIG="${ANSIBLE_CONFIG}"
+  _echo "ANSIBLE_CONFIG: ${ANSIBLE_CONFIG}"
   export ANSIBLE_ROLES_PATH="${ANSIBLE_ROLES}"
   export ANSIBLE_BECOME_PASS="${ANSIBLE_BECOME_PASS}"
-  export PYENV_NAME="$PYENV_NAME"
   ansible-playbook ${ANSIBLE_PLAYBOOK} -i ${ANSIBLE_INVENTORY}
 }
 
