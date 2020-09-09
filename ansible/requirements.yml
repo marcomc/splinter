@@ -21,7 +21,7 @@
   version: '1e52c49'
 
 - name: lafarer.osx-defaults
-  version: 'marcomc/fix-when-condition'
+  version: 'marcomc/stop-handlers-when-target-user'
 
 - name: macstadium.xcode
   version: '501d7ac'
