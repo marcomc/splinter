@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-DEPENDENCIES="
+START_TIME=$(date +%s)
+TOOLS_DEPENDENCIES="
 brew
 pyenv
 "
@@ -24,7 +25,7 @@ ANSINLE_FORCE_ROLES_UPDATE=''
 
 SETUP_PROFILES_DIR='./profiles'
 PIP_SHOW_GREP_FILTER='Version'  # 'Name\|Version\|Location' - it's a grep filter
-RED="\e[31"
+RED="\e[31m"
 GREEN="\e[32m"
 YELLOW="\e[33m"
 PURPLE="\e[35m"
@@ -86,26 +87,151 @@ function print_execution_time {
 }
 
 function check_command_line_parameters {
-  case ${1} in
-    -h|--help)
+  VERBOSE='no'
+  NEW_USER_USERNAME=""  # Default to empty package
+  NEW_USER_PASSWORD_CLEARTEXT="password"  # Default to empty target
+  NEW_USER_FULL_NAME="New User"
+  COMPUTER_HOST_NAME=""
+  ANSIBLE_BASE_PROFILE=""
+  ANSIBLE_SETUP_PROFILE=""
+  # Parse options to the `install` command
+  case "${1}" in
+    # -v|--verbose )
+    #   export VERBOSE='yes'
+    #   _echo "VERBOSE: ${VERBOSE}"
+    #   shift
+    #   ;;
+    -h|--help )
       eval show_usage
-      exit
-    ;;
-    -f|--force)
-      _echo "Will force Asnible to update all the Galaxy roles dependencies" 'w'
-      ANSINLE_FORCE_ROLES_UPDATE='--force'
-      ;;
-    -l|--list)
-      ls -1 './profiles/'
-      exit
+      exit 0
       ;;
     -*)
-      echo "Error: option '${1}' not recogonised"
+      _echo "Invalid option: ${1}" 'e' 1>&2
       eval show_usage
-      exit
+      exit 1
+      ;;
+  esac
+
+  ACTION="${1}";
+  _echo "ACTION: ${ACTION}"
+  case "$ACTION" in
+    list )
+      ACTION_OPTION=$2; # fetch the action's option
+      # Process package options
+      _echo "OPTION: ${ACTION_OPTION}"
+      case ${ACTION_OPTION} in
+        profiles )
+          find "${SETUP_PROFILES_DIR}"  -maxdepth 1 -mindepth 1 -type directory
+          exit 0
+          ;;
+        '')
+          _echo "Missing option for action '${ACTION}'" 'e' 1>&2
+          eval show_usage
+          exit 1
+          ;;
+        *)
+          _echo "Incorrect option '${ACTION_OPTION}' for action '${ACTION}'" 'e' 1>&2
+          eval show_usage
+          exit 1
+          ;;
+      esac
+      ;;
+    # Parse options to the install sub command
+    update)
+      ACTION_OPTION="${2}";# fetch the action's option
+      # Process package options
+      _echo "OPTION: ${ACTION_OPTION}"
+      case ${ACTION_OPTION} in
+        deps|dependencies )
+          _echo "Will force Asnible to update all the Galaxy roles dependencies" 'w'
+          ANSINLE_FORCE_ROLES_UPDATE='--force'
+          eval install_dependencies
+          exit 0
+          ;;
+        '')
+          _echo "Missing option for action '${ACTION}'" 'e' 1>&2
+          eval show_usage
+          exit 1
+          ;;
+        *)
+          _echo "Incorrect option '${ACTION_OPTION}' for action '${ACTION}'" 'e' 1>&2
+          eval show_usage
+          exit 1
+          ;;
+      esac
+      ;;
+    install|provision )
+      shift
+      while getopts ":c:B:f:H:p:P:u:v" ACTION_OPTION; do
+        case "${ACTION_OPTION}" in
+          c)
+            export CUSTOM_CONFIG_FILE="${OPTARG}"
+            _echo "CUSTOM_CONFIG_FILE: ${CUSTOM_CONFIG_FILE}"
+            ;;
+          B)
+            if ansible_profile_is_available "${OPTARG}" 2>/dev/null ; then
+              export ANSIBLE_BASE_PROFILE="${OPTARG}"
+              _echo "ANSIBLE_BASE_PROFILE: ${ANSIBLE_BASE_PROFILE}"
+            fi
+            ;;
+          f)
+            export NEW_USER_FULL_NAME="${OPTARG}"
+            _echo "NEW_USER_FULL_NAME: '${NEW_USER_FULL_NAME}'"
+            ;;
+          H)
+            export COMPUTER_HOST_NAME="${OPTARG}"
+            _echo "COMPUTER_HOST_NAME: ${COMPUTER_HOST_NAME}"
+            ;;
+          p)
+            export NEW_USER_PASSWORD_CLEARTEXT="${OPTARG}"
+            _echo "NEW_USER_PASSWORD_CLEARTEXT: ${NEW_USER_PASSWORD_CLEARTEXT}"
+            ;;
+          P)
+            if ansible_profile_is_available "${OPTARG}" 2>/dev/null; then
+              export ANSIBLE_SETUP_PROFILE="${OPTARG}"
+              _echo "ANSIBLE_SETUP_PROFILE: ${ANSIBLE_SETUP_PROFILE}"
+            fi
+            ;;
+          u)
+            export NEW_USER_USERNAME="${OPTARG}"
+            _echo "NEW_USER_USERNAME: ${NEW_USER_USERNAME}"
+            ;;
+          v)
+            export VERBOSE='yes'
+            _echo "VERBOSE: ${VERBOSE}"
+            ;;
+          \?)
+             _echo "Action '${ACTION}': Invalid option '-${OPTARG}'" 'e' 1>&2
+             eval show_usage
+             exit 1
+             ;;
+          :)
+            _echo "Action '${ACTION}': option '-${OPTARG}' is missing an argument" 'e' 1>&2
+            eval show_usage
+            exit 1
+            ;;
+        esac
+      done
+
+      shift $(( OPTIND - 1 ))
+      if [[ -n "${*}" ]];then
+        # if it is NOT empty it means it interrupted before evaluating all the parameters
+        # becaue it encountered a unexpected param or arg
+        _echo "Provided unknow parameter: ${1}" 'e'
+        eval show_usage
+        exit 1
+      fi
+      eval main
+      ;;
+    '')
+      _echo "Missing action" 'e' 1>&2
+      eval show_usage
+      exit 1
       ;;
     *)
-      eval define_ansible_setup_profile "${1}"
+      _echo "Invalid action '$ACTION'" 'e' 1>&2
+      eval show_usage
+      exit 1
       ;;
   esac
 }
@@ -156,17 +282,15 @@ function restore_path_permissions {
   fi
 }
 
-function define_ansible_setup_profile {
+function ansible_profile_is_available {
   if [ -z "${1}" ]; then
     # if the paramater is empty just keep going
     # ansible will only load default configs
     _echo "No profile name has been provides. Will use the values set in Ansible."
-  elif [ -d "${SETUP_PROFILES_DIR}/${1}" ]; then
-    export ANSIBLE_SETUP_PROFILE="${1}"
-    _echo "Running setup for the profile '${ANSIBLE_SETUP_PROFILE}'" 'a'
-  else
-    echo "Error: the profile '${SETUP_PROFILES_DIR}/${1}' does not exist"
-    exit
+    exit 1
+  elif [ ! -d "${SETUP_PROFILES_DIR}/${1}" ]; then
+    _echo "The profile '${SETUP_PROFILES_DIR}/${1}' does not exist" 'e'
+    exit 1
   fi
 }
 
@@ -207,14 +331,14 @@ function install_pip_dependencies {
   done
 }
 
-function install_dependencies {
-  for COMMAND in ${DEPENDENCIES}; do
-    if ! command -v "${COMMAND}" >/dev/null 2>&1; then
-      _echo "${COMMAND} not installed" w
-      eval "install_${COMMAND}"
+function install_tools_dependencies {
+  for TOOL in ${TOOLS_DEPENDENCIES}; do
+    if ! command -v "${TOOL}" >/dev/null 2>&1; then
+      _echo "${TOOL} not installed" w
+      eval "install_${TOOL}"
     else
-      DEP_VERSION=$(command -v "${COMMAND}")
-      _echo "${COMMAND} ${DEP_VERSION} is installed"
+      TOOL_VERSION=$(command -v "${TOOL}")
+      _echo "${TOOL} ${TOOL_VERSION} is installed"
       # command -v "${COMMAND}"
     fi
   done
@@ -301,8 +425,8 @@ function install_ansible {
   fi
 }
 
-function update_ansible_galaxy_roles {
-  _echo "Updating Ansible Galaxy Roles" 'a'
+function install_ansible_galaxy_roles {
+  _echo "Installing Ansible Galaxy Roles" 'a'
   ansible-galaxy install -r ${ANSIBLE_REQUIREMENTS} -p ${ANSIBLE_ROLES} ${ANSINLE_FORCE_ROLES_UPDATE}
 }
 
@@ -327,28 +451,27 @@ function ask_for_ansible_sudo_password {
   fi
 }
 
-function main {
-  START=$(date +%s)
-  _echo "Starting time $( date )" 'r'
-  eval ask_for_ansible_sudo_password
-  eval enable_passwordless_sudo
-  eval check_install_path_permissions
-  eval print_execution_time "${START}"
-
-  eval install_dependencies
+function install_dependencies {
+  eval install_tools_dependencies
   eval activate_pyenv
   eval install_pyenv_python
   eval upgrade_pip
   eval install_pip_dependencies
-  eval update_ansible_galaxy_roles
-  eval print_execution_time "${START}"
+  eval install_ansible_galaxy_roles
+  eval print_execution_time "${START_TIME}"
+}
 
+function main {
+  _echo "Starting time $( date )" 'r'
+  # eval ask_for_ansible_sudo_password
+  eval enable_passwordless_sudo
+  eval check_install_path_permissions
+  eval install_dependencies
   eval run_ansible_playbook
   eval restore_path_permissions
   eval disable_passwordless_sudo
   _echo "Ending time $( date )" 'r'
-  eval print_execution_time "${START}"
+  eval print_execution_time "${START_TIME}"
 }
 
-eval check_command_line_parameters "${@}"
-eval main
+check_command_line_parameters "${@}"
