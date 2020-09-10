@@ -105,7 +105,66 @@ __On the new machine:__
   * option 2: transfer with a USB stick.
   * option 3: you can create a writable Disk Image and transfer it to the new machine.
 
-## Setup
+## Configuration
+
+The required configuration settings are:
+
+    verbose:                     yes
+    setup_profile_base:          "my-default-profile"
+    setup_profile:               "my-specific-profile"
+    create_new_user:             no
+    new_user_username:           "newuser"
+    new_user_fullname:           "New User"
+    new_user_password_cleartext: "password"
+    target_user_id:              "newuser"
+    computer_name:               "My New Mac"
+
+See the [content of config.yml](config.yml) for a detailed description of the parameters.
+
+Splinter supports 3 levels of configurations listed here from least to most important:
+
+1. `config.yml` - __optional__:
+
+
+2. `<custom_config>.yml` - __optional__:
+
+    you can have as many custom config YAML file with different sets of settings in case you need different kind of setup.
+
+    To load your custom config file run:
+
+            splinter.sh provision -c <custom_config>.yml
+
+    This will __completely override__ the values in `config.yml` (if present).
+
+3. command line parameters:
+
+   You can pass the above values as command line parameters to `splinter.sh`
+
+        splinter.sh provision -v -u newuser -p password -f "New User" -B my-default-profile -P my-specific-profile -H "My New Mac" -c <custom_config>.yml
+
+   you can specify only some of those parameters and they will override any value contained in `config.yml` or `<custom_config>.yml`
+
+
+# Profiles
+Splinter supports 3 levels of profile listed here from least to most important:
+
+1. `marcomc.splinter-toolkit default values`:
+   This is a collection of sensible default values
+
+2. `profiles/default`:
+   This is a set of default values that you can _customise and rename as you prefer_.
+
+   If you are handling many different profiles i.e. `finance`, `developer`, `devops`, `fe-developer`, `marketing` you can have a base default set with the common company defaults to apply to all new machines.
+
+3. `profiles/<specific-profile>`:
+
+    i.e. `finance`, `developer`, `devops`, `fe-developer`, `marketing`
+
+    These are specific profile where you can define only the settings that you want to customise for each type of machine/employee that will override or complete the settings specified in your `default` profile (described above).
+
+    > when using the command line options `create_new_user` is assumed as `yes` if a `username` is provided
+
+## Provision
 __On the new machine:__
 1. Open the Terminal app (located in `/Applications/Utilities/`)
 
@@ -113,14 +172,13 @@ __On the new machine:__
 
 3. run `splinter`:
 
-    sh splinter.sh
+    ./splinter.sh provision [ options ]
 
 4. Splinter will request you to enter the current user account (to be used as `sudo` password throughout the whole process).
 
 5. the rest of the provisioning can be unattended but a few applications might require some system privacy authorisation, for instance `vagrant` and if you do not allow that in time and the installation fail you can re-run the `brew` installation command or re-run `splinter`
 
 __During the deployment a few applications will request authorisation to run run so do not leave the computer completely unattended.__
-
 
 
 # Post deployment manual steps
