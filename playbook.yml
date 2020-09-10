@@ -2,13 +2,38 @@
 - hosts: localhost
   connection: local
   vars:
-    ansible_python_interpreter: "{{ lookup('env','PYENV_ROOT') }}/shims/python"
-    ansible_become_pass: "{{ lookup('env','ANSIBLE_BECOME_PASS') }}"
+    ansible_python_interpreter: "{{ lookup('env','PYENV_ROOT')|mandatory }}/shims/python"
 
   vars_files:
-    - config.yml
+    - [ "{{ lookup('env','CUSTOM_CONFIG_FILE') if lookup('env','CUSTOM_CONFIG_FILE')|length > 0 else omit }}",'config.yml','/dev/null' ]
 
   pre_tasks:
+
+    - name: Load ENV and Default Values
+      include_tasks: ansible/load-env-values.yml
+
+    - name: verbose
+      debug:
+        var: verbose
+
+    - name: new_user_fullname
+      debug:
+        var: new_user_fullname
+
+    - name: new_user_username
+      debug:
+        var: new_user_username
+
+    - name: create_new_user
+      debug:
+        var: create_new_user
+
+    - name: computer_name
+      debug:
+        var: computer_name
+
+    - pause:
+
     - name: Load the Splinter base tasks.
       include_role:
         name: marcomc.splinter-toolkit
@@ -17,84 +42,85 @@
 
   roles:
     - role: ctorgalson.macos_hostname
-      when: configure_system
+      when: configure_system|bool
       tags: ['osx']
       ignore_errors: yes
 
     - role: marcomc.sophos-endpoint
-      when: configure_sophos_endpoint
+      when: configure_sophos_endpoint|bool
       tags: ['non_mas']
       ignore_errors: yes
 
     - role: marcomc.macos-new-user
-      when: create_new_user
+      when: create_new_user|bool
       tags: ['new-user']
       ignore_errors: yes
 
     - role: marcomc.user-ssh-config
-      when: create_new_user
+      when: create_new_user|bool
       tags: ['new-user']
       ignore_errors: yes
 
     - role: marcomc.filevault2
-      when: configure_filevault
+      when: configure_filevault|bool
       tags: ['osx']
       ignore_errors: yes
 
     - role: marcomc.homebrew-multi-user
-      when: configure_homebrew
+      when: configure_homebrew|bool
       tags: ['homebrew']
       ignore_errors: yes
 
     - role: geerlingguy.homebrew
-      when: configure_homebrew
+      when: configure_homebrew|bool
       tags: ['homebrew']
       ignore_errors: yes
 
     - role: marcomc.homebrew-autoupdate
-      when: configure_homebrew
+      when: configure_homebrew|bool
       tags: ['homebrew']
       ignore_errors: yes
 
     - role: marcomc.splinter-extra-packages
-      when: configure_extra_packages
+      when: configure_extra_packages|bool
       tags: ['extra-packages']
       ignore_errors: yes
 
     - role: lafarer.osx-defaults
-      when: configure_system
+      when: configure_system|bool
       tags: ['osx']
       ignore_errors: yes
 
     - role: marcomc.macprefs-restore
-      when: restore_dotfiles_with_macprefs
+      when: restore_dotfiles_with_macprefs|bool
       tags: ['dotfiles']
       ignore_errors: yes
 
     - role: marcomc.mackup
-      when: restore_dotfiles_with_mackup
+      when: restore_dotfiles_with_mackup|bool
       tags: ['dotfiles']
       ignore_errors: yes
 
     - role: geerlingguy.dotfiles
-      when: configure_dotfiles
+      when: configure_dotfiles|bool
       tags: ['dotfiles']
-      become: yes
+      ignore_errors: yes
+      become: "{{ target_user_id != ansible_user_id }}"
       become_user: "{{ target_user_id }}"
 
     - role: juju4.macos_apps_install
-      when: install_macos_apps
+      when: install_macos_apps|bool
       tags: ['non_mas']
       ignore_errors: yes
       environments:
         PATH: "{{ gnubin_path }}:{{ ansible_env.PATH }}"
 
     - role: marcomc.setapp
-      when: configure_setapp
+      when: configure_setapp|bool
       ignore_errors: yes
 
     - role: geerlingguy.mas
-      when: install_mas_apps
+      when: install_mas_apps|bool
       tags: ['mas']
       ignore_errors: yes
 

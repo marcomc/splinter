@@ -1,0 +1,18 @@
+---
+- name: Load variables from ENVS (if set)
+  set_fact:
+    verbose: "{{ lookup('env','VERBOSE') if lookup('env','VERBOSE')|length > 0 else omit }}"
+    ansible_become_pass: "{{ lookup('env','ANSIBLE_BECOME_PASS') }}"
+    setup_profile_base: "{{ lookup('env','ANSIBLE_BASE_PROFILE') }}"
+    setup_profile: "{{ lookup('env','ANSIBLE_SETUP_PROFILE') }}"
+    new_user_username: "{{ lookup('env','NEW_USER_USERNAME') if lookup('env','NEW_USER_USERNAME')|length > 0 else omit }}"
+    new_user_fullname: "{{ lookup('env','NEW_USER_FULL_NAME') if lookup('env','NEW_USER_FULL_NAME')|length > 0 else omit }}"
+    new_user_password_cleartext: "{{ lookup('env','NEW_USER_PASSWORD_CLEARTEXT') if lookup('env','NEW_USER_PASSWORD_CLEARTEXT')|length > 0 else omit }}"
+    create_new_user: "{{ 'yes' if lookup('env','NEW_USER_USERNAME')|length > 0 else omit }}"
+    computer_name: "{{ lookup('env','COMPUTER_HOST_NAME') if lookup('env','COMPUTER_HOST_NAME')| length > 0 else omit }}"
+
+- name: Set default values if not set
+  set_fact:
+    target_user_id: "{{ new_user_username if new_user_username|length > 0 else ansible_user_id }}"
+    new_user_password_cleartext: "{{ new_user_password_cleartext if new_user_password_cleartext|length > 0 else 'password' }}"
+    create_new_user: "{{ create_new_user|default(False) }}"
