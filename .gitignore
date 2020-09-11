@@ -20,6 +20,6 @@ files/*/*
 
 profiles/*
 !profiles/default/
-!profiles/example/
+!profiles/default-example/
 pyenv/
 splinter/

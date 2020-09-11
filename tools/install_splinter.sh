@@ -5,6 +5,8 @@ set -u
 SPLINTER_DIR="splinter"
 SPLINTER_ZIP="${SPLINTER_DIR}.zip"
 SPLINTER_ARCHIVE="https://github.com/marcomc/splinter/archive/master.zip"
+DEFAULT_PROFILE="default"
+DEFAULT_PROFILE_EXAMPLE="default-example"
 
 shell_join() {
   local arg
@@ -41,8 +43,13 @@ execute "curl" "-fsSL" "${SPLINTER_ARCHIVE}" "-o" "${TEMP_DIR}/${SPLINTER_ZIP}"
 echo "Decompressing Splinter archive in to '${TEMP_DIR}'..."
 execute "unzip" "-qq" "${TEMP_DIR}/${SPLINTER_ZIP}" "-d" "${TEMP_DIR}"
 ls "${TEMP_DIR}"
+
 echo "Moving Splinter files to '${SPLINTER_DIR}'..."
 execute "mkdir" "-p" "${SPLINTER_DIR}"
+execute "mv" "${TEMP_DIR}"/*/* "${SPLINTER_DIR}"
+
+echo "Create default profile..."
+execute "cp" "-a" "${SPLINTER_DIR}/profiles/${DEFAULT_PROFILE_EXAMPLE}" "${SPLINTER_DIR}/profiles/${DEFAULT_PROFILE}"
 execute "mv" "${TEMP_DIR}"/*/* "${SPLINTER_DIR}"
 
 echo "Removing temporary files..."
