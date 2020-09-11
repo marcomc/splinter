@@ -106,11 +106,6 @@ function check_command_line_parameters {
   ANSIBLE_SETUP_PROFILE=""
   # Parse options to the `install` command
   case "${1}" in
-    # -v|--verbose )
-    #   export VERBOSE='yes'
-    #   _echo "VERBOSE: ${VERBOSE}"
-    #   shift
-    #   ;;
     -e|--env )
       PYTHON_PROVIDER="${2}"
       export PYTHON_PROVIDER="${PYTHON_PROVIDER}"
@@ -383,7 +378,7 @@ function install_conda {
     mkdir -p $CONDA_DIR
     tar -xzf "${CONDA_PACKAGE_PATH}" -C $CONDA_DIR
   else
-    _echo "Miniconda package is already installed in '${CONDA_DIR}' directory" 'a'
+    _echo "Miniconda package is already installed in '${CONDA_DIR}' directory" 'i'
   fi
 }
 
@@ -481,8 +476,14 @@ function install_ansible {
 }
 
 function install_ansible_galaxy_roles {
+
+  if [ "${VERBOSE}" == "yes" ];then
+    DEV_OUTPUT="/dev/stdout"
+  else
+    DEV_OUTPUT="/dev/null"
+  fi
   _echo "Installing Ansible Galaxy roles" 'a'
-  ansible-galaxy install -r ${ANSIBLE_REQUIREMENTS} -p ${ANSIBLE_ROLES} ${ANSINLE_FORCE_ROLES_UPDATE}
+  ansible-galaxy install -r ${ANSIBLE_REQUIREMENTS} -p ${ANSIBLE_ROLES} ${ANSINLE_FORCE_ROLES_UPDATE} 1> "${DEV_OUTPUT}"
 }
 
 function run_ansible_playbook {
