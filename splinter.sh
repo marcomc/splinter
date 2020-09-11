@@ -11,9 +11,15 @@ passlib
 "
 DESIRED_PASSLIB_VERSION='1.7.2'
 DESIRED_WHEEL_VERSION='0.35.1'
-DESIRED_ANSIBLE_VERSION='2.9.11'
+DESIRED_ANSIBLE_VERSION='2.9.13'
 DESIRED_PYTHON_VERSION='3.8.5'
-PYENV_ROOT="/tmp/pyenv"
+PYTHON_PROVIDER="conda"
+PYENV_ROOT="pyenv"
+CONDA_DIR="conda"
+CONDA_PACKAGE_NAME="splinter-conda.tar.gz"
+CONDA_PACKAGE_VERSION="v0.1"
+CONDA_PACKAGE_URL="https://github.com/marcomc/splinter-conda/releases/download/${CONDA_PACKAGE_VERSION}/${CONDA_PACKAGE_NAME}"
+CONDA_PACKAGE_PATH="files/${CONDA_PACKAGE_NAME}"
 PIP_CONFIG_FILE="pip.conf"
 ANSIBLE_DIR="ansible"
 ANSIBLE_PLAYBOOK='playbook.yml'
@@ -35,6 +41,7 @@ STAFF_GUID='20'
 PAUSE_SECONDS='3'
 
 function _echo {
+  MESSAGE_TYPE=""
   case ${2} in
     a|action)
       COLOUR="${CYAN}" #green
@@ -53,11 +60,14 @@ function _echo {
       TAG='#######'
     ;;
     i|info|*)
+      MESSAGE_TYPE="info"
       COLOUR="${GREEN}" #green
       TAG='INFO...'
     ;;
   esac
-  printf "${COLOUR}[${TAG}] ${WHITE}%s\n" "${1}"
+  if [ "${VERBOSE}" == "yes" ] || [ "${MESSAGE_TYPE}" != "info" ];then
+    printf "${COLOUR}[${TAG}] ${WHITE}%s\n" "${1}"
+  fi
 }
 
 function show_usage (){
@@ -101,6 +111,12 @@ function check_command_line_parameters {
     #   _echo "VERBOSE: ${VERBOSE}"
     #   shift
     #   ;;
+    -e|--env )
+      PYTHON_PROVIDER="${2}"
+      export PYTHON_PROVIDER="${PYTHON_PROVIDER}"
+      _echo "PYTHON_PROVIDER: ${PYTHON_PROVIDER}"
+      shift 2
+      ;;
     -h|--help )
       eval show_usage
       exit 0
@@ -140,6 +156,7 @@ function check_command_line_parameters {
     update)
       ACTION_OPTION="${2}";# fetch the action's option
       # Process package options
+      export VERBOSE='yes' # `update` will always be verbose
       _echo "OPTION: ${ACTION_OPTION}"
       case ${ACTION_OPTION} in
         deps|dependencies )
@@ -356,11 +373,49 @@ function install_brew {
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)" < /dev/null
 }
 
+function install_conda {
+  if [ ! -d "${CONDA_DIR}/bin" ];then
+    if [ ! -f "${CONDA_PACKAGE_PATH}" ];then
+      _echo "Downloading Miniconda package to '${CONDA_PACKAGE_PATH}'" 'a'
+      curl -fsSL "$CONDA_PACKAGE_URL" -o "${CONDA_PACKAGE_PATH}"
+    fi
+    _echo "Unpacking Miniconda package to '${CONDA_DIR}' directory" 'a'
+    mkdir -p $CONDA_DIR
+    tar -xzf "${CONDA_PACKAGE_PATH}" -C $CONDA_DIR
+  else
+    _echo "Miniconda package is already installed in '${CONDA_DIR}' directory" 'a'
+  fi
+}
+
+function activate_conda {
+  _echo "USING PROJECT'S OWN MINICONDA PYTHON VERSION" 'r'
+
+  _CONDA_ROOT="$(pwd)/$CONDA_DIR"
+  export _CONDA_ROOT="$_CONDA_ROOT"
+
+  PYTHON_ROOT="${_CONDA_ROOT}"
+
+  export PATH="${_CONDA_ROOT}/bin:$PATH"
+  _echo "PIP_CONFIG_FILE: ${PIP_CONFIG_FILE}"
+
+  # Fix issues with SSL Certificates
+  CERT_PATH=$(python -m certifi)
+  export SSL_CERT_FILE=${CERT_PATH}
+  export REQUESTS_CA_BUNDLE=${CERT_PATH}
+
+  PYTHON_VERSION=$(python --version)
+  _echo "${PYTHON_VERSION} is installed"
+}
+
 function activate_pyenv {
   _echo "USING PROJECT'S OWN PYENV PYTHON VERSION" 'r'
-  export PATH="${PYENV_ROOT}/shims:${PATH}"
-  # _echo "PATH: ${PATH}"
+
+  ln -fs shims ${PYENV_ROOT}/bin
+
+  export PATH="${PYENV_ROOT}/bin:${PATH}"
   export PYENV_ROOT="${PYENV_ROOT}"
+  PYTHON_ROOT="${PYENV_ROOT}"
+
   _echo "PYENV_ROOT: ${PYENV_ROOT}"
   export PIP_CONFIG_FILE="${PIP_CONFIG_FILE}"
   _echo "PIP_CONFIG_FILE: ${PIP_CONFIG_FILE}"
@@ -403,7 +458,7 @@ function install_pyenv_python {
     # •	install python3 with pyenv
     _echo "Installing Pyenv Python ${DESIRED_PYTHON_VERSION}" 'a'
     pyenv install "${DESIRED_PYTHON_VERSION}"
-    _echo "Fixing Pyenv shims ${DESIRED_PYTHON_VERSION}" 'a'
+    _echo "Rehashing Pyenv shims ${DESIRED_PYTHON_VERSION}" 'a'
     pyenv rehash
   else
     _echo "Pyenv Python ${DESIRED_PYTHON_VERSION} is already installed"
@@ -426,7 +481,7 @@ function install_ansible {
 }
 
 function install_ansible_galaxy_roles {
-  _echo "Installing Ansible Galaxy Roles" 'a'
+  _echo "Installing Ansible Galaxy roles" 'a'
   ansible-galaxy install -r ${ANSIBLE_REQUIREMENTS} -p ${ANSIBLE_ROLES} ${ANSINLE_FORCE_ROLES_UPDATE}
 }
 
@@ -451,10 +506,24 @@ function ask_for_ansible_sudo_password {
   fi
 }
 
+function setup_python {
+  if [ "${PYTHON_PROVIDER}" == "pyenv" ];then
+    eval install_tools_dependencies
+    eval activate_pyenv
+    eval install_pyenv_python
+  elif [ "${PYTHON_PROVIDER}" == "conda" ];then
+    eval install_conda
+    eval activate_conda
+  else
+    _echo "Unknow python provider '${PYTHON_PROVIDER}'" 'e'
+    exit 1
+  fi
+  export PYTHON_ROOT="${PYTHON_ROOT}"
+  _echo "PYTHON_ROOT: ${PYTHON_ROOT}"
+}
+
 function install_dependencies {
-  eval install_tools_dependencies
-  eval activate_pyenv
-  eval install_pyenv_python
+  eval setup_python
   eval upgrade_pip
   eval install_pip_dependencies
   eval install_ansible_galaxy_roles
@@ -463,7 +532,7 @@ function install_dependencies {
 
 function main {
   _echo "Starting time $( date )" 'r'
-  # eval ask_for_ansible_sudo_password
+  eval ask_for_ansible_sudo_password
   eval enable_passwordless_sudo
   eval check_install_path_permissions
   eval install_dependencies

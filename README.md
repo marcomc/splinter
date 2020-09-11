@@ -1,10 +1,9 @@
-# Splinter - Ansible Automated macOS Provisioning
-
 ![Splinter Logo](files/splinter_logo.png)
 
-# What does Splinter do?
+# Splinter - Ansible Automated macOS Provisioning
 
-Spliter uses a bash script to install the minimum requirements to run Ansible within a dedicated  Pyenv Python environment, then run an Ansible playbook that will run the full provisioning of a macOS system
+## What does Splinter do?
+Spliter uses a bash script to install the minimum requirements to run Ansible within a dedicated Python environment, then run an Ansible playbook that will run the full provisioning of a macOS system
 
 __BASH script__:
 * Ask for current user password
@@ -12,10 +11,9 @@ __BASH script__:
 * Enable passwordless sudo
 * Check and fix install dir path permissions
 * Install requirements
-  * brew
-  * pyenv
-* Activate pyenv
-* Install pyenv python 3.x in /tmp/pyenv directory
+  * Conda or Pyenv and Homebrew
+* Activate conda or pyenv
+* Install python 3.x
 * Upgrade pip to the latest version
 * install pip dependencies
   * ansible
@@ -41,8 +39,8 @@ __Ansible playbook__:
     * optionally add a SSH proxy server definition
 * Activate FileVault2
   * for both current and target users
-* Configure Hombrew:
-  * Allow multi-user admonistration allowing all members of the chosen group to Read/Write (by default it is `admin` group)
+* Install/Configure Hombrew:
+  * Allow multi-user administration allowing all members of the chosen group to Read/Write (by default it is `admin` group)
   * Enable Autoupdates
     * define a threshold to consider cached database still fresh
     * setup a LaunchAgent to refresh the cached database periodically
@@ -56,7 +54,7 @@ __Ansible playbook__:
   * Install desired Ruby gems
 * Configure macOS system-wide settings:
   * Application Firewall
-  * Date and Time: Timezone and Formats
+  * Date & Time, Timezone & Formats
   * Display(s)
   * Energy Saver
   * Login Window
@@ -86,10 +84,22 @@ __Ansible playbook__:
 
 __You can can chose which of the above modules to run customising the the modules.yml file in your profiles__
 
-## Pre-Deployment manual steps
+## Python
+
+Python is provided by default via a custom [Conda package](https://github.com/marcomc/splinter-conda) or alternatively via on-the-fly Pyenv installation.
+
+To chose run:
+
+      ./plinter.sh --env [conda|pyenv] install .....
+
+> `Conda` makes the provisioning dependencies installation much faster because comes in a preconfigured package `already loaded with Ansible` and doesn't require any Pip package installation.
+
+## Provisioning
+
+### Pre-provisioning: manual steps
 
 __On the old machine:__
-1. pre-configure Splinter:
+1. preconfigure Splinter:
   * define your `profiles`.
   * personalise `config.yml`.
 
@@ -105,7 +115,7 @@ __On the new machine:__
   * option 2: transfer with a USB stick.
   * option 3: you can create a writable Disk Image and transfer it to the new machine.
 
-## Configuration
+### Configuration
 
 The required configuration settings are:
 
@@ -145,7 +155,7 @@ Splinter supports 3 levels of configurations listed here from least to most impo
    you can specify only some of those parameters and they will override any value contained in `config.yml` or `<custom_config>.yml`
 
 
-# Profiles
+#### Profiles
 Splinter supports 3 levels of profile listed here from least to most important:
 
 1. `marcomc.splinter-toolkit default values`:
@@ -164,7 +174,8 @@ Splinter supports 3 levels of profile listed here from least to most important:
 
     > when using the command line options `create_new_user` is assumed as `yes` if a `username` is provided
 
-## Provision
+### Provision
+
 __On the new machine:__
 1. Open the Terminal app (located in `/Applications/Utilities/`)
 
@@ -172,7 +183,7 @@ __On the new machine:__
 
 3. run `splinter`:
 
-    ./splinter.sh provision [ options ]
+    ./splinter.sh [ options] provision [ settings ]
 
 4. Splinter will request you to enter the current user account (to be used as `sudo` password throughout the whole process).
 
@@ -181,9 +192,9 @@ __On the new machine:__
 __During the deployment a few applications will request authorisation to run run so do not leave the computer completely unattended.__
 
 
-# Post deployment manual steps
+### Post deployment manual steps
 
-## Authorise "Virtualbox" kext if you installed it via homebrew or macos_apps list
+#### Authorise "Virtualbox" kext if you installed it via homebrew or macos_apps list
 
 1. Go to System Preferences -> Security & Privacy -> General
 
@@ -193,7 +204,7 @@ __During the deployment a few applications will request authorisation to run run
 
     > brew cask reinstall virtualbox
 
-## Fix "Sophos" installation
+#### Fix "Sophos" installation
 
 Follow Sophos guide to add all the required components to `System Preferences -> Security & Privacy -> Privacy`
 
@@ -205,11 +216,20 @@ If no Sophos guided steps window appear then:
 
 
 
-# License
+## License
 
 MIT
 
-# Copyright
+## Copyright
 
 Marco Massari Calderone <marco@marcomc.com>
 The logo `MarcoMC_Apple_Sketch_Round` is a property and copyright of Marco Massari Calderone.
+
+## Credits
+
+### Inspiration
+
+geerlingguy's [Mac Development Ansible Playbook](https://github.com/geerlingguy/mac-dev-playbook)
+
+### Images
+The Image [splinter-desktop.jpg](files/desktop_pictures/splinter-desktop.jpg) is an image by [Maaark](https://pixabay.com/users/Maaark-3329882/?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=1693434) from [Pixabay](https://pixabay.com/?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=1693434)
