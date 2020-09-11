@@ -1,5 +1,10 @@
 .DS_Store
+*.tar*
+*.gz
 *iniconda*.sh
+*test*
+*bk*
+*backup*
 ansible/roles
 conda/
 env/
