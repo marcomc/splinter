@@ -53,17 +53,11 @@
   * [x] !env
   * [x] !files
   * [x] !profiles
-
-* [ ] BUG: splinter.sh script, when using the option force the <profile> parameter is ignored
-* [ ] recover the definition of non_mas_apps from old installations
-
-* [not really necessary: every user will have its favourite] user custom keyboards shortcuts
-* [not possible?] disable Apps Quarantine: to put virtualbox out of quarantine
-* [not working on Catalina] include Desktop picture for the `default` role
-* [not doable because the `user:` mobule does not accept hashed passwords in macos] create an admin account using a pre-encrypted password stored somewhere else
-* [not doable] convert osx-defaults handlers into listeners
-     https://docs.ansible.com/ansible/latest/user_guide/playbooks_intro.html
-* [not doable because TCC is protected by SIP] grant Full Disk Access to specific apps
+* [x] BUG: splinter.sh script, when using the option force the <profile> parameter is ignored
+* [x] write README for custom envs and config file handling
+* [x] recover the definition of non_mas_apps from old installations
+* [*] see how to use `miniconda` to distribute python
+* [*] update usage functionx  
 
 # Restore Options
 * [x] dotfiles: export personal System Configs
@@ -92,8 +86,6 @@
 * [ ] App settings (with mackup?)
 * [ ] add ShareMouse config to Mackup
 * [ ] add ShareMouse config to Macprefs
-* [ ] Cron
-  * [ ] setup periodic export of app/pkg lists and mackup exports
 * [ ] Internet login
 * [ ] iCloud login
 * [ ] Gmail account(s)
@@ -102,6 +94,7 @@
   * [ ] allow to specify which source to use for mackup
 
 # Future
+* [ ] user custom keyboards shortcuts, only my private set if macprefs doesn't restore them
 * [ ] see if it is possible to prevent Xcode to request confirmation
 * [ ] Add `update` action to the splinter.sh script that will download updated version of:
   * [ ] make backup and then update all the list below

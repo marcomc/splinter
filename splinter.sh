@@ -71,11 +71,29 @@ function _echo {
 }
 
 function show_usage (){
-  printf "usage: %s [ options ] [ profile ]\n" "${0}"
+  printf "usage: %s [option] action [object] [settings]\n" "${0}"
   printf "options: \n"
-  printf " -f|--force, Force Asnible to update all of the Galaxy roles dependencies\n"
-  printf " -h|--help, Print help\n"
-  printf " -l|--list, List available profiles\n"
+  printf "       -e|--env conda|pyenv, List available profiles\n"
+  printf "       -h|--help, Print help\n"
+  printf "actions: \n"
+  printf "       list, List available profiles\n"
+  printf "       provision [settings], Provision the host\n"
+  printf "       update <object>, Update the object\n"
+  printf "\n"
+  printf "obejcts: \n"
+  printf "       deps|dependencies, update all the dependency tools (PIP, Ansible Galaxy role)\n"
+  printf "       self|auto, Update Splinter itself (not yet implemented!)\n"
+  printf "\n"
+  printf "settings: \n"
+  printf "       -c file, Specify a custom configuration file\n"
+  printf "       -b base_profile_name, Specify the the BASE profile to be used (default: 'default')\n"
+  printf "       -r role_profile_name, Specify the the ROLE profile to be used\n"
+  printf "       -u username, New user username (all lowercase, without spaces)\n"
+  printf "       -f 'Full Name', New user full name (quoted if has blank spaces)\n"
+  printf "       -p 'clear text password', New user's password in cleartext (quoted if has blank spaces)\n"
+  printf "       -h 'Computer Name', Computer host name (quoted if has blank spaces)\n"
+
+  printf "       -v, Produce verbose output\n"
   printf "\n"
   printf "Create your own profiles in the '%s' directory.\n" "${SETUP_PROFILES_DIR}"
   printf "\n"
@@ -160,6 +178,11 @@ function check_command_line_parameters {
           eval install_dependencies
           exit 0
           ;;
+        self)
+          _echo "Option not yet implemented for action '${ACTION}'" 'e' 1>&2
+          eval show_usage
+          exit 1
+          ;;
         '')
           _echo "Missing option for action '${ACTION}'" 'e' 1>&2
           eval show_usage
@@ -172,15 +195,15 @@ function check_command_line_parameters {
           ;;
       esac
       ;;
-    install|provision )
+    provision )
       shift
-      while getopts ":c:B:f:H:p:P:u:v" ACTION_OPTION; do
+      while getopts ":c:b:f:h:p:r:u:v" ACTION_OPTION; do
         case "${ACTION_OPTION}" in
           c)
             export CUSTOM_CONFIG_FILE="${OPTARG}"
             _echo "CUSTOM_CONFIG_FILE: ${CUSTOM_CONFIG_FILE}"
             ;;
-          B)
+          b)
             if ansible_profile_is_available "${OPTARG}" 2>/dev/null ; then
               export ANSIBLE_BASE_PROFILE="${OPTARG}"
               _echo "ANSIBLE_BASE_PROFILE: ${ANSIBLE_BASE_PROFILE}"
@@ -190,7 +213,7 @@ function check_command_line_parameters {
             export NEW_USER_FULL_NAME="${OPTARG}"
             _echo "NEW_USER_FULL_NAME: '${NEW_USER_FULL_NAME}'"
             ;;
-          H)
+          h)
             export COMPUTER_HOST_NAME="${OPTARG}"
             _echo "COMPUTER_HOST_NAME: ${COMPUTER_HOST_NAME}"
             ;;
@@ -198,7 +221,7 @@ function check_command_line_parameters {
             export NEW_USER_PASSWORD_CLEARTEXT="${OPTARG}"
             _echo "NEW_USER_PASSWORD_CLEARTEXT: ${NEW_USER_PASSWORD_CLEARTEXT}"
             ;;
-          P)
+          r)
             if ansible_profile_is_available "${OPTARG}" 2>/dev/null; then
               export ANSIBLE_SETUP_PROFILE="${OPTARG}"
               _echo "ANSIBLE_SETUP_PROFILE: ${ANSIBLE_SETUP_PROFILE}"

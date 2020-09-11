@@ -70,7 +70,7 @@ __Ansible playbook__:
   * Language and Region
   * Mission Control
   * Safari
-  * SetupAssistant
+  * SetupAssistant (chose to skip some or all setup questions)
   * Spotlight
   * Trackpad
 * Restore dotfiles (3 distinct methods):
@@ -95,6 +95,32 @@ To chose run:
 > `Conda` makes the provisioning dependencies installation much faster because comes in a preconfigured package `already loaded with Ansible` and doesn't require any Pip package installation.
 
 ## Provisioning
+### Usage
+
+    usage: ./splinter.sh [option] action [object] [settings]
+    options:
+       -e|--env conda|pyenv, List available profiles
+       -h|--help, Print help
+    actions:
+       list, List available profiles
+       provision [settings], Provision the host
+       update <object>, Update the object
+
+    obejcts:
+       deps|dependencies, update all the dependency tools (PIP, Ansible Galaxy role)
+       self|auto, Update Splinter itself (not yet implemented!)
+
+    settings:
+       -c file, Specify a custom configuration file
+       -b base_profile_name, Specify the the BASE profile to be used (default: 'default')
+       -r role_profile_name, Specify the the ROLE profile to be used
+       -u username, New user username (all lowercase, without spaces)
+       -f 'Full Name', New user full name (quoted if has blank spaces)
+       -p 'clear text password', New user's password in cleartext (quoted if has blank spaces)
+       -h 'Computer Name', Computer host name (quoted if has blank spaces)
+       -v, Produce verbose output
+
+    Create your own profiles in the './profiles' directory.
 
 ### Pre-provisioning: manual steps
 
@@ -120,8 +146,8 @@ __On the new machine:__
 The required configuration settings are:
 
     verbose:                     yes
-    setup_profile_base:          "my-default-profile"
-    setup_profile:               "my-specific-profile"
+    base_profile:                "my-base-profile"
+    role_profile:                "my-role-profile"
     create_new_user:             no
     new_user_username:           "newuser"
     new_user_fullname:           "New User"
@@ -150,10 +176,11 @@ Splinter supports 3 levels of configurations listed here from least to most impo
 
    You can pass the above values as command line parameters to `splinter.sh`
 
-        splinter.sh provision -v -u newuser -p password -f "New User" -B my-default-profile -P my-specific-profile -H "My New Mac" -c <custom_config>.yml
+        splinter.sh provision -v -u newuser -p password -f "New User" -b my-base-profile -r my-role-profile -h "My New Mac" -c <custom_config>.yml
 
    you can specify only some of those parameters and they will override any value contained in `config.yml` or `<custom_config>.yml`
 
+   > when using the command line options `create_new_user` is assumed as `yes` if a `username` is provided
 
 #### Profiles
 Splinter supports 3 levels of profile listed here from least to most important:
@@ -164,15 +191,15 @@ Splinter supports 3 levels of profile listed here from least to most important:
 2. `profiles/default`:
    This is a set of default values that you can _customise and rename as you prefer_.
 
+   __The `default` profile is generally used as the `base` profile__
+
    If you are handling many different profiles i.e. `finance`, `developer`, `devops`, `fe-developer`, `marketing` you can have a base default set with the common company defaults to apply to all new machines.
 
-3. `profiles/<specific-profile>`:
+3. `profiles/<role-profile>`:
 
     i.e. `finance`, `developer`, `devops`, `fe-developer`, `marketing`
 
-    These are specific profile where you can define only the settings that you want to customise for each type of machine/employee that will override or complete the settings specified in your `default` profile (described above).
-
-    > when using the command line options `create_new_user` is assumed as `yes` if a `username` is provided
+    These are specific role profile where you can define only the settings that you want to customise for each role of machine or employee that will override some or all of the settings specified in your `base` profile.
 
 ### Provision
 
@@ -183,14 +210,13 @@ __On the new machine:__
 
 3. run `splinter`:
 
-    ./splinter.sh [ options] provision [ settings ]
+    ./splinter.sh [options] provision [object] [settings]
 
 4. Splinter will request you to enter the current user account (to be used as `sudo` password throughout the whole process).
 
 5. the rest of the provisioning can be unattended but a few applications might require some system privacy authorisation, for instance `vagrant` and if you do not allow that in time and the installation fail you can re-run the `brew` installation command or re-run `splinter`
 
 __During the deployment a few applications will request authorisation to run run so do not leave the computer completely unattended.__
-
 
 ### Post deployment manual steps
 
@@ -213,8 +239,6 @@ If no Sophos guided steps window appear then:
 1. Go to System Preferences -> Security & Privacy -> General
 
 2. Click the `Allow` button next to the request of authorisation for "Oracole America, Inc." software
-
-
 
 ## License
 
