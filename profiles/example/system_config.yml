@@ -1,0 +1,88 @@
+---
+ActivityMonitor_Enabled:     yes # Enable ActivityMonitor configuration
+AppStore_Enabled:            yes # Enable AppStore configuration
+ApplicationFirewall_Enabled: yes # Enable Application Firewall
+Bluetooth_Enabled:           yes # Enable Bluetooth configuration
+Dashboard_Enabled:           yes # Enable Dashboard configuration
+DateTime_Enabled:            no # Enable Date Time configuration
+DesktopScreenSaver_Enabled:  yes # Enable Desktop and Screen Saver configuration
+DiskImages_Enabled:          yes # Enable DiskImages configuration
+Displays_Enabled:            yes # Enable Displays configuration
+Dock_Enabled:                yes # Enable Dock configuration
+EnergySaver_Enabled:         yes # Enable Energy Saver configuration
+Finder_Enabled:              yes # Enable Finder configuration
+General_Enabled:             yes # Enable General configuration
+HotCorners_Enabled:          yes # Enable Hot Corners configurations
+ICloud_Enabled:              yes # Enable iCloud configuration
+Keyboard_Enabled:            yes # Enable Keyboard configuration
+LanguageRegion_Enabled:      no # Enable Language and Region configuration
+LaunchServices_Enabled:      yes # Enable Launch Services configuration
+LoginWindow_Enabled:         yes # Enable Launch Services configuration
+MissionControl_Enabled:      yes # Enable Mission Control configuration
+Safari_Enabled:              yes # Enable Safari configuration
+SetupAssistant_Enabled:      yes # Enable Setup Assitant configuration
+Spotlight_Enabled:           yes # Enable Spotlight configuration
+Trackpad_Enabled:            yes # Enable Trackpad configuration
+
+DesktopScreenSaver_BackGroundImage: "files/desktop_pictures/splinter-desktop.jpg"
+LoginWindow_DesktopPicture: "files/desktop_pictures/splinter-desktop.jpg" # Change login screen background
+
+DateTime_TimeZone: "Europe/London" # Set the timezone; see `systemsetup -listtimezones` for other values
+Dock_PersistentApps: # A plain path string, if empty [] it won't change anything
+  - /Applications/Safari.app
+  - /Applications/Google Chrome.app
+  - /Applications/Firefox.app
+  - /Applications/Slack.app
+  - /Applications/Visual Studio Code.app
+  - /Applications/Atom.app
+  - /Applications/iTerm.app
+  - /System/Applications/Utilities/Activity Monitor.app
+  - /System/Applications/System Preferences.app
+Dock_PersistentOthers: # Either a plain path string or a dict like "{path: /path, type: [file | directory], arrange: [1-5] }"
+  - { path: "/Users/{{ target_user_id }}/Downloads", type: directory, arrange: 3}
+
+EnergySaver_ComputerSleepTime: "30" # Never, or number of minutes
+EnergySaver_DisplaySleepTime: "15" # Never, or number of minutes
+
+Finder_ShowHardDrivesOnDesktop: yes # Show hard drives on the desktop
+Finder_ShowExternalHardDrivesOnDesktop: yes # Show external hard drives on the desktop
+Finder_ShowRemovableMediaOnDesktop: yes # Show CDs,DVDs and iPods on the desktop
+Finder_ShowMountedServersOnDesktop: yes # Show connected servers on the desktop
+
+Finder_WarnOnEmptyTrash: yes # Show warning before emptying the trash
+Finder_FXDefaultSearchScope: "SCsp" # When performing a search (SCev:Search This Mac, SCcf:Search the Current Folder, SCsp:Use the Previous Search Scope)
+Finder_AppleShowAllFiles: yes # Show hidden files
+
+General_AppleInterfaceStyle: "Dark" # Use Dark menu bar and Dock (Empty or "Dark")
+General_AppleHighlightColor: "Yellow" # Highlight color (Red, Orange, Yellow, Green, Blue, Purple, Pink, Brown, Graphite)
+
+Keyboard_KeyRepeat: 2 # Set key repeat rate (Off: 300000, Slow: 120, Fast: 2)
+Keyboard_InitialKeyRepeat: 25 # Set delay until repeat, in milliseconds (Long: 120, Short: 15)
+Keyboard_fnState: no # Use F1, F2, etc. keys as standard function keys
+Keyboard_AutomaticSpellingCorrectionEnabled: yes # Correct spelling automatically
+Keyboard_AutomaticQuoteSubstitutionEnabled: no # Use smart quotes
+Keyboard_AutomaticDashSubstitutionEnabled: no # Use smart dashes
+Keyboard_AutomaticPeriodSubstitutionEnabled: no # Automatic period substitution
+Keyboard_PowerButtonSleepsSystem: yes # Prevent accidental Power button presses from sleeping system
+Keyboard_PressAndHoldEnabled: yes # Disable press-and-hold for keys in favor of key repeat
+
+LanguageRegion_Locale: "en_GB@currency=GBP" # Locale and Currency (United States : en_US@currency=USD, Great Britian : en_GB@currency=EUR)
+LanguageRegion_MeasurementUnits: "Inches" # Measure Units (Inches, Centimeters)
+LanguageRegion_Force24HourTime: "yes" # Force 12/24 hour time
+LanguageRegion_MetricUnits: "yes" # Set Metric Units
+
+Safari_DebugMenu: yes # Debug Menu
+Safari_WarnAboutFraudulentWebsites: yes # Security - Fraudulent Sites - Warn when visiting a fraudulent website
+Safari_JavaScriptEnabled: yes # Security - Web Content - Enable Javascript
+Safari_BlockPopupWindows: yes # Security - Web Content - Block pop-up windows
+Safari_AllowWebGL: yes # Security - Web Content - Allow WebGL
+Safari_Cookies: "Always from current website only" # Privacy - Cookies and website data ("Always block", "Always from current website only", "Allow from websites I visit", "Always allow")
+Safari_SafariGeolocationPermissionPolicy: "Prompt for each site one time only" # Privacy - Website use of location services (0:Deny without prompting, 1:Prompt for each site once each day, 2:Prompt for each site one time only)
+Safari_SendDoNotTrackHTTPHeader: yes # Privacy - Website tracking - Ask websites not to track me
+Safari_CanPromptForPushNotifications: yes # Notification - Allow websites to ask for permission to send push notifications
+Safari_WebKitTabToLinksPreferenceKey: no # Advanced - Accessibility - Press Tab to highlight ach item on a webpage
+Safari_StopPuginsToSavePower: yes # Advanced - Internet plug-ins - Stop plug-ins to saver power
+Safari_ShowDeloperMenu: yes # Advanced - Show Develop menu in menu bar
+Safari_ShowFavoritesBar: yes # View - Show Favorites Bar
+Safari_AlwaysShowTabBar: yes # View - Show Tab Bar
+Safari_ShowFrequentlyVisitedSites: yes # Bookmarks - Show Frequently Visited in Favorites

@@ -1,0 +1,3 @@
+---
+downloads: ~/.ansible-downloads/ # the directory used by ansible to download any stuff
+current_user_profile_picture: "files/profile_pictures/MarcoMC_Apple_Sketch_Round"

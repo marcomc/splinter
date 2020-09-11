@@ -1,0 +1,7 @@
+---
+ssh_proxy_enabled: no
+ssh_proxy_name: test_proxy.com
+ssh_proxy_aliases:
+  - test_proxy
+  - test-proxy
+ssh_proxy_port: 22

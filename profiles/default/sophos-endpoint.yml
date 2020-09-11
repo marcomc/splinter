@@ -1,0 +1,4 @@
+---
+sophos_installer_dir_path: ./files/sophos_endpoint
+sophos_installer_file_name: "SophosInstaller.zip"
+sophos_installer_url: "" 

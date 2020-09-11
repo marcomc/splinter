@@ -1,0 +1,16 @@
+---
+filevault_user:              "{{ ansible_user_id }}" # That user with sudo that can activate filevault 2
+filevault_user_password:     "{{ ansible_become_pass }}"
+filevault_showrecoverykey:  yes # Show the recovery on screen when the installation completes
+                                # It is necessary to show the recovery key if you want to produce
+                                # the filevault_recovery_key_output_file
+filevault_norecoverykey:     no # To specify that only the FileVaultMaster keychain be used as the recovery key
+filevault_certificate:       no
+filevault_certificate_file: 'files/FileVaultMaster.der.cer'
+
+filevault_additional_users_and_passwords:
+   - { username: "{{ new_user_username }}", password: "{{ new_user_password_cleartext }}"}
+filevault_recovery_key_output_file: "~/Desktop/{{ ansible_hostname }}-presonal-recovery-key.txt" # the path where to save the Personal Recovery Key generate by FileVault2
+
+# more options and instructions about generating the certificate in the repo
+# https://github.com/marcomc/ansible-role-filevault2

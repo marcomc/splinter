@@ -1,0 +1,11 @@
+---
+filevault_certificate:       yes
+filevault_certificate_file: 'files/FileVaultMaster.der.cer'
+
+filevault_additional_users_and_passwords:
+   - { username: "{{ new_user_username }}", password: "{{ new_user_password_cleartext }}"}
+
+# To add a user to FileVault you need to know their password
+
+# more options and instructions about generating the certificate in the repo
+# https://github.com/marcomc/ansible-role-filevault2
