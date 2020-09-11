@@ -1,44 +1,55 @@
 #!/usr/bin/env bash
-START_TIME=$(date +%s)
-TOOLS_DEPENDENCIES="" #
+
+ANSIBLE_DIR="ansible"
+ANSIBLE_CONFIG="${ANSIBLE_DIR}/ansible.cfg"
+ANSIBLE_INVENTORY="${ANSIBLE_DIR}/inventory"
+ANSIBLE_PLAYBOOK='playbook.yml'
+ANSIBLE_REQUIREMENTS="${ANSIBLE_DIR}/requirements.yml"
+ANSIBLE_ROLES="${ANSIBLE_DIR}/roles"
+ANSIBLE_FORCE_ROLES_UPDATE=''
+
+CONDA_DIR="conda"
+CONDA_PACKAGE_NAME="splinter-conda.tar.gz"
+CONDA_PACKAGE_VERSION="v0.1"
+CONDA_PACKAGE_PATH="files/${CONDA_PACKAGE_NAME}"
+CONDA_PACKAGE_URL="https://github.com/marcomc/splinter-conda/releases/download/${CONDA_PACKAGE_VERSION}/${CONDA_PACKAGE_NAME}"
+
+TOOLS_DEPENDENCIES=""
+
+DESIRED_ANSIBLE_VERSION='2.9.13'
+DESIRED_PASSLIB_VERSION='1.7.2'
+DESIRED_PYTHON_VERSION='3.8.5'
+DESIRED_WHEEL_VERSION='0.35.1'
+
+HOMEBREW_INSTALLER_URL='https://raw.githubusercontent.com/Homebrew/install/master/install.sh'
+
+PAUSE_SECONDS='3'
+
+PIP_CONFIG_FILE="pip.conf"
 PIP_DEPENDECIES="
 ansible
 wheel
 passlib
 "
-DESIRED_PASSLIB_VERSION='1.7.2'
-DESIRED_WHEEL_VERSION='0.35.1'
-DESIRED_ANSIBLE_VERSION='2.9.13'
-DESIRED_PYTHON_VERSION='3.8.5'
-PYTHON_PROVIDER="conda"
+PIP_SHOW_GREP_FILTER='Version'  # 'Name\|Version\|Location' - it's a grep filter
+
 PYENV_ROOT="pyenv"
-CONDA_DIR="conda"
-CONDA_PACKAGE_NAME="splinter-conda.tar.gz"
-CONDA_PACKAGE_VERSION="v0.1"
-CONDA_PACKAGE_URL="https://github.com/marcomc/splinter-conda/releases/download/${CONDA_PACKAGE_VERSION}/${CONDA_PACKAGE_NAME}"
-CONDA_PACKAGE_PATH="files/${CONDA_PACKAGE_NAME}"
-PIP_CONFIG_FILE="pip.conf"
-ANSIBLE_DIR="ansible"
-ANSIBLE_PLAYBOOK='playbook.yml'
-ANSIBLE_CONFIG="${ANSIBLE_DIR}/ansible.cfg"
-ANSIBLE_REQUIREMENTS="${ANSIBLE_DIR}/requirements.yml"
-ANSIBLE_ROLES="${ANSIBLE_DIR}/roles"
-ANSIBLE_INVENTORY="${ANSIBLE_DIR}/inventory"
-ANSINLE_FORCE_ROLES_UPDATE=''
+PYTHON_PROVIDER="conda"
 
 SETUP_PROFILES_DIR='./profiles'
-PIP_SHOW_GREP_FILTER='Version'  # 'Name\|Version\|Location' - it's a grep filter
-RED="\e[31m"
-GREEN="\e[32m"
-YELLOW="\e[33m"
-PURPLE="\e[35m"
-CYAN="\e[36m"
-WHITE="\e[39m"
 STAFF_GUID='20'
-PAUSE_SECONDS='3'
+
+START_TIME=$(date +%s)
 
 function _echo {
+  PURPLE="\e[35m"
+  RED="\e[31m"
+  GREEN="\e[32m"
+  CYAN="\e[36m"
+  WHITE="\e[39m"
+  YELLOW="\e[33m"
   MESSAGE_TYPE=""
+
   case ${2} in
     a|action)
       COLOUR="${CYAN}" #green
@@ -170,7 +181,7 @@ function check_command_line_parameters {
       case ${ACTION_OPTION} in
         deps|dependencies )
           _echo "Will force Asnible to update all the Galaxy roles dependencies" 'w'
-          ANSINLE_FORCE_ROLES_UPDATE='--force'
+          ANSIBLE_FORCE_ROLES_UPDATE='--force'
           eval install_dependencies
           exit 0
           ;;
@@ -385,7 +396,7 @@ function give_terminal_control_access {
 function install_brew {
   if ! command -v "brew" >/dev/null 2>&1; then
     _echo "Installing Homebrew" 'a'
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)" < /dev/null
+    /bin/bash -c "$(curl -fsSL ${HOMEBREW_INSTALLER_URL})" < /dev/null
   else
     TOOL_VERSION=$(command -v "brew")
     _echo "Homebrew ${TOOL_VERSION} is installed"
@@ -429,9 +440,6 @@ function activate_conda {
 
 function activate_pyenv {
   _echo "USING PROJECT'S OWN PYENV PYTHON VERSION" 'r'
-
-  ln -fs shims ${PYENV_ROOT}/bin
-
   export PATH="${PYENV_ROOT}/bin:${PATH}"
   export PYENV_ROOT="${PYENV_ROOT}"
   PYTHON_ROOT="${PYENV_ROOT}"
@@ -483,6 +491,7 @@ function install_pyenv_python {
     # •	install python3 with pyenv
     _echo "Installing Pyenv Python ${DESIRED_PYTHON_VERSION}" 'a'
     pyenv install "${DESIRED_PYTHON_VERSION}"
+    ln -fs shims ${PYENV_ROOT}/bin
     _echo "Rehashing Pyenv shims ${DESIRED_PYTHON_VERSION}" 'a'
     pyenv rehash
   else
@@ -513,7 +522,7 @@ function install_ansible_galaxy_roles {
     DEV_OUTPUT="/dev/null"
   fi
   _echo "Installing Ansible Galaxy roles" 'a'
-  ansible-galaxy install -r ${ANSIBLE_REQUIREMENTS} -p ${ANSIBLE_ROLES} ${ANSINLE_FORCE_ROLES_UPDATE} 1> "${DEV_OUTPUT}"
+  ansible-galaxy install -r ${ANSIBLE_REQUIREMENTS} -p ${ANSIBLE_ROLES} ${ANSIBLE_FORCE_ROLES_UPDATE} 1> "${DEV_OUTPUT}"
 }
 
 function run_ansible_playbook {
