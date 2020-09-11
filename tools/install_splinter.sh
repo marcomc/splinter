@@ -48,9 +48,8 @@ echo "Moving Splinter files to '${SPLINTER_DIR}'..."
 execute "mkdir" "-p" "${SPLINTER_DIR}"
 execute "mv" "${TEMP_DIR}"/*/* "${SPLINTER_DIR}"
 
-echo "Create default profile..."
+echo "Creating 'default' profile..."
 execute "cp" "-a" "${SPLINTER_DIR}/profiles/${DEFAULT_PROFILE_EXAMPLE}" "${SPLINTER_DIR}/profiles/${DEFAULT_PROFILE}"
-execute "mv" "${TEMP_DIR}"/*/* "${SPLINTER_DIR}"
 
 echo "Removing temporary files..."
 execute "rm" "-rf" "${TEMP_DIR}"
