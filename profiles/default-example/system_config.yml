@@ -1,5 +1,5 @@
 ---
-mh_computername: "{{ computer_name|default('My New Mac') }}"
+mh_computername: "{{ computer_name|default('My-New-Mac') }}"
 mh_localhostname: "{{ mh_computername }}"
 
 ActivityMonitor_Enabled:     yes # Enable ActivityMonitor configuration

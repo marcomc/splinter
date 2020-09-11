@@ -27,7 +27,7 @@ target_user_id: "testuser"
 # The user to which the configuration will be applied
 # if commented or left `empty` the target user will be the (current) user that is running the provisioning
 
-computer_name: "Test Computer"
+computer_name: "Test-Computer"
 # DO NOT ADD MORE OPTIONS HERE
 # ANY OTHER OPTION IN THIS FILE WILL BE OVERRIDDEN
 # BY THE PROFILE SETTINGS IN the `./profiles/*` directories
