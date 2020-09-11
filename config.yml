@@ -1,12 +1,12 @@
 ---
 
 verbose: no
-setup_profile_base: "default"
+base_profile: "default"
 # this is the profile to be used as base of all your profiles.
 # Phe project already includes one default profile set that you can customise
 # you can rename and copy the default profiel and have multiple different `default` profiles
 
-setup_profile: "test"
+role_profile: "test"
 # You can leave thos `empty` to use only the `default` profile settings.
 # Custom setup profiles can be created inside the './profiles' directory
 # You can have many different profile to override specific settings of the `default` profile

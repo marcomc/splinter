@@ -3,8 +3,8 @@
   set_fact:
     verbose: "{{ lookup('env','VERBOSE') if lookup('env','VERBOSE')|length > 0 else omit }}"
     ansible_become_pass: "{{ lookup('env','ANSIBLE_BECOME_PASS') }}"
-    setup_profile_base: "{{ lookup('env','ANSIBLE_BASE_PROFILE') }}"
-    setup_profile: "{{ lookup('env','ANSIBLE_SETUP_PROFILE') }}"
+    base_profile: "{{ lookup('env','ANSIBLE_BASE_PROFILE') }}"
+    role_profile: "{{ lookup('env','ANSIBLE_SETUP_PROFILE') }}"
     new_user_username: "{{ lookup('env','NEW_USER_USERNAME') if lookup('env','NEW_USER_USERNAME')|length > 0 else omit }}"
     new_user_fullname: "{{ lookup('env','NEW_USER_FULL_NAME') if lookup('env','NEW_USER_FULL_NAME')|length > 0 else omit }}"
     new_user_password_cleartext: "{{ lookup('env','NEW_USER_PASSWORD_CLEARTEXT') if lookup('env','NEW_USER_PASSWORD_CLEARTEXT')|length > 0 else omit }}"
