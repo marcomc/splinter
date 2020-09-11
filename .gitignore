@@ -22,3 +22,4 @@ profiles/*
 !profiles/default/
 !profiles/example/
 pyenv/
+splinter/
