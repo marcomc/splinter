@@ -1,6 +1,6 @@
 ---
 configure_filevault: yes       # Activate FileVault2, fine tuning in filevault_options.yml
-configure_sophos_endpoint: yes # Install Sophos Endpoint from your organisation
+configure_sophos_endpoint: no # Install Sophos Endpoint from your organisation
 configure_homebrew: yes           # Install and Configure homebrew to be used by all accounts
 configure_system: yes             # Set default settings for the Operating Sysntem, fine tuning in osx_config.yml
 configure_dotfiles: no            # Import pre-set config files for your application, fine tuning in dotfiles_options.yml
