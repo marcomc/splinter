@@ -135,7 +135,7 @@ function check_command_line_parameters {
       exit 0
       ;;
     -*)
-      _echo "Invalid option: ${1}" 'e' 1>&2
+      echo "[Error] Invalid option: ${1}" 1>&2
       eval show_usage
       exit 1
       ;;
@@ -154,12 +154,12 @@ function check_command_line_parameters {
           exit 0
           ;;
         '')
-          _echo "Missing option for action '${ACTION}'" 'e' 1>&2
+          echo "[Error] Missing option for action '${ACTION}'" 1>&2
           eval show_usage
           exit 1
           ;;
         *)
-          _echo "Incorrect option '${ACTION_OPTION}' for action '${ACTION}'" 'e' 1>&2
+          echo "[Error] Incorrect option '${ACTION_OPTION}' for action '${ACTION}'" 1>&2
           eval show_usage
           exit 1
           ;;
@@ -170,7 +170,6 @@ function check_command_line_parameters {
       ACTION_OPTION="${2}";# fetch the action's option
       # Process package options
       export VERBOSE='yes' # `update` will always be verbose
-      _echo "OPTION: ${ACTION_OPTION}"
       case ${ACTION_OPTION} in
         deps|dependencies )
           _echo "Will force Asnible to update all the Galaxy roles dependencies" 'w'
@@ -179,21 +178,22 @@ function check_command_line_parameters {
           exit 0
           ;;
         self)
-          _echo "Option not yet implemented for action '${ACTION}'" 'e' 1>&2
+          echo "[Error] Option '${ACTION_OPTION}' not yet implemented for action '${ACTION}'" 1>&2
           eval show_usage
           exit 1
           ;;
         '')
-          _echo "Missing option for action '${ACTION}'" 'e' 1>&2
+          echo "[Error] Missing option for action '${ACTION}'" 1>&2
           eval show_usage
           exit 1
           ;;
         *)
-          _echo "Incorrect option '${ACTION_OPTION}' for action '${ACTION}'" 'e' 1>&2
+          echo "[Error] Incorrect option '${ACTION_OPTION}' for action '${ACTION}'" 1>&2
           eval show_usage
           exit 1
           ;;
       esac
+      _echo "OPTION: ${ACTION_OPTION}"
       ;;
     provision )
       shift
@@ -236,12 +236,12 @@ function check_command_line_parameters {
             _echo "VERBOSE: ${VERBOSE}"
             ;;
           \?)
-             _echo "Action '${ACTION}': Invalid option '-${OPTARG}'" 'e' 1>&2
-             eval show_usage
-             exit 1
-             ;;
+            echo "[Error] Action '${ACTION}': Invalid setting '-${OPTARG}'" 1>&2
+            eval show_usage
+            exit 1
+            ;;
           :)
-            _echo "Action '${ACTION}': option '-${OPTARG}' is missing an argument" 'e' 1>&2
+            echo "[Error] Action '${ACTION}': setting '-${OPTARG}' is missing an argument" 1>&2
             eval show_usage
             exit 1
             ;;
@@ -252,19 +252,19 @@ function check_command_line_parameters {
       if [[ -n "${*}" ]];then
         # if it is NOT empty it means it interrupted before evaluating all the parameters
         # becaue it encountered a unexpected param or arg
-        _echo "Provided unknow parameter: ${1}" 'e'
+        echo "[Error] Provided unknow parameter: ${1}" 1>&2
         eval show_usage
         exit 1
       fi
       eval main
       ;;
     '')
-      _echo "Missing action" 'e' 1>&2
+      echo "[Error] Missing action" 1>&2
       eval show_usage
       exit 1
       ;;
     *)
-      _echo "Invalid action '$ACTION'" 'e' 1>&2
+      echo "[Error] Invalid action '$ACTION'" 1>&2
       eval show_usage
       exit 1
       ;;
