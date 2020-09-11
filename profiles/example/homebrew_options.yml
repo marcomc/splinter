@@ -31,7 +31,6 @@ homebrew_cask_apps:
   - google-backup-and-sync
   - google-chrome
   - google-drive-file-stream
-  - hem
   - iterm2
   - lastpass
   - macvim
