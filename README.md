@@ -4,7 +4,11 @@
 
 # Install Splinter
 
+    # BASH & ZSH
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/marcomc/splinter/master/install.sh)"
+
+    # FISH
+    curl -fsSL https://raw.githubusercontent.com/marcomc/splinter/master/install.sh | /bin/bash
 
 ## What does Splinter do?
 Spliter uses a bash script to install the minimum requirements to run Ansible within a dedicated Python environment, then run an Ansible playbook that will run the full provisioning of a macOS system
