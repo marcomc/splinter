@@ -2,6 +2,10 @@
 
 # Splinter - Ansible Automated macOS Provisioning
 
+# Install Splinter
+
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/marcomc/splinter/master/install.sh)"
+
 ## What does Splinter do?
 Spliter uses a bash script to install the minimum requirements to run Ansible within a dedicated Python environment, then run an Ansible playbook that will run the full provisioning of a macOS system
 
