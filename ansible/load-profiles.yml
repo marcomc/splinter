@@ -1,5 +1,5 @@
 ---
-- name: "Loading profile settings: {{ profile if profile | length > 0 else 'default' }}"
+- name: "Loading profile settings: {{ role_profile if role_profile | length > 0 else base_profile }}"
   include_vars: "{{ item }}"
   with_fileglob:
     - "{{ playbook_dir }}/profiles/{{ base_profile }}/*.yml"

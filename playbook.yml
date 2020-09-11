@@ -8,6 +8,7 @@
     - [ "{{ lookup('env','CUSTOM_CONFIG_FILE') if lookup('env','CUSTOM_CONFIG_FILE')|length > 0 else omit }}",'config.yml','/dev/null' ]
 
   pre_tasks:
+
     - name: Load ENV and Default Values
       include_tasks: ansible/load-env-values.yml
 
