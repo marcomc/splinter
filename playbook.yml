@@ -12,10 +12,7 @@
       include_tasks: ansible/load-env-values.yml
 
     - name: Load the Splinter base tasks.
-      include_role:
-        name: marcomc.splinter-toolkit
-        tasks_from: main
-      tags: ['always']
+      include_tasks: ansible/load-profiles.yml
 
   roles:
     - role: ctorgalson.macos_hostname
