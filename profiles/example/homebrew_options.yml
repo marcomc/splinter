@@ -80,7 +80,6 @@ homebrew_installed_packages:
   - sshfs
   - speedtest-cli
   - ssh-copy-id
-  - sshfs
   - telnet
   - testdisk
   - unison
