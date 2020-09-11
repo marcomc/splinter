@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
 START_TIME=$(date +%s)
-TOOLS_DEPENDENCIES="
-brew
-pyenv
-"
+TOOLS_DEPENDENCIES="" #
 PIP_DEPENDECIES="
 ansible
 wheel
@@ -386,9 +383,14 @@ function give_terminal_control_access {
 }
 
 function install_brew {
-  # install homebrew
-  _echo "Installing Homebrew" 'a'
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)" < /dev/null
+  if ! command -v "brew" >/dev/null 2>&1; then
+    _echo "Installing Homebrew" 'a'
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)" < /dev/null
+  else
+    TOOL_VERSION=$(command -v "brew")
+    _echo "Homebrew ${TOOL_VERSION} is installed"
+  fi
+
 }
 
 function install_conda {
@@ -447,10 +449,15 @@ function update_brew {
 }
 
 function install_pyenv {
-  _echo "Installing Pyenv" 'a'
-  # install pyenv with homebrew
-  eval update_brew
-  brew install pyenv
+  if ! command -v "pyenv" >/dev/null 2>&1; then
+    _echo "Installing Pyenv" 'a'
+    # install pyenv with homebrew
+    eval update_brew
+    brew install pyenv
+  else
+    TOOL_VERSION=$(command -v "pyenv")
+    _echo "Pyenv ${TOOL_VERSION} is installed"
+  fi
 }
 
 function install_pip_ansible {
@@ -532,7 +539,7 @@ function ask_for_ansible_sudo_password {
 
 function setup_python {
   if [ "${PYTHON_PROVIDER}" == "pyenv" ];then
-    eval install_tools_dependencies
+    eval install_pyenv
     eval activate_pyenv
     eval install_pyenv_python
   elif [ "${PYTHON_PROVIDER}" == "conda" ];then
@@ -547,6 +554,7 @@ function setup_python {
 }
 
 function install_dependencies {
+  eval install_brew
   eval setup_python
   eval upgrade_pip
   eval install_pip_dependencies
