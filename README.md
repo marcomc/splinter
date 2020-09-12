@@ -4,6 +4,8 @@
 
 # Install Splinter
 
+The installatio will download Splinter to `./splinter` directory and setup the first `config` file and `default` profile.
+
     # BASH & ZSH
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/marcomc/splinter/master/tools/install_splinter.sh)"
 
