@@ -59,7 +59,10 @@
 * [*] see how to use `miniconda` to distribute python
 * [*] update usage functionx  
 
-# Restore Options
+* [ ] add support for profiles from git repos
+* [ ] allow extra packages to be installed as target_user_id or for the current user
+
+# When Provisioning the current user (and not a target user)
 * [x] dotfiles: export personal System Configs
 * [x] dotfiles: import personal System Configs (mackup?)
 * [x] zsh
@@ -79,15 +82,13 @@
   changed_when: false
   with_items: "{{ login_items }}"
 
-* [ ] allow extra packages to be installed as target_user_id or for the current user
-  * [ ] install pip packages in virtualenv (?)
+* [ ] iCloud login
 * [ ] Cron
   * [ ] setup periodic export of app/pkg lists and mackup exports
 * [ ] App settings (with mackup?)
 * [ ] add ShareMouse config to Mackup
 * [ ] add ShareMouse config to Macprefs
 * [ ] Internet login
-* [ ] iCloud login
 * [ ] Gmail account(s)
 * [ ] User Login items
 * [ ] TimeMachine Settings
