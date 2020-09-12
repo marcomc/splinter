@@ -110,7 +110,7 @@ To chose run:
     usage: ./splinter.sh [option] action [object] [settings]
     options:
        -e|--env conda|pyenv, List available profiles
-       --help, Print help
+       -elp, Print help
        --version, Print Splinter version and release date
     actions:
        list, List available profiles
@@ -128,7 +128,7 @@ To chose run:
        -u username, New user username (all lowercase, without spaces)
        -f 'Full Name', New user full name (quoted if has blank spaces)
        -p 'clear text password', New user's password in cleartext (quoted if has blank spaces)
-       -h Computer-Name, Computer host name, __no blank spaces allowed__
+        Computer-Name, Computer host name, __no blank spaces allowed__
        -v, Produce verbose output
 
     Create your own profiles in the './profiles' directory.
@@ -187,7 +187,7 @@ Splinter supports 3 levels of configurations listed here from least to most impo
 
    You can pass the above values as command line parameters to `splinter.sh`
 
-        splinter.sh provision -v -u newuser -p password -f "New User" -b my-base-profile -r my-role-profile -h "My New Mac" -c <custom_config>.yml
+        splinter.sh provision -v -u newuser -p password -f "New User" -b my-base-profile -r my-role-profile -h My-New-Mac -c <custom_config>.yml
 
    you can specify only some of those parameters and they will override any value contained in `config.yml` or `<custom_config>.yml`
 
