@@ -23,7 +23,7 @@
   version: '1e52c49'
 
 - name: lafarer.osx-defaults
-  version: 'marcomc/stop-handlers-when-target-user'
+  version: 'marcomc/trackpad-boolean-options-fix'
 
 - name: macstadium.xcode
   version: '501d7ac'
