@@ -1,23 +1,28 @@
+
+# exclude these file patterns
 .DS_Store
-*.tar*
 *.gz
+*.tar*
+*backup*
+*bk*
 *iniconda*.sh
 *test*
-*bk*
-*backup*
-!*.md
+config.yml
+
+# exclude these directories patterns
 ansible/roles
 conda/
 env/
-
 files/*
 files/*/*
-!files/splinter_logo.png
-!files/*/
-!files/*/MarcoMC_Apple_Sketch_Round.png
-
 profiles/*
-!profiles/example/
-!profiles/default-example/
 pyenv/
 splinter/
+
+# exceptios
+!*.md
+!*splinter*
+!files/*/
+!files/*/MarcoMC_Apple_Sketch_Round.png
+!profiles/default-example/
+!profiles/example/
