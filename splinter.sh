@@ -77,7 +77,7 @@ function _echo {
       tag='INFO...'
     ;;
   esac
-  if [ "${verborse}" == "yes" ] || [ "${message_type}" != "info" ];then
+  if [ "${verbose}" == "yes" ] || [ "${message_type}" != "info" ];then
     printf "${cyan}[${tag}] ${white}%s\n" "${1}"
   fi
 }
@@ -192,7 +192,7 @@ function check_command_line_parameters {
     update)
       action_option="${2}";# fetch the action's option
       # Process package options
-      verborse='yes' # `update` will always be verbose
+      verbose='yes' # `update` will always be verbose
       case ${action_option} in
         deps|dependencies )
           _echo "Will force Asnible to update all the Galaxy roles dependencies" 'w'
@@ -255,7 +255,7 @@ function check_command_line_parameters {
             _echo "NEW_USER_USERNAME: ${NEW_USER_USERNAME}"
             ;;
           v)
-            verborse='yes'
+            verbose='yes'
             ;;
           \?)
             echo "[Error] Action '${action}': Invalid setting '-${OPTARG}'" 1>&2
@@ -531,7 +531,7 @@ function install_ansible {
 
 function install_ansible_galaxy_roles {
 
-  if [ "${verborse}" == "yes" ];then
+  if [ "${verbose}" == "yes" ];then
     dev_output="/dev/stdout"
   else
     dev_output="/dev/null"
