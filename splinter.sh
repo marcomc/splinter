@@ -545,7 +545,6 @@ function run_ansible_playbook {
   export ANSIBLE_CONFIG="${ansible_config}"
   _echo "ANSIBLE_CONFIG: ${ANSIBLE_CONFIG}"
   export ANSIBLE_ROLES_PATH="${ansible_roles}"
-  export ANSIBLE_BECOME_PASS="${ansible_become_pass}"
   ansible-playbook ${ansible_playbook} -i ${ansible_inventory}
 }
 
@@ -555,6 +554,7 @@ function ask_for_ansible_sudo_password {
   if [ -z "${ANSIBLE_BECOME_PASS}" ]; then
         _echo "Requesting the admin password to be used for 'sudo' throughout the deployment process" 'a'
         read -r -p ">>>>>>>>> Insert the current user password: " -s ansible_become_pass
+        export ANSIBLE_BECOME_PASS="${ansible_become_pass}"
         printf "\n"
   else
         _echo "'ANSIBLE_BECOME_PASS' is already set"
