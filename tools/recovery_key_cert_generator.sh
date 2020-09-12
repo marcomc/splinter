@@ -6,55 +6,55 @@ case "${1}" in
     exit
   ;;
   '')
-    KEYCHAIN_NAME="FileVaultMaster"
+    keychain_name="FileVaultMaster"
     ;;
   *)
-    KEYCHAIN_NAME="${1}"
+    keychain_name="${1}"
   ;;
 esac
 
-OUTPUT_DIR="${HOMEz}/Desktop"
-KEYCHAIN_FILE="${OUTPUT_DIR}/${KEYCHAIN_NAME}.keychain"
-KEYCHAIN_SECRET_OUTPUT="${OUTPUT_DIR}/${KEYCHAIN_NAME}_keychain_password.txt"
-DER_CERT="${OUTPUT_DIR}/${KEYCHAIN_NAME}.der.cer"
-KEYCHAIN_PASSWORD=""
-RED="\e[31m"
-YELLOW="\e[33m"
-CYAN="\e[36m"
-WHITE="\e[39m"
+output_dir="${HOME}/Desktop"
+keychain_file="${output_dir}/${keychain_name}.keychain"
+keychain_secret_output="${output_dir}/${keychain_name}_keychain_password.txt"
+der_cert="${output_dir}/${keychain_name}.der.cer"
+keychain_password=""
+red="\e[31m"
+yellow="\e[33m"
+cyan="\e[36m"
+white="\e[39m"
 
 function from_keychain_to_cert {
   eval ask_for_private_key_secret
 
-  printf ">> %bCreate %s keychain%b\n" "${CYAN}" "${KEYCHAIN_FILE}" "${WHITE}"
-  security create-filevaultmaster-keychain -p "${KEYCHAIN_PASSWORD}" "${KEYCHAIN_FILE}"
+  printf ">> %bCreate %s keychain%b\n" "${cyan}" "${keychain_file}" "${white}"
+  security create-filevaultmaster-keychain -p "${KEYCHAIN_PASSWORD}" "${keychain_file}"
 
-  printf ">> %bExport DER certificate %s from %s keychain%b\n" "${CYAN}" "${DER_CERT}" "${KEYCHAIN_FILE}" "${WHITE}"
-  security export -k "${KEYCHAIN_FILE}" -t certs -o "${DER_CERT}"
+  printf ">> %bExport DER certificate %s from %s keychain%b\n" "${cyan}" "${der_cert}" "${keychain_file}" "${white}"
+  security export -k "${keychain_file}" -t certs -o "${der_cert}"
 }
 
 function ask_for_private_key_secret {
   if [ -z "${KEYCHAIN_PASSWORD}" ]; then
-        printf ">> %bRequest the secret used to encript %b%s%b\n" "${CYAN}" "${YELLOW}" "${KEYCHAIN_FILE}" "${WHITE}"
-        read -r -p ">> Insert your chosen secret: " -s KEYCHAIN_PASSWORD
+        printf ">> %bRequest the secret used to encript %b%s%b\n" "${cyan}" "${yellow}" "${keychain_file}" "${white}"
+        read -r -p ">> Insert your chosen secret: " -s keychain_password
         printf "\n"
-        export KEYCHAIN_PASSWORD="${KEYCHAIN_PASSWORD}"
-        printf ">> %bKeychain password saved in %s%b\n" "${RED}" "${KEYCHAIN_SECRET_OUTPUT}" "${WHITE}"
-        echo "${KEYCHAIN_PASSWORD}" > "${KEYCHAIN_SECRET_OUTPUT}"
-        chmod 0600 "${KEYCHAIN_SECRET_OUTPUT}"
-        printf ">> %bStore the keychain password in a safe place (i.e. Bitwarden, LastPass or 1Password)%b\n" "${YELLOW}" "${WHITE}"
-        printf ">> %bthen delete the file %s%b\n" "${YELLOW}" "${KEYCHAIN_SECRET_OUTPUT}" "${WHITE}"
+        export KEYCHAIN_PASSWORD="${keychain_password}"
+        printf ">> %bKeychain password saved in %s%b\n" "${red}" "${keychain_secret_output}" "${white}"
+        echo "${KEYCHAIN_PASSWORD}" > "${keychain_secret_output}"
+        chmod 0600 "${keychain_secret_output}"
+        printf ">> %bStore the keychain password in a safe place (i.e. Bitwarden, LastPass or 1Password)%b\n" "${yellow}" "${white}"
+        printf ">> %bthen delete the file %s%b\n" "${yellow}" "${keychain_secret_output}" "${white}"
   else
-        printf ">> %b'KEYCHAIN_PASSWORD' is already set%b\n" "${RED}" "${WHITE}"
+        printf ">> %b'KEYCHAIN_PASSWORD' is already set%b\n" "${red}" "${white}"
   fi
 }
 
-if [ -f "${KEYCHAIN_FILE}" ];then
-  printf ">> %b%s keychain file already exists!%b\n" "${YELLOW}" "${KEYCHAIN_FILE}" "${WHITE}"
+if [ -f "${keychain_file}" ];then
+  printf ">> %b%s keychain file already exists!%b\n" "${yellow}" "${keychain_file}" "${white}"
   exit
 else
   eval from_keychain_to_cert
-  printf ">> %bOpen %s keychain for review\n%b" "${CYAN}" "${KEYCHAIN_NAME}" "${WHITE}"
-  open "${KEYCHAIN_FILE}"
+  printf ">> %bOpen %s keychain for review\n%b" "${cyan}" "${keychain_name}" "${white}"
+  open "${keychain_file}"
 fi
-open "${OUTPUT_DIR}"
+open "${output_dir}"
