@@ -59,6 +59,9 @@
 * [*] see how to use `miniconda` to distribute python
 * [*] update usage functionx  
 
+* [ ] BUG: Desktop picture is not being copied and installed in the target user account
+* [ ] BUG: some process is overriding `com.apple.AppleMultitouchTrackpad` `Clicking` and `Dragging` setting at first login, turing it to int and to False. maybe we need to apply that setting to another plist file?
+* [ ] remove the dsimport file for the profile picture
 * [ ] add support for profiles from git repos
 * [ ] allow extra packages to be installed as target_user_id or for the current user
 
@@ -97,17 +100,6 @@
 # Future
 * [ ] filevault2 role: if FV is already enabled, check if the newuser is already added to Filevault, if not, add it
 * [ ] user custom keyboards shortcuts, only my private set if macprefs doesn't restore them
-* [ ] see if it is possible to prevent Xcode to request confirmation
-* [ ] Add `update` action to the splinter.sh script that will download updated version of:
-  * [ ] make backup and then update all the list below
-  * [ ] requirements.yml
-  * [ ] ansible.cfg
-  * [ ] playbook.yml
-  * [ ] README.md
-  * [ ] CHANGELOG.md
-  * [ ] splinter.sh
-  * [ ] TODO.md
-  * [ ] tools/
 * [ ] convert mac-app-install into ansible-brew like repo
   * [ ] leave the option to define your own application configuration
   * [ ] add the option to have a common database of app with their info
@@ -115,3 +107,14 @@
     * if no version is specified will skip if the app is already installed
     * if 'upgrade' option is provided will install only if the version on the database is newer
     * if a version is specified it will install it if the version is available in the database
+* [x] see if it is possible to prevent Xcode to request confirmation
+* [x] Add `update` action to the splinter.sh script that will download updated version of:
+  * [x] make backup and then update all the list below
+  * [x] requirements.yml
+  * [x] ansible.cfg
+  * [x] playbook.yml
+  * [x] README.md
+  * [x] CHANGELOG.md
+  * [x] splinter.sh
+  * [x] TODO.md
+  * [x] tools/

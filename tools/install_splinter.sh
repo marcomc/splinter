@@ -7,6 +7,8 @@ splinter_zip="${splinter_dir}.zip"
 splinter_archive="https://github.com/marcomc/splinter/archive/master.zip"
 default_profile="default"
 default_profile_example="default-example"
+config_file="config.yml"
+config_file_example="config-example.yml"
 
 shell_join() {
   local arg
@@ -48,7 +50,10 @@ echo "Moving Splinter files to '${splinter_dir}'..."
 execute "mkdir" "-p" "${splinter_dir}"
 execute "mv" "${temp_dir}"/*/* "${splinter_dir}"
 
-echo "Creating 'default' profile..."
+echo "Creating config file 'config.yml'..."
+execute "cp" "-a" "${splinter_dir}/${config_file_example}" "${splinter_dir}/${config_file}"
+
+echo "Creating profile 'default'..."
 execute "cp" "-a" "${splinter_dir}/profiles/${default_profile_example}" "${splinter_dir}/profiles/${default_profile}"
 
 echo "Removing temporary files..."
