@@ -439,18 +439,17 @@ function activate_conda {
   _echo "USING PROJECT'S OWN MINICONDA PYTHON VERSION" 'r'
 
   conda_root="$(pwd)/${conda_dir}"
-  export _CONDA_ROOT="${conda_root}"
-
-  python_root="${conda_root}"
-
-  export PATH="${_CONDA_ROOT}/bin:$PATH"
-
   # Fix issues with SSL Certificates
   cert_path=$(python -m certifi)
+  python_root="${conda_root}"
+  python_version=$(python --version)
+
+  export _CONDA_ROOT="${conda_root}"
+  export CONDA_PREFIX="${_CONDA_ROOT}"
+  export PATH="${_CONDA_ROOT}/bin:$PATH"
   export SSL_CERT_FILE=${cert_path}
   export REQUESTS_CA_BUNDLE=${cert_path}
 
-  python_version=$(python --version)
   _echo "${python_version} is installed"
 }
 
