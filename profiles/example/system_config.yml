@@ -24,8 +24,8 @@ SetupAssistant_Enabled:      yes # Enable Setup Assitant configuration
 Spotlight_Enabled:           yes # Enable Spotlight configuration
 Trackpad_Enabled:            yes # Enable Trackpad configuration
 
-DesktopScreenSaver_BackGroundImage: "files/desktop_pictures/splinter-desktop.jpg"
-LoginWindow_DesktopPicture: "files/desktop_pictures/splinter-desktop.jpg" # Change login screen background
+DesktopScreenSaver_BackGroundImage: "files/desktop_pictures/splinter_desktop.jpg"
+LoginWindow_DesktopPicture: "files/desktop_pictures/splinter_desktop.jpg" # Change login screen background
 
 DateTime_TimeZone: "Europe/London" # Set the timezone; see `systemsetup -listtimezones` for other values
 Dock_PersistentApps: # A plain path string, if empty [] it won't change anything

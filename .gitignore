@@ -2,7 +2,7 @@
 # exclude these file patterns
 .DS_Store
 *.gz
-*.tar*
+*.tar.*
 *backup*
 *bk*
 *iniconda*.sh
@@ -21,7 +21,7 @@ splinter/
 
 # exceptios
 !*.md
-!*splinter*
+!splinter_*
 !files/*/
 !files/*/MarcoMC_Apple_Sketch_Round.png
 !profiles/default-example/
