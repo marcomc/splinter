@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+version="0.1-beta"
+release_date="20200911"
 
 ansible_dir="ansible"
 ansible_config="${ansible_dir}/ansible.cfg"
@@ -80,11 +82,16 @@ function _echo {
   fi
 }
 
+function show_version {
+  echo "Splinter ${version} ${release_date}"
+}
+
 function show_usage (){
   printf "usage: %s [option] action [object] [settings]\n" "${0}"
   printf "options: \n"
   printf "       -e|--env conda|pyenv, List available profiles\n"
   printf "       -h|--help, Print help\n"
+  printf "       --version, Print Splinter version and release date\n"
   printf "actions: \n"
   printf "       list, List available profiles\n"
   printf "       provision [settings], Provision the host\n"
@@ -144,6 +151,10 @@ function check_command_line_parameters {
       ;;
     -h|--help )
       eval show_usage
+      exit 0
+      ;;
+    --version )
+      eval show_version
       exit 0
       ;;
     -*)

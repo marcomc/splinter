@@ -109,6 +109,7 @@ To chose run:
     options:
        -e|--env conda|pyenv, List available profiles
        -h|--help, Print help
+       --version, Print Splinter version and release date
     actions:
        list, List available profiles
        provision [settings], Provision the host
