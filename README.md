@@ -126,7 +126,7 @@ To chose run:
        -u username, New user username (all lowercase, without spaces)
        -f 'Full Name', New user full name (quoted if has blank spaces)
        -p 'clear text password', New user's password in cleartext (quoted if has blank spaces)
-       -h Computer-Name, Computer host name, __no spaces allowed__
+       -h Computer-Name, Computer host name, __no blank spaces allowed__
        -v, Produce verbose output
 
     Create your own profiles in the './profiles' directory.

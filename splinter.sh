@@ -108,7 +108,7 @@ function show_usage (){
   printf "       -u username, New user username (all lowercase, without spaces)\n"
   printf "       -f 'Full Name', New user full name (quoted if has blank spaces)\n"
   printf "       -p 'clear text password', New user's password in cleartext (quoted if has blank spaces)\n"
-  printf "       -h 'Computer Name', Computer host name (quoted if has blank spaces)\n"
+  printf "       -h Computer-Name, Computer host name, no blank spaces allowed\n"
 
   printf "       -v, Produce verbose output\n"
   printf "\n"

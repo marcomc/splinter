@@ -95,6 +95,7 @@
   * [ ] allow to specify which source to use for mackup
 
 # Future
+* [ ] filevault2 role: if FV is already enabled, check if the newuser is already added to Filevault, if not, add it
 * [ ] user custom keyboards shortcuts, only my private set if macprefs doesn't restore them
 * [ ] see if it is possible to prevent Xcode to request confirmation
 * [ ] Add `update` action to the splinter.sh script that will download updated version of:
