@@ -5,6 +5,7 @@
 *test*
 *bk*
 *backup*
+!*.md
 ansible/roles
 conda/
 env/
@@ -13,10 +14,7 @@ files/*
 files/*/*
 !files/splinter_logo.png
 !files/*/
-!files/*/*.md
 !files/*/MarcoMC_Apple_Sketch_Round.png
-
-
 
 profiles/*
 !profiles/example/
