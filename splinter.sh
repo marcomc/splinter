@@ -278,6 +278,10 @@ function check_command_line_parameters {
         eval show_usage
         exit 1
       fi
+
+
+      export VERBOSE="${verbose}"
+      _echo "VERBOSE: ${VERBOSE}"
       eval main
       ;;
     '')
@@ -291,12 +295,6 @@ function check_command_line_parameters {
       exit 1
       ;;
   esac
-
-  export VERBOSE="${verbose}"
-  _echo "VERBOSE: ${VERBOSE}"
-
-  export PYTHON_PROVIDER="${python_provider}"
-  _echo "PYTHON_PROVIDER: ${PYTHON_PROVIDER}"
 }
 
 function check_install_path_permissions {
@@ -575,6 +573,8 @@ function setup_python {
     _echo "Unknow python provider '${python_provider}'" 'e'
     exit 1
   fi
+  export PYTHON_PROVIDER="${python_provider}"
+  _echo "PYTHON_PROVIDER: ${PYTHON_PROVIDER}"
   export PYTHON_ROOT="${python_root}"
   _echo "PYTHON_ROOT: ${PYTHON_ROOT}"
 }
