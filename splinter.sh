@@ -10,7 +10,7 @@ ansible_requirements="${ansible_dir}/requirements.yml"
 ansible_roles="${ansible_dir}/roles"
 ansible_force_roles_update=''
 
-conda_dir="conda"
+conda_dir="pyenv"
 conda_package_name="splinter-conda.tar.gz"
 conda_package_version="v0.1"
 conda_package_path="files/${conda_package_name}"
