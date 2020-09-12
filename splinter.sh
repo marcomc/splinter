@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-version="0.2-beta"
+version="0.3-beta"
 release_date="20200912"
 
 ansible_dir="ansible"
