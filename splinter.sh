@@ -228,8 +228,8 @@ function check_command_line_parameters {
             ;;
           b)
             if ansible_profile_is_available "${OPTARG}" 2>/dev/null ; then
-              export ANSIBLE_BASE_PROFILE="${OPTARG}"
-              _echo "ANSIBLE_BASE_PROFILE: ${ANSIBLE_BASE_PROFILE}"
+              export SPLINTER_BASE_PROFILE="${OPTARG}"
+              _echo "SPLINTER_BASE_PROFILE: ${SPLINTER_BASE_PROFILE}"
             fi
             ;;
           f)
@@ -246,8 +246,8 @@ function check_command_line_parameters {
             ;;
           r)
             if ansible_profile_is_available "${OPTARG}" 2>/dev/null; then
-              export ANSIBLE_SETUP_PROFILE="${OPTARG}"
-              _echo "ANSIBLE_SETUP_PROFILE: ${ANSIBLE_SETUP_PROFILE}"
+              export SPLINTER_ROLE_PROFILE="${OPTARG}"
+              _echo "SPLINTER_ROLE_PROFILE: ${SPLINTER_ROLE_PROFILE}"
             fi
             ;;
           u)
