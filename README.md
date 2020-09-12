@@ -108,7 +108,7 @@ To chose run:
     usage: ./splinter.sh [option] action [object] [settings]
     options:
        -e|--env conda|pyenv, List available profiles
-       -h|--help, Print help
+       --help, Print help
        --version, Print Splinter version and release date
     actions:
        list, List available profiles

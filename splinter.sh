@@ -90,7 +90,7 @@ function show_usage (){
   printf "usage: %s [option] action [object] [settings]\n" "${0}"
   printf "options: \n"
   printf "       -e|--env conda|pyenv, List available profiles\n"
-  printf "       -h|--help, Print help\n"
+  printf "       --help, Print help\n"
   printf "       --version, Print Splinter version and release date\n"
   printf "actions: \n"
   printf "       list, List available profiles\n"
@@ -153,7 +153,7 @@ function check_command_line_parameters {
       eval show_usage
       exit 0
       ;;
-    --version )
+    -v|--version )
       eval show_version
       exit 0
       ;;
@@ -236,7 +236,7 @@ function check_command_line_parameters {
             export NEW_USER_FULL_NAME="${OPTARG}"
             _echo "NEW_USER_FULL_NAME: '${NEW_USER_FULL_NAME}'"
             ;;
-          h)
+          H)
             export COMPUTER_HOST_NAME="${OPTARG}"
             _echo "COMPUTER_HOST_NAME: ${COMPUTER_HOST_NAME}"
             ;;
