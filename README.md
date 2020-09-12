@@ -116,7 +116,7 @@ To chose run:
 
     obejcts:
        deps|dependencies, update all the dependency tools (PIP, Ansible Galaxy role)
-       self|auto, Update Splinter itself (not yet implemented!)
+       self|auto|splinter, Update Splinter itself (to be run withing the Spliter directory)
 
     settings:
        -c file, Specify a custom configuration file

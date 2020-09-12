@@ -39,6 +39,8 @@ PYTHON_PROVIDER="conda"
 SETUP_PROFILES_DIR='./profiles'
 STAFF_GUID='20'
 
+UPDATE_SCRIPT="tools/update_splinter.sh"
+
 START_TIME=$(date +%s)
 
 function _echo {
@@ -90,7 +92,7 @@ function show_usage (){
   printf "\n"
   printf "obejcts: \n"
   printf "       deps|dependencies, update all the dependency tools (PIP, Ansible Galaxy role)\n"
-  printf "       self|auto, Update Splinter itself (not yet implemented!)\n"
+  printf "       self|auto|splinter, Update Splinter itself (to be run withing the Spliter directory)\n"
   printf "\n"
   printf "settings: \n"
   printf "       -c file, Specify a custom configuration file\n"
@@ -120,6 +122,16 @@ function print_execution_time {
     TOTAL="${TOTAL_SECONDS} seconds"
   fi
   _echo "Execution time was ${TOTAL}" 'r'
+}
+
+function update_splinter {
+  if [ ! -f ${UPDATE_SCRIPT} ]; then
+    _echo "Looks like you are not inside the Splinter directory: $(pwd)" 'e'
+    _echo "You need to run the self-update command witing the Splinter directory"
+    exit 1
+  fi
+  _echo "Self updating with '${UPDATE_SCRIPT}'" 'a'
+  /bin/bash -c "${UPDATE_SCRIPT}"
 }
 
 function check_command_line_parameters {
@@ -185,10 +197,10 @@ function check_command_line_parameters {
           eval install_dependencies
           exit 0
           ;;
-        self)
-          echo "[Error] Option '${ACTION_OPTION}' not yet implemented for action '${ACTION}'" 1>&2
-          eval show_usage
-          exit 1
+        self|auto|splinter)
+          _echo "Will Self Update" 'w' 1>&2
+          eval update_splinter
+          exit 0
           ;;
         '')
           echo "[Error] Missing option for action '${ACTION}'" 1>&2
