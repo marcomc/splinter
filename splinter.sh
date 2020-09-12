@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-version="0.1-beta"
-release_date="20200911"
+version="0.2-beta"
+release_date="20200912"
 
 ansible_dir="ansible"
 ansible_config="${ansible_dir}/ansible.cfg"
@@ -149,11 +149,11 @@ function check_command_line_parameters {
       python_provider="${2}"
       shift 2
       ;;
-    -h|--help )
+    --help )
       eval show_usage
       exit 0
       ;;
-    -v|--version )
+    --version )
       eval show_version
       exit 0
       ;;
@@ -236,7 +236,7 @@ function check_command_line_parameters {
             export NEW_USER_FULL_NAME="${OPTARG}"
             _echo "NEW_USER_FULL_NAME: '${NEW_USER_FULL_NAME}'"
             ;;
-          H)
+          h)
             export COMPUTER_HOST_NAME="${OPTARG}"
             _echo "COMPUTER_HOST_NAME: ${COMPUTER_HOST_NAME}"
             ;;
