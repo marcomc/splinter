@@ -98,8 +98,8 @@ function show_usage (){
   printf "       update <object>          Update the object\n"
   printf "\n"
   printf "obejcts: \n"
-  printf "       conda                    Re-install the most recent Miniconda Python environment available for splinter\n"
-  printf "       pyenv                    Re-install Pyenv Python environment\n"
+  printf "       conda                    Reinstall the most recent Miniconda Python environment available for splinter\n"
+  printf "       pyenv                    Reinstall Pyenv Python environment\n"
   printf "       roles|galaxy|ansible     Force update all the Ansible Galaxy roles\n"
   printf "       deps|dependencies        Update all the dependencies (Python envs and  Ansible Galaxy role)\n"
   printf "       self|auto|splinter       Update Splinter itself (but not the dependencies)\n"
@@ -198,7 +198,7 @@ function check_command_line_parameters {
       verbose='yes' # `update` will always be verbose
       case ${action_option} in
         deps|dependencies )
-          _echo "Will re-installation all the dependencies (Python and Ansible Galaxy roles)" 'w'
+          _echo "Will reinstall all the dependencies (Python and Ansible Galaxy roles)" 'w'
           ansible_force_roles_update='--force'
           reinstall_conda='yes'
           reinstall_pyenv='yes'
@@ -206,21 +206,21 @@ function check_command_line_parameters {
           exit 0
           ;;
         conda )
-          _echo "Will re-install the Conda Python environemnt" 'w'
+          _echo "Will reinstall the Conda Python environemnt" 'w'
           python_provider="conda"
           reinstall_conda='yes'
           eval install_dependencies
           exit 0
           ;;
         pyenv )
-        _echo "Will re-install the Pyenv Python environemnt" 'w'
+        _echo "Will reinstall the Pyenv Python environemnt" 'w'
           python_provider="pyenv"
           reinstall_pyenv='yes'
           eval install_dependencies
           exit 0
           ;;
         roles|galaxy|ansible )
-          _echo "Will re-install all the Asnible Galaxy roles" 'w'
+          _echo "Will reinstall all the Asnible Galaxy roles" 'w'
           ansible_force_roles_update='--force'
           eval install_dependencies
           exit 0
