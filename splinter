@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-version="0.3-beta"
+version="0.4-beta"
 release_date="20200912"
 my_name="$(basename "${0}")"
 
@@ -145,22 +145,22 @@ function update_splinter {
     _echo "You need to run the self-update command witing the ${my_name}'s directory" 'w'
     exit 1
   fi
-  _echo "Self updating..." 'a'
+  _echo "Self updating" 'a'
 
   temp_dir=$(mktemp -d)
   splinter_dir="${PWD}"
 
-  _echo "Downloading Splinter in to '${temp_dir}/${splinter_archive}'..." 'a'
+  _echo "Downloading Splinter in to '${temp_dir}/${splinter_archive}'" 'a'
   execute "curl" "-fsSL" "${splinter_archive_url}" "-o" "${temp_dir}/${splinter_archive}"
 
-  _echo "Decompressing Splinter archive in to '${temp_dir}'..." 'a'
+  _echo "Decompressing Splinter archive in to '${temp_dir}'" 'a'
   execute "unzip" "-qq" "${temp_dir}/${splinter_archive}" "-d" "${temp_dir}"
   ls "${temp_dir}"
 
-  _echo "Updating Splinter files to '${splinter_dir}'..." 'a'
+  _echo "Updating Splinter files to '${splinter_dir}'" 'a'
   execute "rsync" "-rlWuv" "${temp_dir}"/*/* "${splinter_dir}"
 
-  _echo "Removing temporary files..." 'a'
+  _echo "Removing temporary files" 'a'
   execute "rm" "-rf" "${temp_dir}"
 
   _echo "Update successful!" 'r'
@@ -198,8 +198,7 @@ function check_command_line_parameters {
       _echo "OPTION: ${action_option}"
       case ${action_option} in
         profiles)
-          find "${setup_profiles_dir}"  -maxdepth 1 -mindepth 1 -type directory
-          exit 0
+          execute "find" "${setup_profiles_dir}"  "-maxdepth" "1" "-mindepth" "1" "-type" "directory"
           ;;
         '')
           echo "[Error] Missing option for action '${action}'" 1>&2
@@ -368,7 +367,7 @@ function check_install_path_permissions {
       _echo "'${dir_name}' does NOT allow the 'staff' group to 'read' AND 'exec'" 'w'
       _echo "(this might lead to issues during the execution of some Ansible tasks)" 'w'
       _echo "Adding POSIX 'g+rx' permissions to ${third_level_dir}" 'a'
-      chmod g+rx "${third_level_dir}"
+      execute "chmod" "g+rx" "${third_level_dir}"
       export ORIGINAL_DIR_PEMISSIONS="${dir_pemissions}"
       export THIRD_LEVEL_DIR="${third_level_dir}"
     fi
@@ -410,16 +409,16 @@ function enable_passwordless_sudo {
     if [ -n "${ANSIBLE_BECOME_PASS}" ]; then
       sudo_stdin='--stdin'
     fi
-    # Enable passwordless sudo for the macbuild run
-    _echo "Enabling passwordless sudo for the macbuild run" 'a'
+    # Enable passwordless sudo for the provisioning
+    _echo "Enabling passwordless sudo for the provisioning" 'a'
     echo "${ANSIBLE_BECOME_PASS}" | sudo "${sudo_stdin}" sed -i -e "s/^%admin (.*)ALL.*/%admin ALL=(ALL) NOPASSWD: ALL/" /etc/sudoers >/dev/null 2>&1
   fi
 }
 
 function disable_passwordless_sudo {
   if sudo -n true 2>/dev/null; then
-    # Enable passwordless sudo for the macbuild run
-    _echo "Disabling passwordless sudo after the macbuild run" 'a'
+    # Enable passwordless sudo for the provisioning
+    _echo "Disabling passwordless sudo after the provisioning" 'a'
     sudo sed -i -e "s/^%admin (.*)ALL.*/%admin ALL=(ALL) ALL/" /etc/sudoers
   else
     _echo "Passwordless sudo is disabled"
@@ -451,12 +450,6 @@ function install_tools_dependencies {
   done
 }
 
-function give_terminal_control_access {
-  _echo "allow Terminal to control the computer" 'a'
-  sudo sqlite3 /Library/Application\ Support/com.apple.TCC/TCC.db \
-    "INSERT or REPLACE INTO access(service,client,client_type,allowed,prompt_count) VALUES('kTCCServiceAccessibility','com.apple.Terminal',0,1,1);"
-}
-
 function install_brew {
   if ! command -v "brew" >/dev/null 2>&1; then
     _echo "Installing Homebrew" 'a'
@@ -472,21 +465,21 @@ function install_conda {
   if [ "${reinstall_conda}" == "yes" ];then
     if [ -f ${conda_package_path} ]; then
       _echo "Removing old Miniconda Python package '${conda_package_path}'" 'a'
-      rm "${conda_package_path}" || { _echo "Problems during the removal of '${conda_package_path}'" 'e'; exit 1; }
+      execute "rm" "${conda_package_path}"
     fi
     if [ -d ${conda_dir} ]; then
       _echo "Removing old Miniconda Python directory '${conda_dir}'" 'a'
-      rm -rf "${conda_dir}" || { _echo "Problems during the removal of '${conda_dir}'" 'e'; exit 1; }
+      execute "rm" "-rf" "${conda_dir}"
     fi
   fi
   if [ ! -d ${conda_dir}/bin ];then
     if [ ! -f "${conda_package_path}" ];then
       _echo "Downloading Miniconda Python package to '${conda_package_path}'" 'a'
-      curl -fsSL "${conda_package_url}" -o "${conda_package_path}"
+      execute "curl" "-fsSL" "${conda_package_url}" "-o" "${conda_package_path}"
     fi
     _echo "Unpacking Miniconda Python package to '${conda_dir}' directory" 'a'
-    mkdir -p ${conda_dir}
-    tar -xzf "${conda_package_path}" -C ${conda_dir}
+    execute "mkdir" "-p" "${conda_dir}"
+    execute "tar" "-xzf" "${conda_package_path}" "-C" "${conda_dir}"
   else
     _echo "Miniconda Python package is already installed in '${conda_dir}' directory" 'i'
   fi
@@ -503,7 +496,7 @@ function activate_conda {
   export PATH="${_CONDA_ROOT}/bin:$PATH"
 
   _echo "Cleanup prefixes from in the active environment"
-  eval conda-unpack
+  execute "conda-unpack"
 
   python_version="$(python --version 2>&1)"
   _echo "${python_version} is installed"
@@ -529,7 +522,7 @@ function activate_pyenv {
 
 function update_brew {
   _echo "Updating Homebrew" 'a'
-  brew update
+  execute "brew" "update"
 }
 
 function install_pyenv {
@@ -537,7 +530,7 @@ function install_pyenv {
     _echo "Installing Pyenv" 'a'
     # install pyenv with homebrew
     eval update_brew
-    brew install pyenv
+    execute "brew" "install" "pyenv"
   else
     tool_version=$(command -v "pyenv")
     _echo "Pyenv ${tool_version} is installed"
@@ -546,19 +539,19 @@ function install_pyenv {
 
 function install_pip_ansible {
   _echo "PIP - Installing Ansible ${desired_ansible_version}" 'a'
-  pip install "ansible==${desired_ansible_version}"
+  execute "pip" "install" "ansible==${desired_ansible_version}"
   # pip show ansible | grep "${pip_show_grep_filter}"
 }
 
 function install_pip_wheel {
   _echo "PIP - Installing Wheel ${desired_wheel_version}" 'a'
-  pip install "wheel==${desired_wheel_version}"
+  execute "pip" "install" "wheel==${desired_wheel_version}"
   # pip show "wheel"  | grep "${pip_show_grep_filter}"
 }
 
 function install_pip_passlib {
   _echo "PIP - Installing passlib ${desired_passlib_version}" 'a'
-  pip install "passlib==${desired_passlib_version}"
+  execute "pip" "install" "passlib==${desired_passlib_version}"
   # pip show "passlib" | grep "${pip_show_grep_filter}"
 }
 
@@ -566,16 +559,16 @@ function install_pyenv_python {
   if [ "${reinstall_pyenv}" == "yes" ]; then
     if [ -d ${pyenv_root} ]; then
       _echo "Removing old Pyenv Python directory '${pyenv_root}'" 'a'
-      rm -rf "${pyenv_root}" || { _echo "Problems during the removal of '${pyenv_root}'" 'e'; exit 1; }
+      execute "rm" "-rf" "${pyenv_root}"
     fi
   fi
   if ! pyenv versions | grep "${desired_python_version}" >/dev/null 2>&1; then
     # •	install python3 with pyenv
     _echo "Installing Pyenv Python ${desired_python_version}" 'a'
-    pyenv install "${desired_python_version}"
-    ln -fs shims ${pyenv_root}/bin
+    execute "pyenv" "install" "${desired_python_version}"
+    execute "ln" "-fs" "shims" "${pyenv_root}/bin"
     _echo "Rehashing Pyenv Python shims ${desired_python_version}" 'a'
-    pyenv rehash
+    execute "pyenv" "rehash"
   else
     _echo "Pyenv Python ${desired_python_version} is already installed"
   fi
@@ -583,7 +576,7 @@ function install_pyenv_python {
 
 function upgrade_pip {
   _echo "Upgrading PIP to the latest version" 'a'
-  pip install --upgrade pip
+  execute "pip" "install" "--upgrade" "pip"
 }
 
 function install_ansible {
@@ -592,7 +585,7 @@ function install_ansible {
     eval install_pip_ansible
   else
     _echo "Ansible is already installed"
-    ansible --version
+    execute "ansible" "--version"
   fi
 }
 
@@ -612,6 +605,7 @@ function run_ansible_playbook {
   export ANSIBLE_CONFIG="${ansible_config}"
   _echo "ANSIBLE_CONFIG: ${ANSIBLE_CONFIG}"
   export ANSIBLE_ROLES_PATH="${ansible_roles}"
+  # this is not wrapped with `execute` because if an error occur during Ansible execution we want the script to keep going and run the cleanup tasks
   ansible-playbook ${ansible_playbook} -i ${ansible_inventory}
 }
 
@@ -657,6 +651,11 @@ function install_dependencies {
   eval print_execution_time "${start_time}"
 }
 
+function cleanup_tasks {
+  eval restore_path_permissions
+  eval disable_passwordless_sudo
+}
+
 function main {
   _echo "$(eval show_version)"
   _echo "Starting time $( date )" 'r'
@@ -665,9 +664,9 @@ function main {
   eval check_install_path_permissions
   eval install_dependencies
   eval run_ansible_playbook
-  eval restore_path_permissions
-  eval disable_passwordless_sudo
+  eval cleanup_tasks
   _echo "Ending time $( date )" 'r'
   eval print_execution_time "${start_time}"
 }
+
 check_command_line_parameters "${@}"
