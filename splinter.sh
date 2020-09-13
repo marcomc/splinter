@@ -148,15 +148,15 @@ function check_command_line_parameters {
   verbose='no'
   # Parse options to the `install` command
   case "${1}" in
-    -e|--env )
+    -e|--env)
       python_provider="${2}"
       shift 2
       ;;
-    --help )
+    --help)
       eval show_usage
       exit 0
       ;;
-    --version )
+    --version)
       eval show_version
       exit 0
       ;;
@@ -170,12 +170,12 @@ function check_command_line_parameters {
   action="${1}";
   _echo "ACTION: ${action}"
   case "$action" in
-    list )
+    list)
       action_option=$2; # fetch the action's option
       # Process package options
       _echo "OPTION: ${action_option}"
       case ${action_option} in
-        profiles )
+        profiles)
           find "${setup_profiles_dir}"  -maxdepth 1 -mindepth 1 -type directory
           exit 0
           ;;
@@ -197,7 +197,7 @@ function check_command_line_parameters {
       # Process package options
       verbose='yes' # `update` will always be verbose
       case ${action_option} in
-        deps|dependencies )
+        deps|dependencies)
           _echo "Will reinstall all the dependencies (Python and Ansible Galaxy roles)" 'w'
           ansible_force_roles_update='--force'
           reinstall_conda='yes'
@@ -205,27 +205,27 @@ function check_command_line_parameters {
           eval install_dependencies
           exit 0
           ;;
-        conda )
+        conda)
           _echo "Will reinstall the Conda Python environemnt" 'w'
           python_provider="conda"
           reinstall_conda='yes'
           eval install_dependencies
           exit 0
           ;;
-        pyenv )
+        pyenv)
         _echo "Will reinstall the Pyenv Python environemnt" 'w'
           python_provider="pyenv"
           reinstall_pyenv='yes'
           eval install_dependencies
           exit 0
           ;;
-        roles|galaxy|ansible )
+        roles|galaxy|ansible)
           _echo "Will reinstall all the Asnible Galaxy roles" 'w'
           ansible_force_roles_update='--force'
           eval install_dependencies
           exit 0
           ;;
-        self|auto|splinter )
+        self|auto|splinter)
           _echo "Will Self Update" 'w' 1>&2
           eval update_splinter
           exit 0
