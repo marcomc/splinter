@@ -57,7 +57,3 @@ echo "Removing temporary files..."
 execute "rm" "-rf" "${temp_dir}"
 
 echo "Update successful!"
-
-if [[ "$(uname)" = "Darwin" ]] && [[ -d "${splinter_dir}" ]]; then
-  execute "open" "${splinter_dir}"
-fi

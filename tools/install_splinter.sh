@@ -59,8 +59,4 @@ execute "cp" "-a" "${splinter_dir}/profiles/${default_profile_example}" "${splin
 echo "Removing temporary files..."
 execute "rm" "-rf" "${temp_dir}"
 
-echo "Installation successful!"
-
-if [[ "$(uname)" = "Darwin" ]] && [[ -d "${splinter_dir}" ]]; then
-  execute "open" "${splinter_dir}"
-fi
+echo "Installation successful! now go to ./'${splinter_dir}'!!"
