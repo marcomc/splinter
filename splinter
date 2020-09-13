@@ -41,7 +41,7 @@ pause_seconds='3'
 setup_profiles_dir='./profiles'
 staff_guid='20'
 
-update_script="tools/update_splinter.sh"
+update_script="tools/update-splinter"
 
 start_time=$(date +%s)
 
