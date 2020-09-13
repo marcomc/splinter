@@ -372,7 +372,7 @@ function ansible_profile_is_available {
   if [ -z "${1}" ]; then
     # if the paramater is empty just keep going
     # ansible will only load default configs
-    _echo "No profile name has been provides. Will use the values set in Ansible."
+    _echo "No profile name has been provides. Will use the values set in Ansible"
     exit 1
   elif [ ! -d "${setup_profiles_dir}/${1}" ]; then
     _echo "The profile '${setup_profiles_dir}/${1}' does not exist" 'e'
@@ -482,10 +482,11 @@ function activate_conda {
   export _CONDA_ROOT="${conda_root}"
   export CONDA_PREFIX="${_CONDA_ROOT}"
   export PATH="${_CONDA_ROOT}/bin:$PATH"
-  export SSL_CERT_FILE=${cert_path}
-  export REQUESTS_CA_BUNDLE=${cert_path}
-
-  _echo "Cleanup prefixes from in the active environment."
+  export SSL_CERT_FILE="${cert_path}"
+  export REQUESTS_CA_BUNDLE="${cert_path}"
+  _echo "SSL_CERT_FILE: ${cert_path}"
+  _echo "REQUESTS_CA_BUNDLE: ${cert_path}"
+  _echo "Cleanup prefixes from in the active environment"
   eval conda-unpack
   python_version="$(python --version 2>&1)"
   _echo "${python_version} is installed"
