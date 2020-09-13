@@ -109,27 +109,27 @@ To chose run:
 
     usage: ./splinter.sh [option] action [object] [settings]
     options:
-       -e|--env conda|pyenv, List available profiles
-       -elp, Print help
-       --version, Print Splinter version and release date
+       -e|--env conda|pyenv     List available profiles
+       -elp                     Print help
+       --version                Print Splinter version and release date
     actions:
-       list, List available profiles
-       provision [settings], Provision the host
-       update <object>, Update the object
+       list                     List available profiles
+       provision [settings]     Provision the host
+       update <object>          Update the object
 
     obejcts:
-       deps|dependencies, update all the dependency tools (PIP, Ansible Galaxy role)
-       self|auto|splinter, Update Splinter itself (to be run withing the Spliter directory)
+       deps|dependencies        Update all the dependency tools (PIP, Ansible Galaxy role)
+       self|auto|splinter       Update Splinter itself (to be run withing the Spliter directory)
 
     settings:
-       -c file, Specify a custom configuration file
-       -b base_profile_name, Specify the the BASE profile to be used (default: 'default')
-       -r role_profile_name, Specify the the ROLE profile to be used
-       -u username, New user username (all lowercase, without spaces)
-       -f 'Full Name', New user full name (quoted if has blank spaces)
-       -p 'clear text password', New user's password in cleartext (quoted if has blank spaces)
-        Computer-Name, Computer host name, __no blank spaces allowed__
-       -v, Produce verbose output
+       -c file                  Specify a custom configuration file
+       -b base_profile_name     Specify the the BASE profile to be used (default: 'default')
+       -r role_profile_name     Specify the the ROLE profile to be used
+       -u username              New user username (all lowercase, without spaces)
+       -f 'Full Name'           New user full name (quoted if has blank spaces)
+       -p 'cleartext password'  New user's password in cleartext (quoted if has blank spaces)
+        Computer-Name           Computer host name, __no blank spaces allowed__
+       -v,                      Produce verbose output
 
     Create your own profiles in the './profiles' directory.
 
