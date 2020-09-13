@@ -2,6 +2,8 @@
 version="0.3-beta"
 release_date="20200912"
 
+tools_dependencies=""
+
 ansible_dir="ansible"
 ansible_config="${ansible_dir}/ansible.cfg"
 ansible_inventory="${ansible_dir}/inventory"
@@ -10,13 +12,22 @@ ansible_requirements="${ansible_dir}/requirements.yml"
 ansible_roles="${ansible_dir}/roles"
 ansible_force_roles_update=''
 
-conda_dir="pyenv"
+python_provider="conda"
+
+pyenv_root="pyenv"
+pip_config_file="pip.conf"
+pip_dependecies="
+ansible
+wheel
+passlib
+"
+pip_show_grep_filter='Version'  # 'Name\|Version\|Location' - it's a grep filter
+
+conda_dir="conda"
 conda_package_name="splinter-conda.tar.gz"
 conda_package_version="v0.1"
 conda_package_path="files/${conda_package_name}"
 conda_package_url="https://github.com/marcomc/splinter-conda/releases/download/${conda_package_version}/${conda_package_name}"
-
-tools_dependencies=""
 
 desired_ansible_version='2.9.13'
 desired_passlib_version='1.7.2'
@@ -26,17 +37,6 @@ desired_wheel_version='0.35.1'
 homebrew_installer_url='https://raw.githubusercontent.com/Homebrew/install/master/install.sh'
 
 pause_seconds='3'
-
-pip_config_file="pip.conf"
-pip_dependecies="
-ansible
-wheel
-passlib
-"
-pip_show_grep_filter='Version'  # 'Name\|Version\|Location' - it's a grep filter
-
-pyenv_root="pyenv"
-python_provider="conda"
 
 setup_profiles_dir='./profiles'
 staff_guid='20'
@@ -159,7 +159,7 @@ function check_command_line_parameters {
       ;;
     -*)
       echo "[Error] Invalid option: ${1}" 1>&2
-      eval show_usage
+      eval show_usage 1>&2
       exit 1
       ;;
   esac
@@ -178,12 +178,12 @@ function check_command_line_parameters {
           ;;
         '')
           echo "[Error] Missing option for action '${action}'" 1>&2
-          eval show_usage
+          eval show_usage 1>&2
           exit 1
           ;;
         *)
           echo "[Error] Incorrect option '${action_option}' for action '${action}'" 1>&2
-          eval show_usage
+          eval show_usage 1>&2
           exit 1
           ;;
       esac
@@ -207,12 +207,12 @@ function check_command_line_parameters {
           ;;
         '')
           echo "[Error] Missing option for action '${action}'" 1>&2
-          eval show_usage
+          eval show_usage 1>&2
           exit 1
           ;;
         *)
           echo "[Error] Incorrect option '${action_option}' for action '${action}'" 1>&2
-          eval show_usage
+          eval show_usage 1>&2
           exit 1
           ;;
       esac
@@ -259,12 +259,12 @@ function check_command_line_parameters {
             ;;
           \?)
             echo "[Error] Action '${action}': Invalid setting '-${OPTARG}'" 1>&2
-            eval show_usage
+            eval show_usage 1>&2
             exit 1
             ;;
           :)
             echo "[Error] Action '${action}': setting '-${OPTARG}' is missing an argument" 1>&2
-            eval show_usage
+            eval show_usage 1>&2
             exit 1
             ;;
         esac
@@ -275,7 +275,7 @@ function check_command_line_parameters {
         # if it is NOT empty it means it interrupted before evaluating all the parameters
         # becaue it encountered a unexpected param or arg
         echo "[Error] Provided unknow parameter: ${1}" 1>&2
-        eval show_usage
+        eval show_usage 1>&2
         exit 1
       fi
 
@@ -286,12 +286,12 @@ function check_command_line_parameters {
       ;;
     '')
       echo "[Error] Missing action" 1>&2
-      eval show_usage
+      eval show_usage 1>&2
       exit 1
       ;;
     *)
       echo "[Error] Invalid action '$action'" 1>&2
-      eval show_usage
+      eval show_usage 1>&2
       exit 1
       ;;
   esac
@@ -442,7 +442,7 @@ function activate_conda {
   # Fix issues with SSL Certificates
   cert_path=$(python -m certifi)
   python_root="${conda_root}"
-  python_version=$(python --version)
+  python_version="$(python --version 2>&1)"
 
   export _CONDA_ROOT="${conda_root}"
   export CONDA_PREFIX="${_CONDA_ROOT}"
