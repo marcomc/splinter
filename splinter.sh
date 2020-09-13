@@ -636,6 +636,7 @@ function install_dependencies {
 }
 
 function main {
+  _echo "$(eval show_version)"
   _echo "Starting time $( date )" 'r'
   eval ask_for_ansible_sudo_password
   eval enable_passwordless_sudo
@@ -647,5 +648,4 @@ function main {
   _echo "Ending time $( date )" 'r'
   eval print_execution_time "${start_time}"
 }
-
 check_command_line_parameters "${@}"
