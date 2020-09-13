@@ -442,7 +442,7 @@ function activate_conda {
   # Fix issues with SSL Certificates
   cert_path=$(python -m certifi)
   python_root="${conda_root}"
-  python_version="$(python --version 2>&1)"
+
 
   export _CONDA_ROOT="${conda_root}"
   export CONDA_PREFIX="${_CONDA_ROOT}"
@@ -450,6 +450,9 @@ function activate_conda {
   export SSL_CERT_FILE=${cert_path}
   export REQUESTS_CA_BUNDLE=${cert_path}
 
+  _echo "Cleanup prefixes from in the active environment."
+  eval conda-unpack
+  python_version="$(python --version 2>&1)"
   _echo "${python_version} is installed"
 }
 
@@ -559,8 +562,6 @@ function ask_for_ansible_sudo_password {
 }
 
 function setup_python {
-  export PIP_CONFIG_FILE="${pip_config_file}"
-  _echo "PIP_CONFIG_FILE: ${PIP_CONFIG_FILE}"
   if [ "${python_provider}" == "pyenv" ];then
     eval install_pyenv
     eval activate_pyenv
@@ -576,6 +577,8 @@ function setup_python {
   _echo "PYTHON_PROVIDER: ${PYTHON_PROVIDER}"
   export PYTHON_ROOT="${python_root}"
   _echo "PYTHON_ROOT: ${PYTHON_ROOT}"
+  export PIP_CONFIG_FILE="${pip_config_file}"
+  _echo "PIP_CONFIG_FILE: ${PIP_CONFIG_FILE}"
 }
 
 function install_dependencies {

@@ -98,6 +98,7 @@
   * [ ] allow to specify which source to use for mackup
 
 # Future
+* [x] make conda to work: has issues linking libtinfo
 * [ ] filevault2 role: if FV is already enabled, check if the newuser is already added to Filevault, if not, add it
 * [ ] user custom keyboards shortcuts, only my private set if macprefs doesn't restore them
 * [ ] convert mac-app-install into ansible-brew like repo

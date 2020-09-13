@@ -98,7 +98,9 @@ __You can can chose which of the above modules to run customising the the module
 
 Python is provided by default via a custom [Conda package](https://github.com/marcomc/splinter-conda) or alternatively via on-the-fly Pyenv installation.
 
-To chose run:
+Having Python running within pre-configured project's specific environments means that the target system won't be polluted with any python package that might be undesired by the user.
+
+To choose which python environment to run:
 
       ./plinter.sh --env [conda|pyenv] install .....
 
