@@ -1,6 +1,6 @@
 ---
 #
-# YOU CAN CREATE XXX_LIST_FILES USING tools/export_apps_lists.sh
+# YOU CAN CREATE XXX_LIST_FILES USING tools/export-apps-lists.sh
 #
 # Install packages from other package managers.
 # Note: You are responsible for making sure the required package managers are

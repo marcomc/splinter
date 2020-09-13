@@ -1,6 +1,6 @@
 ---
 #
-# YOU CAN CREATE XXX_LIST_FILES USING tools/export_apps_lists.sh
+# YOU CAN CREATE XXX_LIST_FILES USING tools/export-apps-lists.sh
 #
 #     'configure_dotfiles'
 # and 'restore_dotfiles_with_mackup'

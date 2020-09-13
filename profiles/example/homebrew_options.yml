@@ -5,7 +5,7 @@ homebrew_auto_update_upgrade: yes  # also upgrade packages and casks after updat
 homebrew_auto_update_cleanup: yes # cleanup homebrew cache and logs after update
 homebrew_auto_update_enable_notification: no # enable terminal notifications when homebrew is upgrading
 #
-# YOU CAN CREATE XXX_LIST_FILES USING tools/export_apps_lists.sh
+# YOU CAN CREATE XXX_LIST_FILES USING tools/export-apps-lists.sh
 #
 # homebrew_taps_list_file values will be merged to homebrew_taps values
 homebrew_taps_list_file: ''

@@ -12,7 +12,7 @@ homebrew_auto_update_tollerance: 300 # do not update homebrew if it was updated 
 homebrew_auto_update_override_config: yes
 homebrew_auto_update_for_all_shell_types: yes
 #
-# YOU CAN CREATE XXX_LIST_FILES USING tools/export_apps_lists.sh
+# YOU CAN CREATE XXX_LIST_FILES USING tools/export-apps-lists.sh
 #
 # homebrew_taps_list_file values will be merged to homebrew_taps values
 homebrew_taps_list_file: files/lists/homebrew_taps.txt
