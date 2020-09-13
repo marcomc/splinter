@@ -124,8 +124,8 @@ To choose which python environment to run:
        update <object>          Update the object
 
     obejcts:
-       conda                    Re-install the most recent Miniconda Python environment available for splinter
-       pyenv                    Re-install Pyenv Python environment
+       conda                    Reinstall the most recent Miniconda Python environment available for splinter
+       pyenv                    Reinstall Pyenv Python environment
        roles|galaxy|ansible     Force update all the Ansible Galaxy roles
        deps|dependencies        Update all the dependencies (Python envs and  Ansible Galaxy role)
        self|auto|splinter       Update Splinter itself (but not the dependencies)
