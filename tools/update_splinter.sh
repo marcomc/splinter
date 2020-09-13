@@ -4,7 +4,7 @@ set -u
 
 splinter_zip="splinter.zip"
 splinter_archive="https://github.com/marcomc/splinter/archive/master.zip"
-splinter_script="splinter.sh"
+splinter_script="splinter"
 
 shell_join() {
   local arg

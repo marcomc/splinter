@@ -9,10 +9,10 @@
 The installatio will download Splinter to `./splinter` directory and setup the first `config` file and `default` profile.
 
     # BASH & ZSH
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/marcomc/splinter/master/tools/install_splinter.sh)"
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/marcomc/splinter/master/tools/install_splinter)"
 
     # FISH
-    curl -fsSL https://raw.githubusercontent.com/marcomc/splinter/master/tools/install_splinter.sh | /bin/bash
+    curl -fsSL https://raw.githubusercontent.com/marcomc/splinter/master/tools/install_splinter | /bin/bash
 
 
 
@@ -113,7 +113,7 @@ To choose which python environment to run:
 ## Provisioning
 ### Usage
 
-    usage: ./splinter.sh [option] action [object] [settings]
+    usage: ./splinter [option] action [object] [settings]
     options:
        -e|--env conda|pyenv     List available profiles
        -elp                     Print help
@@ -188,15 +188,15 @@ Splinter supports 3 levels of configurations listed here from least to most impo
 
     To load your custom config file run:
 
-            splinter.sh provision -c <custom_config>.yml
+            splinter provision -c <custom_config>.yml
 
     This will __completely override__ the values in `config.yml` (if present).
 
 3. command line parameters:
 
-   You can pass the above values as command line parameters to `splinter.sh`
+   You can pass the above values as command line parameters to `splinter`
 
-        splinter.sh provision -v -u newuser -p password -f "New User" -b my-base-profile -r my-role-profile -h My-New-Mac -c <custom_config>.yml
+        splinter provision -v -u newuser -p password -f "New User" -b my-base-profile -r my-role-profile -h My-New-Mac -c <custom_config>.yml
 
    you can specify only some of those parameters and they will override any value contained in `config.yml` or `<custom_config>.yml`
 
@@ -230,7 +230,7 @@ __On the new machine:__
 
 3. run `splinter`:
 
-    ./splinter.sh [options] provision [object] [settings]
+    ./splinter [options] provision [object] [settings]
 
 4. Splinter will request you to enter the current user account (to be used as `sudo` password throughout the whole process).
 

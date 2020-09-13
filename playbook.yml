@@ -45,7 +45,7 @@
       when: configure_homebrew|bool
       tags: ['homebrew']
       ignore_errors: yes
-      # this position assumes/rquires that Homebrew is already installed by the splinter.sh script
+      # this position assumes/rquires that Homebrew is already installed by the splinter script
 
     - role: geerlingguy.homebrew
       when: configure_homebrew|bool

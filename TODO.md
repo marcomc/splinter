@@ -53,17 +53,24 @@
   * [x] !env
   * [x] !files
   * [x] !profiles
-* [x] BUG: splinter.sh script, when using the option force the <profile> parameter is ignored
+* [x] BUG: splinter script, when using the option force the <profile> parameter is ignored
 * [x] write README for custom envs and config file handling
 * [x] recover the definition of non_mas_apps from old installations
 * [*] see how to use `miniconda` to distribute python
 * [*] update usage functionx  
+* [x] BUG: Desktop picture is not being copied and installed in the target user account
+* [x] BUG: some process is overriding `com.apple.AppleMultitouchTrackpad` `Clicking` and `Dragging` setting at first login, turing it to int and to False. maybe we need to apply that setting to another plist file?
 
-* [ ] BUG: Desktop picture is not being copied and installed in the target user account
-* [ ] BUG: some process is overriding `com.apple.AppleMultitouchTrackpad` `Clicking` and `Dragging` setting at first login, turing it to int and to False. maybe we need to apply that setting to another plist file?
+* [ ] find what setting is showing the 'input menu in menu bar'
 * [ ] remove the dsimport file for the profile picture
 * [ ] add support for profiles from git repos
+  profile_name: <githubuser>.<profilename> ( github.com/<githubuser>/splinter-profiles/<profilename>/)
+  bash dowloads it '<githubuser>-.<profilename>' (if not already existing)
 * [ ] allow extra packages to be installed as target_user_id or for the current user
+
+* [ ] add a `prepare` action that will download the profile profiles and dependencies and create a DMG file to be deployed for an offline deployment
+
+* [ ] BUG: after setting the taptoClick even if the checkbox is marked properly tapping is not working (tapBehavior), maybe there is some service to restart (but I don't think so), probably there is some other flag somewhere to set
 
 # When Provisioning the current user (and not a target user)
 * [x] dotfiles: export personal System Configs
@@ -109,13 +116,13 @@
     * if 'upgrade' option is provided will install only if the version on the database is newer
     * if a version is specified it will install it if the version is available in the database
 * [x] see if it is possible to prevent Xcode to request confirmation
-* [x] Add `update` action to the splinter.sh script that will download updated version of:
+* [x] Add `update` action to the splinter script that will download updated version of:
   * [x] make backup and then update all the list below
   * [x] requirements.yml
   * [x] ansible.cfg
   * [x] playbook.yml
   * [x] README.md
   * [x] CHANGELOG.md
-  * [x] splinter.sh
+  * [x] splinter
   * [x] TODO.md
   * [x] tools/
