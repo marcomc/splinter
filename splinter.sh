@@ -98,8 +98,11 @@ function show_usage (){
   printf "       update <object>          Update the object\n"
   printf "\n"
   printf "obejcts: \n"
-  printf "       deps|dependencies        Update all the dependency tools (PIP  Ansible Galaxy role)\n"
-  printf "       self|auto|splinter       Update Splinter itself (to be run withing the Spliter directory)\n"
+  printf "       conda                    Re-install the most recent Miniconda Python environment available for splinter\n"
+  printf "       pyenv                    Re-install Pyenv Python environment\n"
+  printf "       roles|galaxy|ansible     Force update all the Ansible Galaxy roles\n"
+  printf "       deps|dependencies        Update all the dependencies (Python envs and  Ansible Galaxy role)\n"
+  printf "       self|auto|splinter       Update Splinter itself (but not the dependencies)\n"
   printf "\n"
   printf "settings: \n"
   printf "       -c file                  Specify a custom configuration file\n"
@@ -195,12 +198,34 @@ function check_command_line_parameters {
       verbose='yes' # `update` will always be verbose
       case ${action_option} in
         deps|dependencies )
-          _echo "Will force Asnible to update all the Galaxy roles dependencies" 'w'
+          _echo "Will re-installation all the dependencies (Python and Ansible Galaxy roles)" 'w'
+          ansible_force_roles_update='--force'
+          reinstall_conda='yes'
+          reinstall_pyenv='yes'
+          eval install_dependencies
+          exit 0
+          ;;
+        conda )
+          _echo "Will re-install the Conda Python environemnt" 'w'
+          python_provider="conda"
+          reinstall_conda='yes'
+          eval install_dependencies
+          exit 0
+          ;;
+        pyenv )
+        _echo "Will re-install the Pyenv Python environemnt" 'w'
+          python_provider="pyenv"
+          reinstall_pyenv='yes'
+          eval install_dependencies
+          exit 0
+          ;;
+        roles|galaxy|ansible )
+          _echo "Will re-install all the Asnible Galaxy roles" 'w'
           ansible_force_roles_update='--force'
           eval install_dependencies
           exit 0
           ;;
-        self|auto|splinter)
+        self|auto|splinter )
           _echo "Will Self Update" 'w' 1>&2
           eval update_splinter
           exit 0
@@ -422,16 +447,26 @@ function install_brew {
 }
 
 function install_conda {
-  if [ ! -d "${conda_dir}/bin" ];then
+  if [ "${reinstall_conda}" == "yes" ];then
+    if [ -f ${conda_package_path} ]; then
+      _echo "Removing old Miniconda Python package '${conda_package_path}'" 'a'
+      rm "${conda_package_path}" || _echo "Problems during the removal of '${conda_package_path}'" 'e'
+    fi
+    if [ -d ${conda_dir} ]; then
+      _echo "Removing old Miniconda Python directory '${conda_dir}'" 'a'
+      rm -rf "${conda_dir}" || _echo "Problems during the removal of '${conda_dir}'" 'e'
+    fi
+  fi
+  if [ ! -d ${conda_dir}/bin ];then
     if [ ! -f "${conda_package_path}" ];then
-      _echo "Downloading Miniconda package to '${conda_package_path}'" 'a'
+      _echo "Downloading Miniconda Python package to '${conda_package_path}'" 'a'
       curl -fsSL "${conda_package_url}" -o "${conda_package_path}"
     fi
-    _echo "Unpacking Miniconda package to '${conda_dir}' directory" 'a'
+    _echo "Unpacking Miniconda Python package to '${conda_dir}' directory" 'a'
     mkdir -p ${conda_dir}
     tar -xzf "${conda_package_path}" -C ${conda_dir}
   else
-    _echo "Miniconda package is already installed in '${conda_dir}' directory" 'i'
+    _echo "Miniconda Python package is already installed in '${conda_dir}' directory" 'i'
   fi
 }
 
@@ -502,12 +537,18 @@ function install_pip_passlib {
 }
 
 function install_pyenv_python {
+  if [ "${reinstall_pyenv}" == "yes" ]; then
+    if [ -d ${pyenv_root} ]; then
+      _echo "Removing old Pyenv Python directory '${pyenv_root}'" 'a'
+      rm -rf "${pyenv_root}" || _echo "Problems during the removal of '${pyenv_root}'" 'e'
+    fi
+  fi
   if ! pyenv versions | grep "${desired_python_version}" >/dev/null 2>&1; then
     # •	install python3 with pyenv
     _echo "Installing Pyenv Python ${desired_python_version}" 'a'
     pyenv install "${desired_python_version}"
     ln -fs shims ${pyenv_root}/bin
-    _echo "Rehashing Pyenv shims ${desired_python_version}" 'a'
+    _echo "Rehashing Pyenv Python shims ${desired_python_version}" 'a'
     pyenv rehash
   else
     _echo "Pyenv Python ${desired_python_version} is already installed"

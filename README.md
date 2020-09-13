@@ -4,6 +4,8 @@
 
 # Install Splinter
 
+> It's preferable to use the `bash` installation (rather then git clone) because the installation script will execute some initial setup and cleanup
+
 The installatio will download Splinter to `./splinter` directory and setup the first `config` file and `default` profile.
 
     # BASH & ZSH
@@ -11,6 +13,8 @@ The installatio will download Splinter to `./splinter` directory and setup the f
 
     # FISH
     curl -fsSL https://raw.githubusercontent.com/marcomc/splinter/master/tools/install_splinter.sh | /bin/bash
+
+
 
 ## What does Splinter do?
 Spliter uses a bash script to install the minimum requirements to run Ansible within a dedicated Python environment, then run an Ansible playbook that will run the full provisioning of a macOS system
@@ -120,8 +124,11 @@ To choose which python environment to run:
        update <object>          Update the object
 
     obejcts:
-       deps|dependencies        Update all the dependency tools (PIP, Ansible Galaxy role)
-       self|auto|splinter       Update Splinter itself (to be run withing the Spliter directory)
+       conda                    Re-install the most recent Miniconda Python environment available for splinter
+       pyenv                    Re-install Pyenv Python environment
+       roles|galaxy|ansible     Force update all the Ansible Galaxy roles
+       deps|dependencies        Update all the dependencies (Python envs and  Ansible Galaxy role)
+       self|auto|splinter       Update Splinter itself (but not the dependencies)
 
     settings:
        -c file                  Specify a custom configuration file
