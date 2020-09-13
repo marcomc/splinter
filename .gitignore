@@ -18,6 +18,7 @@ files/*/*
 profiles/*
 pyenv/
 splinter/
+tools/
 
 # exceptios
 !*.md

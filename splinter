@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 version="0.3-beta"
 release_date="20200912"
+my_name="$(basename "${0}")"
 
 tools_dependencies=""
 
@@ -41,9 +42,14 @@ pause_seconds='3'
 setup_profiles_dir='./profiles'
 staff_guid='20'
 
-update_script="tools/update-splinter"
+splinter_archive="splinter.zip"
+splinter_archive_url="https://github.com/marcomc/splinter/archive/master.zip"
 
 start_time=$(date +%s)
+
+function execute {
+  "$@" || { _echo "Failed during: ${*}" 'e'; exit 1; }
+}
 
 function _echo {
   purple="\e[35m"
@@ -56,38 +62,37 @@ function _echo {
 
   case ${2} in
     a|action)
-      cyan="${cyan}" #green
+      colour="${cyan}" #green
       tag='ACTION.'
     ;;
     w|warning)
-      cyan="${yellow}"
+      colour="${yellow}"
       tag='WARNING'
       ;;
     e|error)
-      cyan="${red}"
+      colour="${red}"
       tag='ERROR..'
       ;;
     r|remark)
-      cyan="${purple}" #green
+      colour="${purple}" #green
       tag='#######'
     ;;
     i|info|*)
       message_type="info"
-      cyan="${green}" #green
+      colour="${green}" #green
       tag='INFO...'
     ;;
   esac
   if [ "${verbose}" == "yes" ] || [ "${message_type}" != "info" ];then
-    printf "${cyan}[${tag}] ${white}%s\n" "${1}"
+    printf "${colour}[${tag}] ${white}%s\n" "${1}"
   fi
 }
 
 function show_version {
   echo "Splinter ${version} ${release_date}"
 }
-
 function show_usage (){
-  printf "usage: %s [option] action [object] [settings]\n" "${0}"
+  printf "usage: %s [option] action [object] [settings]\n" "${my_name}"
   printf "options: \n"
   printf "       -e|--env conda|pyenv     List available profiles\n"
   printf "       --help                   Print help\n"
@@ -135,13 +140,30 @@ function print_execution_time {
 }
 
 function update_splinter {
-  if [ ! -f ${update_script} ]; then
+  if [[ ! -f "${my_name}" ]]; then
     _echo "Looks like you are not inside the Splinter directory: $(pwd)" 'e'
-    _echo "You need to run the self-update command witing the Splinter directory"
+    _echo "You need to run the self-update command witing the ${my_name}'s directory" 'w'
     exit 1
   fi
-  _echo "Self updating with '${update_script}'" 'a'
-  /bin/bash -c "${update_script}"
+  _echo "Self updating..." 'a'
+
+  temp_dir=$(mktemp -d)
+  splinter_dir="${PWD}"
+
+  _echo "Downloading Splinter in to '${temp_dir}/${splinter_archive}'..." 'a'
+  execute "curl" "-fsSL" "${splinter_archive_url}" "-o" "${temp_dir}/${splinter_archive}"
+
+  _echo "Decompressing Splinter archive in to '${temp_dir}'..." 'a'
+  execute "unzip" "-qq" "${temp_dir}/${splinter_archive}" "-d" "${temp_dir}"
+  ls "${temp_dir}"
+
+  _echo "Updating Splinter files to '${splinter_dir}'..." 'a'
+  execute "rsync" "-rlWuv" "${temp_dir}"/*/* "${splinter_dir}"
+
+  _echo "Removing temporary files..." 'a'
+  execute "rm" "-rf" "${temp_dir}"
+
+  _echo "Update successful!" 'r'
 }
 
 function check_command_line_parameters {
@@ -226,7 +248,7 @@ function check_command_line_parameters {
           exit 0
           ;;
         self|auto|splinter)
-          _echo "Will Self Update" 'w' 1>&2
+          _echo "Will update '${my_name}'" 'w'
           eval update_splinter
           exit 0
           ;;
@@ -450,11 +472,11 @@ function install_conda {
   if [ "${reinstall_conda}" == "yes" ];then
     if [ -f ${conda_package_path} ]; then
       _echo "Removing old Miniconda Python package '${conda_package_path}'" 'a'
-      rm "${conda_package_path}" || _echo "Problems during the removal of '${conda_package_path}'" 'e'
+      rm "${conda_package_path}" || { _echo "Problems during the removal of '${conda_package_path}'" 'e'; exit 1; }
     fi
     if [ -d ${conda_dir} ]; then
       _echo "Removing old Miniconda Python directory '${conda_dir}'" 'a'
-      rm -rf "${conda_dir}" || _echo "Problems during the removal of '${conda_dir}'" 'e'
+      rm -rf "${conda_dir}" || { _echo "Problems during the removal of '${conda_dir}'" 'e'; exit 1; }
     fi
   fi
   if [ ! -d ${conda_dir}/bin ];then
@@ -544,7 +566,7 @@ function install_pyenv_python {
   if [ "${reinstall_pyenv}" == "yes" ]; then
     if [ -d ${pyenv_root} ]; then
       _echo "Removing old Pyenv Python directory '${pyenv_root}'" 'a'
-      rm -rf "${pyenv_root}" || _echo "Problems during the removal of '${pyenv_root}'" 'e'
+      rm -rf "${pyenv_root}" || { _echo "Problems during the removal of '${pyenv_root}'" 'e'; exit 1; }
     fi
   fi
   if ! pyenv versions | grep "${desired_python_version}" >/dev/null 2>&1; then
