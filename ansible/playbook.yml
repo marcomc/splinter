@@ -2,18 +2,26 @@
 - hosts: localhost
   connection: local
   vars:
-    ansible_python_interpreter: "{{ lookup('env','PYTHON_ROOT')|mandatory }}/bin/python"
+    splinter_dir: "{{ lookup('env','SPLINTER_CONFIG_DIR') if lookup('env','SPLINTER_CONFIG_DIR')| length > 0 else playbook_dir + '/..' }}"
 
   vars_files:
-    - [ "{{ lookup('env','CUSTOM_CONFIG_FILE') if lookup('env','CUSTOM_CONFIG_FILE')|length > 0 else omit }}",'config.yml','/dev/null' ]
+    # Will load ONLY the fist avalilable item of the below list
+    - [
+        "{{ lookup('env','CUSTOM_CONFIG_FILE') if lookup('env','CUSTOM_CONFIG_FILE')|length > 0 else omit }}",
+        "{{ splinter_dir + '/config.yml' }}",
+        '/dev/null'
+      ]
 
   pre_tasks:
+    - name: ansible_python_interpreter
+      debug:
+        var: ansible_python_interpreter
 
     - name: Load ENV and Default Values
-      include_tasks: ansible/load-env-values.yml
+      include_tasks: load-env-values.yml
 
-    - name: Load the Splinter base tasks.
-      include_tasks: ansible/load-profiles.yml
+    - name: Load the Splinter base tasks
+      include_tasks: load-profiles.yml
 
   roles:
     - role: ctorgalson.macos_hostname
