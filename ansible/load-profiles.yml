@@ -1,6 +1,6 @@
 ---
-- name: "Loading profile settings: {{ role_profile if role_profile | length > 0 else base_profile }}"
+- name: "Loading settings from profiles"
   include_vars: "{{ item }}"
   with_fileglob:
-    - "{{ playbook_dir }}/profiles/{{ base_profile }}/*.yml"
-    - "{{ playbook_dir }}/profiles/{{ role_profile }}/*.yml"
+    - "{{ splinter_dir + '/profiles/' + base_profile + '/*.yml' if base_profile|length>0 }}"
+    - "{{ splinter_dir + '/profiles/' + role_profile + '/*.yml' if role_profile|length>0 }}"

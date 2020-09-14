@@ -11,9 +11,18 @@
     create_new_user: "{{ 'yes' if lookup('env','NEW_USER_USERNAME')|length > 0 else omit }}"
     computer_name: "{{ lookup('env','COMPUTER_HOST_NAME') if lookup('env','COMPUTER_HOST_NAME')| length > 0 else omit }}"
 
-- name: Set default values if not set
+- name: Set default values
   set_fact:
-    computer_name: "{{ computer_name if computer_name|default('')|length >0 else 'My-New-Mac'}}"
-    create_new_user: "{{ create_new_user|default(False) }}"
+    base_profile: "{{ base_profile if base_profile|default('')|length > 0 else 'default'}}"
+    role_profile: "{{ role_profile if role_profile|default('')|length > 0 else ''}}"
+    computer_name: "{{ computer_name if computer_name|default('')|length > 0 else 'My-New-Mac'}}"
     new_user_password_cleartext: "{{ new_user_password_cleartext if new_user_password_cleartext|default('')|length > 0 else 'password' }}"
-    target_user_id: "{{ new_user_username if (create_new_user|bool and new_user_username|default('')|length > 0) else ansible_user_id }}"
+    create_new_user: "{{ create_new_user|default('no') }}"
+
+- name: Detect the target user
+  set_fact:
+    target_user_id: "{{ item  }}"
+  loop:
+    - "{{ new_user_username if create_new_user|bool }}"
+    - "{{ ansible_user_id if not ( create_new_user|bool or new_user_username|default('')|length > 0 ) }}"
+  when: item|length > 0
