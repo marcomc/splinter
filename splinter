@@ -1,22 +1,14 @@
 #!/usr/bin/env bash
 version="0.4-beta"
 release_date="20200912"
+config_dir=""
 my_name="$(basename "${0}")"
+start_time=$(date +%s)
 
-tools_dependencies=""
-
-ansible_dir="ansible"
-ansible_config="${ansible_dir}/ansible.cfg"
-ansible_inventory="${ansible_dir}/inventory"
-ansible_playbook='playbook.yml'
-ansible_requirements="${ansible_dir}/requirements.yml"
-ansible_roles="${ansible_dir}/roles"
 ansible_force_roles_update=''
 
 python_provider="conda"
 
-pyenv_root="pyenv"
-pip_config_file="pip.conf"
 pip_dependecies="
 ansible
 wheel
@@ -24,10 +16,8 @@ passlib
 "
 pip_show_grep_filter='Version'  # 'Name\|Version\|Location' - it's a grep filter
 
-conda_dir="conda"
 conda_package_name="splinter-conda.tar.gz"
 conda_package_version="v0.1"
-conda_package_path="files/${conda_package_name}"
 conda_package_url="https://github.com/marcomc/splinter-conda/releases/download/${conda_package_version}/${conda_package_name}"
 
 desired_ansible_version='2.9.13'
@@ -38,16 +28,13 @@ desired_wheel_version='0.35.1'
 homebrew_installer_url='https://raw.githubusercontent.com/Homebrew/install/master/install.sh'
 
 pause_seconds='3'
-
-setup_profiles_dir='./profiles'
 staff_guid='20'
 
 splinter_archive="splinter.zip"
 splinter_archive_url="https://github.com/marcomc/splinter/archive/master.zip"
+splinter_tools_url="https://github.com/marcomc/splinter-tools/archive/master.zip"
 
-start_time=$(date +%s)
-
-function execute {
+function _exec {
   "$@" || { _echo "Failed during: ${*}" 'e'; exit 1; }
 }
 
@@ -91,6 +78,7 @@ function _echo {
 function show_version {
   echo "Splinter ${version} ${release_date}"
 }
+
 function show_usage (){
   printf "usage: %s [option] action [object] [settings]\n" "${my_name}"
   printf "options: \n"
@@ -107,6 +95,7 @@ function show_usage (){
   printf "       pyenv                    Reinstall Pyenv Python environment\n"
   printf "       roles|galaxy|ansible     Force update all the Ansible Galaxy roles\n"
   printf "       deps|dependencies        Update all the dependencies (Python envs and  Ansible Galaxy role)\n"
+  printf "       tools                    Update the Splinter tools directory\n"
   printf "       self|auto|splinter       Update Splinter itself (but not the dependencies)\n"
   printf "\n"
   printf "settings: \n"
@@ -117,10 +106,9 @@ function show_usage (){
   printf "       -f 'Full Name'           New user full name (quoted if has blank spaces)\n"
   printf "       -p 'cleartext password'  New user's password in cleartext (quoted if has blank spaces)\n"
   printf "       -h Computer-Name         Computer host name no blank spaces allowed\n"
-
   printf "       -v                       Produce verbose output\n"
   printf "\n"
-  printf "Create your own profiles in the '%s' directory.\n" "${setup_profiles_dir}"
+  printf "Create your own profiles in the '%s' directory.\n" "${profiles_path}"
   printf "\n"
   return 0
 }
@@ -139,6 +127,29 @@ function print_execution_time {
   _echo "Execution time was ${total}" 'r'
 }
 
+function set_app_directories {
+  if [[ -z "${SPLINTER_CONFIG_DIR}" ]]; then
+    if [[ -z "${config_dir}" ]]; then
+      config_dir="$(realpath "$(dirname "${0}")")"
+    fi
+    export SPLINTER_CONFIG_DIR="${config_dir}"
+  fi
+
+  files_path="${SPLINTER_CONFIG_DIR}/files"
+  tools_path="${SPLINTER_CONFIG_DIR}/tools"
+  profiles_path="${SPLINTER_CONFIG_DIR}/pofiles"
+  ansible_dir="${SPLINTER_CONFIG_DIR}/ansible"
+  pyenv_dir="${SPLINTER_CONFIG_DIR}/pyenv"
+  conda_path="${SPLINTER_CONFIG_DIR}/conda"
+  pip_config_file="${SPLINTER_CONFIG_DIR}/pip.conf"
+
+  ansible_roles="${ansible_dir}/roles"
+  ansible_config="${ansible_dir}/ansible.cfg"
+  ansible_inventory="${ansible_dir}/inventory"
+  ansible_playbook="${ansible_dir}/playbook.yml"
+  ansible_requirements="${ansible_dir}/requirements.yml"
+}
+
 function update_splinter {
   if [[ ! -f "${my_name}" ]]; then
     _echo "Looks like you are not inside the Splinter directory: $(pwd)" 'e'
@@ -148,26 +159,345 @@ function update_splinter {
   _echo "Self updating" 'a'
 
   temp_dir=$(mktemp -d)
-  splinter_dir="${PWD}"
 
   _echo "Downloading Splinter in to '${temp_dir}/${splinter_archive}'" 'a'
-  execute "curl" "-fsSL" "${splinter_archive_url}" "-o" "${temp_dir}/${splinter_archive}"
+  _exec "curl" "-fsSL" "${splinter_archive_url}" "-o" "${temp_dir}/${splinter_archive}"
 
   _echo "Decompressing Splinter archive in to '${temp_dir}'" 'a'
-  execute "unzip" "-qq" "${temp_dir}/${splinter_archive}" "-d" "${temp_dir}"
+  _exec "unzip" "-qq" "${temp_dir}/${splinter_archive}" "-d" "${temp_dir}"
   ls "${temp_dir}"
 
-  _echo "Updating Splinter files to '${splinter_dir}'" 'a'
-  execute "rsync" "-rlWuv" "${temp_dir}"/*/* "${splinter_dir}"
+  _echo "Updating Splinter files to '${SPLINTER_CONFIG_DIR}'" 'a'
+  _exec "rsync" "-rlWuv" "${temp_dir}"/*/* "${SPLINTER_CONFIG_DIR}"
 
   _echo "Removing temporary files" 'a'
-  execute "rm" "-rf" "${temp_dir}"
+  _exec "rm" "-rf" "${temp_dir}"
 
   _echo "Update successful!" 'r'
 }
 
-function check_command_line_parameters {
+function update_tools {
+  _echo "not yest defined" 'e'
+}
+
+function check_install_path_permissions {
+  current_path=$(pwd -P)
+  third_level_dir=$(echo "${current_path}" | cut -d'/' -f-4)
+  dir_stats=$(stat -f '%N %g %p' "${third_level_dir}")
+  read -ra DIR_STATS <<< "${dir_stats}"
+  dir_name="${DIR_STATS[0]}"
+  dir_group_id="${DIR_STATS[1]}"
+  dir_pemissions="${DIR_STATS[2]:(-3)}"
+  dir_group_pemissions="${DIR_STATS[2]:(-2):1}"
+
+  if [[ "${current_path}" == "${HOME}"* ]]; then
+    _echo 'You are running this script within your home directory' 'w'
+    _echo 'Ansible might fail if your home directories are protected' 'w'
+    _echo "(not allowing group memebers to 'read' AND 'exec' them)" 'w'
+    _echo "Checking the permissions on the containing dir" 'a'
+    _echo "DIR_NAME: ${dir_name}"
+    _echo "dir_group_id: ${dir_group_id}"
+    _echo "DIR_PEMISSIONS: ${dir_pemissions}"
+    if [[ "${staff_guid}" != "${dir_group_id}" ]]; then
+      _echo "The '${dir_name}' group is not 'staff(${staff_guid})'" 'w'
+    elif [[ "${dir_group_pemissions}" -lt "5" || "${dir_group_pemissions}" -eq "6" ]]; then
+      _echo "'${dir_name}' does NOT allow the 'staff' group to 'read' AND 'exec'" 'w'
+      _echo "(this might lead to issues during the execution of some Ansible tasks)" 'w'
+      _echo "Adding POSIX 'g+rx' permissions to ${third_level_dir}" 'a'
+      _exec "chmod" "g+rx" "${third_level_dir}"
+      export ORIGINAL_DIR_PEMISSIONS="${dir_pemissions}"
+      export THIRD_LEVEL_DIR="${third_level_dir}"
+    fi
+    _echo "Pausing for ${pause_seconds} seconds for you to read the above message..." 'a'
+    printf ">>>>>>>>> "
+    for ((i=1; i<=pause_seconds; i++)); do
+      # running the countdown before resuming operations
+      printf "..%s" "${i}"
+      sleep 1
+    done
+    printf "\n" # add newline after the countdown
+  fi
+}
+
+function restore_path_permissions {
+  if [ -n "${ORIGINAL_DIR_PEMISSIONS}" ] && [ -n "${THIRD_LEVEL_DIR}" ]; then
+    _echo "Restoring original permissions '${ORIGINAL_DIR_PEMISSIONS}' to the directory '${THIRD_LEVEL_DIR}'" 'a'
+    chmod "${ORIGINAL_DIR_PEMISSIONS}" "${THIRD_LEVEL_DIR}"
+  fi
+}
+
+function profile_is_available {
+  if [ -z "${1}" ]; then
+    # if the paramater is empty just keep going
+    # ansible will only load default configs
+    _echo "No profile name has been provides. Will use the values set in Ansible"
+    exit 1
+  elif [ ! -d "${profiles_path}/${1}" ]; then
+    _echo "The profile '${1}' does not exist" 'e'
+    exit 1
+  fi
+}
+
+function enable_passwordless_sudo {
+  sudo_stdin=''
+  if sudo -n true 2>/dev/null; then
+    _echo "Passwordless sudo is seems to be already available"
+  else
+    if [ -n "${ANSIBLE_BECOME_PASS}" ]; then
+      sudo_stdin='--stdin'
+    fi
+    # Enable passwordless sudo for the provisioning
+    _echo "Enabling passwordless sudo for the provisioning" 'a'
+    echo "${ANSIBLE_BECOME_PASS}" | sudo "${sudo_stdin}" sed -i -e "s/^%admin (.*)ALL.*/%admin ALL=(ALL) NOPASSWD: ALL/" /etc/sudoers >/dev/null 2>&1
+  fi
+}
+
+function disable_passwordless_sudo {
+  if sudo -n true 2>/dev/null; then
+    # Enable passwordless sudo for the provisioning
+    _echo "Disabling passwordless sudo after the provisioning" 'a'
+    sudo sed -i -e "s/^%admin (.*)ALL.*/%admin ALL=(ALL) ALL/" /etc/sudoers
+  else
+    _echo "Passwordless sudo is disabled"
+  fi
+}
+
+function install_pip_dependencies {
+  for pip_dependecy in ${pip_dependecies}; do
+    if ! pip show "${pip_dependecy}" >/dev/null 2>&1; then
+      _echo "${pip_dependecy} not installed" w
+      eval "install_pip_${pip_dependecy}"
+    else
+      dep_version=$(pip show "${pip_dependecy}" | grep "${pip_show_grep_filter}")
+      _echo "${pip_dependecy} ${dep_version} is installed "
+    fi
+  done
+}
+
+function install_brew {
+  if ! command -v "brew" >/dev/null 2>&1; then
+    _echo "Installing Homebrew" 'a'
+    /bin/bash -c "$(curl -fsSL ${homebrew_installer_url})" < /dev/null
+  else
+    tool_version=$(command -v "brew")
+    _echo "Homebrew ${tool_version} is installed"
+  fi
+
+}
+
+function install_conda {
+  conda_package_path="${files_path}/${conda_package_name}"
+  if [[ "${reinstall_conda}" == "yes" ]];then
+    if [[ -f "${conda_package_path}" ]]; then
+      _echo "Removing old Miniconda Python package '${conda_package_path}'" 'a'
+      _exec "rm" "${conda_package_path}"
+    fi
+    if [[ -d "${conda_path}" ]]; then
+      _echo "Removing old Miniconda Python directory '${conda_path}'" 'a'
+      _exec "rm" "-rf" "${conda_path}"
+    fi
+  fi
+  if [[ ! -d "${conda_path}/bin" ]];then
+    if [[ ! -f "${conda_package_path}" ]];then
+      _echo "Downloading Miniconda Python package to '${conda_package_path}'" 'a'
+      _exec "curl" "-fsSL" "${conda_package_url}" "-o" "${conda_package_path}"
+    fi
+    _echo "Unpacking Miniconda Python package to '${conda_path}' directory" 'a'
+    _exec "mkdir" "-p" "${conda_path}"
+    _exec "tar" "-xzf" "${conda_package_path}" "-C" "${conda_path}"
+  else
+    _echo "Miniconda Python package is already installed in '${conda_path}' directory" 'i'
+  fi
+}
+
+function activate_conda {
+  _echo "USING PROJECT'S OWN MINICONDA PYTHON VERSION" 'r'
+
+  # Actual Conda activation
+  python_root="${conda_path}"
+  export _CONDA_ROOT="${conda_path}"
+  export CONDA_PREFIX="${_CONDA_ROOT}"
+  export PATH="${_CONDA_ROOT}/bin:$PATH"
+
+  _echo "Cleanup prefixes from in the active environment"
+  _exec "conda-unpack"
+
+  python_version="$(python --version 2>&1)"
+  _echo "${python_version} is installed"
+
+  # Fix issues with SSL Certificates
+  cert_path=$(python -m certifi)
+  export SSL_CERT_FILE="${cert_path}"
+  export REQUESTS_CA_BUNDLE="${cert_path}"
+  _echo "SSL_CERT_FILE: ${cert_path}"
+  _echo "REQUESTS_CA_BUNDLE: ${cert_path}"
+
+}
+
+function activate_pyenv {
+  _echo "USING PROJECT'S OWN PYENV PYTHON VERSION" 'r'
+  export PYENV_ROOT="${pyenv_dir}"
+  export PATH="${PYENV_ROOT}/bin:${PATH}"
+  export PYENV_VERSION="${desired_python_version}"
+  python_root="${pyenv_dir}"
+  _echo "PYENV_ROOT: ${PYENV_ROOT}"
+  _echo "PYTHON_VERSION: $(pyenv version)"
+}
+
+function update_brew {
+  _echo "Updating Homebrew" 'a'
+  _exec "brew" "update"
+}
+
+function install_pyenv {
+  if ! command -v "pyenv" >/dev/null 2>&1; then
+    _echo "Installing Pyenv" 'a'
+    # install pyenv with homebrew
+    eval update_brew
+    _exec "brew" "install" "pyenv"
+  else
+    tool_version=$(command -v "pyenv")
+    _echo "Pyenv ${tool_version} is installed"
+  fi
+}
+
+function install_pip_ansible {
+  _echo "PIP - Installing Ansible ${desired_ansible_version}" 'a'
+  _exec "pip" "install" "ansible==${desired_ansible_version}"
+  # pip show ansible | grep "${pip_show_grep_filter}"
+}
+
+function install_pip_wheel {
+  _echo "PIP - Installing Wheel ${desired_wheel_version}" 'a'
+  _exec "pip" "install" "wheel==${desired_wheel_version}"
+  # pip show "wheel"  | grep "${pip_show_grep_filter}"
+}
+
+function install_pip_passlib {
+  _echo "PIP - Installing passlib ${desired_passlib_version}" 'a'
+  _exec "pip" "install" "passlib==${desired_passlib_version}"
+  # pip show "passlib" | grep "${pip_show_grep_filter}"
+}
+
+function install_pyenv_python {
+  if [[ "${reinstall_pyenv}" == "yes" ]]; then
+    if [[ -d "${pyenv_dir}" ]]; then
+      _echo "Removing old Pyenv Python directory '${pyenv_dir}'" 'a'
+      _exec "rm" "-rf" "${pyenv_dir}"
+    fi
+  fi
+  if ! pyenv versions | grep "${desired_python_version}" >/dev/null 2>&1; then
+    # •	install python3 with pyenv
+    _echo "Installing Pyenv Python ${desired_python_version}" 'a'
+    _exec "pyenv" "install" "${desired_python_version}"
+    _exec "ln" "-fs" "shims" "${pyenv_dir}/bin"
+    _echo "Rehashing Pyenv Python shims ${desired_python_version}" 'a'
+    _exec "pyenv" "rehash"
+  else
+    _echo "Pyenv Python ${desired_python_version} is already installed"
+  fi
+}
+
+function upgrade_pip {
+    _echo "Upgrading PIP to the latest version" 'a'
+    _exec "pip" "install" "--upgrade" "pip"
+}
+
+function install_ansible {
+  if ! command -v 'ansible' >/dev/null 2>&1; then
+    _echo "Ansible not installed" w
+    eval install_pip_ansible
+  else
+    _echo "Ansible is already installed"
+    _exec "ansible" "--version"
+  fi
+}
+
+function install_ansible_galaxy_roles {
+
+  if [ "${verbose}" == "yes" ];then
+    dev_output="/dev/stdout"
+  else
+    dev_output="/dev/null"
+  fi
+  _echo "Installing Ansible Galaxy roles" 'a'
+  ansible-galaxy install -r "${ansible_requirements}" "-p" "${ansible_roles}" "${ansible_force_roles_update}" 1> "${dev_output}"
+}
+
+function run_ansible_playbook {
+  _echo "Running Ansible provisioning"'a'
+  export ANSIBLE_CONFIG="${ansible_config}"
+  _echo "ANSIBLE_CONFIG: ${ANSIBLE_CONFIG}"
+  export ANSIBLE_ROLES_PATH="${ansible_roles}"
+  # this is not wrapped with `execute` because if an error occur during Ansible execution we want the script to keep going and run the cleanup tasks
+  ansible-playbook "${ansible_playbook}" -i "${ansible_inventory}"
+}
+
+function ask_for_ansible_sudo_password {
+  # temporarely store the password in cleartext in the environment
+  # so it can be used by Ansible throughout the whole execution
+  if [ -z "${ANSIBLE_BECOME_PASS}" ]; then
+        _echo "Requesting the admin password to be used for 'sudo' throughout the deployment process" 'a'
+        read -r -p ">>>>>>>>> Insert the current user password: " -s ansible_become_pass
+        export ANSIBLE_BECOME_PASS="${ansible_become_pass}"
+        printf "\n"
+  else
+        _echo "'ANSIBLE_BECOME_PASS' is already set"
+  fi
+}
+
+function setup_python {
+  if [ "${python_provider}" == "pyenv" ];then
+    eval install_pyenv
+    eval activate_pyenv
+    eval install_pyenv_python
+  elif [ "${python_provider}" == "conda" ];then
+    eval install_conda
+    eval activate_conda
+  else
+    _echo "Unknow python provider '${python_provider}'" 'e'
+    exit 1
+  fi
+  export PYTHON_PROVIDER="${python_provider}"
+  _echo "PYTHON_PROVIDER: ${PYTHON_PROVIDER}"
+  export PYTHON_ROOT="${python_root}"
+  _echo "PYTHON_ROOT: ${PYTHON_ROOT}"
+  export PIP_CONFIG_FILE="${pip_config_file}"
+  _echo "PIP_CONFIG_FILE: ${PIP_CONFIG_FILE}"
+}
+
+function cleanup_tasks {
+  eval restore_path_permissions
+  eval disable_passwordless_sudo
+}
+
+function install_dependencies {
+  eval install_brew
+  eval setup_python
+  if [[ "${reinstall_conda}" == "yes" ]] || [[ "${reinstall_pyenv}" == yes ]]; then
+    eval upgrade_pip
+  fi
+  eval install_pip_dependencies
+  eval install_ansible_galaxy_roles
+  eval print_execution_time "${start_time}"
+}
+
+function provision {
+  _echo "$(eval show_version)"
+  _echo "Starting time $( date )" 'r'
+  eval ask_for_ansible_sudo_password
+  eval enable_passwordless_sudo
+  eval check_install_path_permissions
+  eval install_dependencies
+  eval run_ansible_playbook
+  eval cleanup_tasks
+  _echo "Ending time $( date )" 'r'
+  eval print_execution_time "${start_time}"
+}
+
+function main {
   verbose='no'
+  eval set_app_directories
   # Parse options to the `install` command
   case "${1}" in
     -e|--env)
@@ -198,7 +528,8 @@ function check_command_line_parameters {
       _echo "OPTION: ${action_option}"
       case ${action_option} in
         profiles)
-          execute "find" "${setup_profiles_dir}"  "-maxdepth" "1" "-mindepth" "1" "-type" "directory"
+          _echo "${profiles_path}" 'r' 1>&2
+          _exec "find" "${profiles_path}"  "-maxdepth" "1" "-mindepth" "1" "-type" "directory" "-exec" "basename" "{}" "\\" ";"
           ;;
         '')
           echo "[Error] Missing option for action '${action}'" 1>&2
@@ -217,6 +548,7 @@ function check_command_line_parameters {
       action_option="${2}";# fetch the action's option
       # Process package options
       verbose='yes' # `update` will always be verbose
+      _echo "SPLINTER_CONFIG_DIR: ${SPLINTER_CONFIG_DIR}"
       case ${action_option} in
         deps|dependencies)
           _echo "Will reinstall all the dependencies (Python and Ansible Galaxy roles)" 'w'
@@ -273,7 +605,7 @@ function check_command_line_parameters {
             _echo "CUSTOM_CONFIG_FILE: ${CUSTOM_CONFIG_FILE}"
             ;;
           b)
-            if ansible_profile_is_available "${OPTARG}" 2>/dev/null ; then
+            if profile_is_available "${OPTARG}" 2>/dev/null ; then
               export SPLINTER_BASE_PROFILE="${OPTARG}"
               _echo "SPLINTER_BASE_PROFILE: ${SPLINTER_BASE_PROFILE}"
             fi
@@ -291,7 +623,7 @@ function check_command_line_parameters {
             _echo "NEW_USER_PASSWORD_CLEARTEXT: ${NEW_USER_PASSWORD_CLEARTEXT}"
             ;;
           r)
-            if ansible_profile_is_available "${OPTARG}" 2>/dev/null; then
+            if profile_is_available "${OPTARG}" 2>/dev/null; then
               export SPLINTER_ROLE_PROFILE="${OPTARG}"
               _echo "SPLINTER_ROLE_PROFILE: ${SPLINTER_ROLE_PROFILE}"
             fi
@@ -325,10 +657,10 @@ function check_command_line_parameters {
         exit 1
       fi
 
-
       export VERBOSE="${verbose}"
       _echo "VERBOSE: ${VERBOSE}"
-      eval main
+      _echo "SPLINTER_CONFIG_DIR: ${SPLINTER_CONFIG_DIR}"
+      eval provision
       ;;
     '')
       echo "[Error] Missing action" 1>&2
@@ -343,330 +675,4 @@ function check_command_line_parameters {
   esac
 }
 
-function check_install_path_permissions {
-  current_path=$(pwd -P)
-  third_level_dir=$(echo "${current_path}" | cut -d'/' -f-4)
-  dir_stats=$(stat -f '%N %g %p' "${third_level_dir}")
-  read -ra DIR_STATS <<< "${dir_stats}"
-  dir_name="${DIR_STATS[0]}"
-  dir_group_id="${DIR_STATS[1]}"
-  dir_pemissions="${DIR_STATS[2]:(-3)}"
-  dir_group_pemissions="${DIR_STATS[2]:(-2):1}"
-
-  if [[ "${current_path}" == "${HOME}"* ]]; then
-    _echo 'You are running this script within your home directory' 'w'
-    _echo 'Ansible might fail if your home directories are protected' 'w'
-    _echo "(not allowing group memebers to 'read' AND 'exec' them)" 'w'
-    _echo "Checking the permissions on the containing dir" 'a'
-    _echo "DIR_NAME: ${dir_name}"
-    _echo "dir_group_id: ${dir_group_id}"
-    _echo "DIR_PEMISSIONS: ${dir_pemissions}"
-    if [[ "${staff_guid}" != "${dir_group_id}" ]]; then
-      _echo "The '${dir_name}' group is not 'staff(${staff_guid})'" 'w'
-    elif [[ "${dir_group_pemissions}" -lt "5" || "${dir_group_pemissions}" -eq "6" ]]; then
-      _echo "'${dir_name}' does NOT allow the 'staff' group to 'read' AND 'exec'" 'w'
-      _echo "(this might lead to issues during the execution of some Ansible tasks)" 'w'
-      _echo "Adding POSIX 'g+rx' permissions to ${third_level_dir}" 'a'
-      execute "chmod" "g+rx" "${third_level_dir}"
-      export ORIGINAL_DIR_PEMISSIONS="${dir_pemissions}"
-      export THIRD_LEVEL_DIR="${third_level_dir}"
-    fi
-    _echo "Pausing for ${pause_seconds} seconds for you to read the above message..." 'a'
-    printf ">>>>>>>>> "
-    for ((i=1; i<=pause_seconds; i++)); do
-      # running the countdown before resuming operations
-      printf "..%s" "${i}"
-      sleep 1
-    done
-    printf "\n" # add newline after the countdown
-  fi
-}
-
-function restore_path_permissions {
-  if [ -n "${ORIGINAL_DIR_PEMISSIONS}" ] && [ -n "${THIRD_LEVEL_DIR}" ]; then
-    _echo "Restoring original permissions '${ORIGINAL_DIR_PEMISSIONS}' to the directory '${THIRD_LEVEL_DIR}'" 'a'
-    chmod "${ORIGINAL_DIR_PEMISSIONS}" "${THIRD_LEVEL_DIR}"
-  fi
-}
-
-function ansible_profile_is_available {
-  if [ -z "${1}" ]; then
-    # if the paramater is empty just keep going
-    # ansible will only load default configs
-    _echo "No profile name has been provides. Will use the values set in Ansible"
-    exit 1
-  elif [ ! -d "${setup_profiles_dir}/${1}" ]; then
-    _echo "The profile '${setup_profiles_dir}/${1}' does not exist" 'e'
-    exit 1
-  fi
-}
-
-function enable_passwordless_sudo {
-  sudo_stdin=''
-  if sudo -n true 2>/dev/null; then
-    _echo "Passwordless sudo is seems to be already available"
-  else
-    if [ -n "${ANSIBLE_BECOME_PASS}" ]; then
-      sudo_stdin='--stdin'
-    fi
-    # Enable passwordless sudo for the provisioning
-    _echo "Enabling passwordless sudo for the provisioning" 'a'
-    echo "${ANSIBLE_BECOME_PASS}" | sudo "${sudo_stdin}" sed -i -e "s/^%admin (.*)ALL.*/%admin ALL=(ALL) NOPASSWD: ALL/" /etc/sudoers >/dev/null 2>&1
-  fi
-}
-
-function disable_passwordless_sudo {
-  if sudo -n true 2>/dev/null; then
-    # Enable passwordless sudo for the provisioning
-    _echo "Disabling passwordless sudo after the provisioning" 'a'
-    sudo sed -i -e "s/^%admin (.*)ALL.*/%admin ALL=(ALL) ALL/" /etc/sudoers
-  else
-    _echo "Passwordless sudo is disabled"
-  fi
-}
-
-function install_pip_dependencies {
-  for pip_dependecy in ${pip_dependecies}; do
-    if ! pip show "${pip_dependecy}" >/dev/null 2>&1; then
-      _echo "${pip_dependecy} not installed" w
-      eval "install_pip_${pip_dependecy}"
-    else
-      dep_version=$(pip show "${pip_dependecy}" | grep "${pip_show_grep_filter}")
-      _echo "${pip_dependecy} ${dep_version} is installed "
-    fi
-  done
-}
-
-function install_tools_dependencies {
-  for tool in ${tools_dependencies}; do
-    if ! command -v "${tool}" >/dev/null 2>&1; then
-      _echo "${tool} not installed" w
-      eval "install_${tool}"
-    else
-      tool_version=$(command -v "${tool}")
-      _echo "${tool} ${tool_version} is installed"
-      # command -v "${COMMAND}"
-    fi
-  done
-}
-
-function install_brew {
-  if ! command -v "brew" >/dev/null 2>&1; then
-    _echo "Installing Homebrew" 'a'
-    /bin/bash -c "$(curl -fsSL ${homebrew_installer_url})" < /dev/null
-  else
-    tool_version=$(command -v "brew")
-    _echo "Homebrew ${tool_version} is installed"
-  fi
-
-}
-
-function install_conda {
-  if [ "${reinstall_conda}" == "yes" ];then
-    if [ -f ${conda_package_path} ]; then
-      _echo "Removing old Miniconda Python package '${conda_package_path}'" 'a'
-      execute "rm" "${conda_package_path}"
-    fi
-    if [ -d ${conda_dir} ]; then
-      _echo "Removing old Miniconda Python directory '${conda_dir}'" 'a'
-      execute "rm" "-rf" "${conda_dir}"
-    fi
-  fi
-  if [ ! -d ${conda_dir}/bin ];then
-    if [ ! -f "${conda_package_path}" ];then
-      _echo "Downloading Miniconda Python package to '${conda_package_path}'" 'a'
-      execute "curl" "-fsSL" "${conda_package_url}" "-o" "${conda_package_path}"
-    fi
-    _echo "Unpacking Miniconda Python package to '${conda_dir}' directory" 'a'
-    execute "mkdir" "-p" "${conda_dir}"
-    execute "tar" "-xzf" "${conda_package_path}" "-C" "${conda_dir}"
-  else
-    _echo "Miniconda Python package is already installed in '${conda_dir}' directory" 'i'
-  fi
-}
-
-function activate_conda {
-  _echo "USING PROJECT'S OWN MINICONDA PYTHON VERSION" 'r'
-
-  # Actual Conda activation
-  conda_root="$(pwd)/${conda_dir}"
-  python_root="${conda_root}"
-  export _CONDA_ROOT="${conda_root}"
-  export CONDA_PREFIX="${_CONDA_ROOT}"
-  export PATH="${_CONDA_ROOT}/bin:$PATH"
-
-  _echo "Cleanup prefixes from in the active environment"
-  execute "conda-unpack"
-
-  python_version="$(python --version 2>&1)"
-  _echo "${python_version} is installed"
-
-  # Fix issues with SSL Certificates
-  cert_path=$(python -m certifi)
-  export SSL_CERT_FILE="${cert_path}"
-  export REQUESTS_CA_BUNDLE="${cert_path}"
-  _echo "SSL_CERT_FILE: ${cert_path}"
-  _echo "REQUESTS_CA_BUNDLE: ${cert_path}"
-
-}
-
-function activate_pyenv {
-  _echo "USING PROJECT'S OWN PYENV PYTHON VERSION" 'r'
-  export PYENV_ROOT="${pyenv_root}"
-  export PATH="${PYENV_ROOT}/bin:${PATH}"
-  export PYENV_VERSION="${desired_python_version}"
-  python_root="${pyenv_root}"
-  _echo "PYENV_ROOT: ${PYENV_ROOT}"
-  _echo "PYTHON_VERSION: $(pyenv version)"
-}
-
-function update_brew {
-  _echo "Updating Homebrew" 'a'
-  execute "brew" "update"
-}
-
-function install_pyenv {
-  if ! command -v "pyenv" >/dev/null 2>&1; then
-    _echo "Installing Pyenv" 'a'
-    # install pyenv with homebrew
-    eval update_brew
-    execute "brew" "install" "pyenv"
-  else
-    tool_version=$(command -v "pyenv")
-    _echo "Pyenv ${tool_version} is installed"
-  fi
-}
-
-function install_pip_ansible {
-  _echo "PIP - Installing Ansible ${desired_ansible_version}" 'a'
-  execute "pip" "install" "ansible==${desired_ansible_version}"
-  # pip show ansible | grep "${pip_show_grep_filter}"
-}
-
-function install_pip_wheel {
-  _echo "PIP - Installing Wheel ${desired_wheel_version}" 'a'
-  execute "pip" "install" "wheel==${desired_wheel_version}"
-  # pip show "wheel"  | grep "${pip_show_grep_filter}"
-}
-
-function install_pip_passlib {
-  _echo "PIP - Installing passlib ${desired_passlib_version}" 'a'
-  execute "pip" "install" "passlib==${desired_passlib_version}"
-  # pip show "passlib" | grep "${pip_show_grep_filter}"
-}
-
-function install_pyenv_python {
-  if [ "${reinstall_pyenv}" == "yes" ]; then
-    if [ -d ${pyenv_root} ]; then
-      _echo "Removing old Pyenv Python directory '${pyenv_root}'" 'a'
-      execute "rm" "-rf" "${pyenv_root}"
-    fi
-  fi
-  if ! pyenv versions | grep "${desired_python_version}" >/dev/null 2>&1; then
-    # •	install python3 with pyenv
-    _echo "Installing Pyenv Python ${desired_python_version}" 'a'
-    execute "pyenv" "install" "${desired_python_version}"
-    execute "ln" "-fs" "shims" "${pyenv_root}/bin"
-    _echo "Rehashing Pyenv Python shims ${desired_python_version}" 'a'
-    execute "pyenv" "rehash"
-  else
-    _echo "Pyenv Python ${desired_python_version} is already installed"
-  fi
-}
-
-function upgrade_pip {
-  _echo "Upgrading PIP to the latest version" 'a'
-  execute "pip" "install" "--upgrade" "pip"
-}
-
-function install_ansible {
-  if ! command -v 'ansible' >/dev/null 2>&1; then
-    _echo "Ansible not installed" w
-    eval install_pip_ansible
-  else
-    _echo "Ansible is already installed"
-    execute "ansible" "--version"
-  fi
-}
-
-function install_ansible_galaxy_roles {
-
-  if [ "${verbose}" == "yes" ];then
-    dev_output="/dev/stdout"
-  else
-    dev_output="/dev/null"
-  fi
-  _echo "Installing Ansible Galaxy roles" 'a'
-  ansible-galaxy install -r ${ansible_requirements} -p ${ansible_roles} ${ansible_force_roles_update} 1> "${dev_output}"
-}
-
-function run_ansible_playbook {
-  _echo "Running Ansible provisioning"'a'
-  export ANSIBLE_CONFIG="${ansible_config}"
-  _echo "ANSIBLE_CONFIG: ${ANSIBLE_CONFIG}"
-  export ANSIBLE_ROLES_PATH="${ansible_roles}"
-  # this is not wrapped with `execute` because if an error occur during Ansible execution we want the script to keep going and run the cleanup tasks
-  ansible-playbook ${ansible_playbook} -i ${ansible_inventory}
-}
-
-function ask_for_ansible_sudo_password {
-  # temporarely store the password in cleartext in the environment
-  # so it can be used by Ansible throughout the whole execution
-  if [ -z "${ANSIBLE_BECOME_PASS}" ]; then
-        _echo "Requesting the admin password to be used for 'sudo' throughout the deployment process" 'a'
-        read -r -p ">>>>>>>>> Insert the current user password: " -s ansible_become_pass
-        export ANSIBLE_BECOME_PASS="${ansible_become_pass}"
-        printf "\n"
-  else
-        _echo "'ANSIBLE_BECOME_PASS' is already set"
-  fi
-}
-
-function setup_python {
-  if [ "${python_provider}" == "pyenv" ];then
-    eval install_pyenv
-    eval activate_pyenv
-    eval install_pyenv_python
-  elif [ "${python_provider}" == "conda" ];then
-    eval install_conda
-    eval activate_conda
-  else
-    _echo "Unknow python provider '${python_provider}'" 'e'
-    exit 1
-  fi
-  export PYTHON_PROVIDER="${python_provider}"
-  _echo "PYTHON_PROVIDER: ${PYTHON_PROVIDER}"
-  export PYTHON_ROOT="${python_root}"
-  _echo "PYTHON_ROOT: ${PYTHON_ROOT}"
-  export PIP_CONFIG_FILE="${pip_config_file}"
-  _echo "PIP_CONFIG_FILE: ${PIP_CONFIG_FILE}"
-}
-
-function install_dependencies {
-  eval install_brew
-  eval setup_python
-  eval upgrade_pip
-  eval install_pip_dependencies
-  eval install_ansible_galaxy_roles
-  eval print_execution_time "${start_time}"
-}
-
-function cleanup_tasks {
-  eval restore_path_permissions
-  eval disable_passwordless_sudo
-}
-
-function main {
-  _echo "$(eval show_version)"
-  _echo "Starting time $( date )" 'r'
-  eval ask_for_ansible_sudo_password
-  eval enable_passwordless_sudo
-  eval check_install_path_permissions
-  eval install_dependencies
-  eval run_ansible_playbook
-  eval cleanup_tasks
-  _echo "Ending time $( date )" 'r'
-  eval print_execution_time "${start_time}"
-}
-
-check_command_line_parameters "${@}"
+main "${@}"
