@@ -12,6 +12,7 @@
         '/dev/null'
       ]
 
+  pre_tasks:
     - name: Load ENV and Default Values
       include_tasks: load-env-values.yml
 

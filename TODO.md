@@ -64,6 +64,7 @@
 * [x] write function to import tools from repository during the first installation (maybe launching `splinter update tools` after the installation)
 
 * [ ] remove the dsimport file for the profile picture
+
 * [ ] write function to import profiles from repository
 - [ ] configfile type: ini
   - [ ] look for the config file in the current directory and ~/splinter and ~/Downloads/splinter

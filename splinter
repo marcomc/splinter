@@ -435,12 +435,13 @@ function install_ansible_galaxy_roles {
   else
     dev_output="/dev/null"
   fi
+  ansible_galaxy_command="ansible-galaxy role install -r '${ansible_requirements}' -p '${ansible_roles}' ${ansible_force_roles_update}"
   _echo "Installing Ansible Galaxy roles" 'a'
-  ansible-galaxy install -r "${ansible_requirements}" "-p" "${ansible_roles}" "${ansible_force_roles_update}" 1> "${dev_output}"
+  eval "${ansible_galaxy_command}" 1> "${dev_output}"
 }
 
 function run_ansible_playbook {
-  _echo "Running Ansible provisioning"'a'
+  _echo "Running Ansible provisioning" 'a'
   export ANSIBLE_CONFIG="${ansible_config}"
   _echo "ANSIBLE_CONFIG: ${ANSIBLE_CONFIG}"
   export ANSIBLE_ROLES_PATH="${ansible_roles}"
