@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 version="0.4-beta"
 release_date="20200912"
 config_dir=""
@@ -30,7 +30,6 @@ homebrew_installer_url='https://raw.githubusercontent.com/Homebrew/install/maste
 pause_seconds='3'
 staff_guid='20'
 
-splinter_archive="splinter.zip"
 splinter_archive_url="https://github.com/marcomc/splinter/archive/master.zip"
 splinter_tools_url="https://github.com/marcomc/splinter-tools/archive/master.zip"
 
@@ -79,7 +78,7 @@ function show_version {
   echo "Splinter ${version} ${release_date}"
 }
 
-function show_usage (){
+function show_usage {
   printf "usage: %s [option] action [object] [settings]\n" "${my_name}"
   printf "options: \n"
   printf "       -e|--env conda|pyenv     List available profiles\n"
@@ -94,8 +93,8 @@ function show_usage (){
   printf "       conda                    Reinstall the most recent Miniconda Python environment available for splinter\n"
   printf "       pyenv                    Reinstall Pyenv Python environment\n"
   printf "       roles|galaxy|ansible     Force update all the Ansible Galaxy roles\n"
+  printf "       tools                    Update the splinter tools\n"
   printf "       deps|dependencies        Update all the dependencies (Python envs and  Ansible Galaxy role)\n"
-  printf "       tools                    Update the Splinter tools directory\n"
   printf "       self|auto|splinter       Update Splinter itself (but not the dependencies)\n"
   printf "\n"
   printf "settings: \n"
@@ -130,9 +129,13 @@ function print_execution_time {
 function set_app_directories {
   if [[ -z "${SPLINTER_CONFIG_DIR}" ]]; then
     if [[ -z "${config_dir}" ]]; then
+      # assumes the directory that contains `splinter` is the Splinter directory
       config_dir="$(realpath "$(dirname "${0}")")"
     fi
     export SPLINTER_CONFIG_DIR="${config_dir}"
+  else
+    # makes sure that `config_dir` is assigned
+    config_dir="${SPLINTER_CONFIG_DIR}"
   fi
 
   files_path="${SPLINTER_CONFIG_DIR}/files"
@@ -151,13 +154,8 @@ function set_app_directories {
 }
 
 function update_splinter {
-  if [[ ! -f "${my_name}" ]]; then
-    _echo "Looks like you are not inside the Splinter directory: $(pwd)" 'e'
-    _echo "You need to run the self-update command witing the ${my_name}'s directory" 'w'
-    exit 1
-  fi
-  _echo "Self updating" 'a'
-
+  _echo "Updating splinter" 'a'
+  splinter_archive="${my_name}.zip"
   temp_dir=$(mktemp -d)
 
   _echo "Downloading Splinter in to '${temp_dir}/${splinter_archive}'" 'a'
@@ -167,8 +165,8 @@ function update_splinter {
   _exec "unzip" "-qq" "${temp_dir}/${splinter_archive}" "-d" "${temp_dir}"
   ls "${temp_dir}"
 
-  _echo "Updating Splinter files to '${SPLINTER_CONFIG_DIR}'" 'a'
-  _exec "rsync" "-rlWuv" "${temp_dir}"/*/* "${SPLINTER_CONFIG_DIR}"
+  _echo "Installing Splinter files to '${config_dir}'" 'a'
+  _exec "rsync" "-rlWuv" "${temp_dir}"/*/* "${config_dir}"
 
   _echo "Removing temporary files" 'a'
   _exec "rm" "-rf" "${temp_dir}"
@@ -177,7 +175,24 @@ function update_splinter {
 }
 
 function update_tools {
-  _echo "not yest defined" 'e'
+  _echo "Updating Splinter tools" 'a'
+  splinter_tools_archive="${my_name}-tools.zip"
+  temp_dir=$(mktemp -d)
+
+  _echo "Downloading Splinter in to '${temp_dir}/${splinter_tools_archive}'" 'a'
+  _exec "curl" "-fsSL" "${splinter_tools_url}" "-o" "${temp_dir}/${splinter_tools_archive}"
+
+  _echo "Decompressing Splinter archive in to '${temp_dir}'" 'a'
+  _exec "unzip" "-qq" "${temp_dir}/${splinter_tools_archive}" "-d" "${temp_dir}"
+  ls "${temp_dir}"
+
+  _echo "Installing Splinter tools to '${tools_path}'" 'a'
+  _exec "rsync" "-rlWuv" "${temp_dir}"/*/* "${tools_path}"
+
+  _echo "Removing temporary files" 'a'
+  _exec "rm" "-rf" "${temp_dir}"
+
+  _echo "Tools updated successfully!" 'r'
 }
 
 function check_install_path_permissions {
@@ -576,6 +591,11 @@ function main {
           _echo "Will reinstall all the Asnible Galaxy roles" 'w'
           ansible_force_roles_update='--force'
           eval install_dependencies
+          exit 0
+          ;;
+        tools)
+          _echo "Will update '${my_name}' tools" 'w'
+          eval update_tools
           exit 0
           ;;
         self|auto|splinter)

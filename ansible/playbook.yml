@@ -12,11 +12,6 @@
         '/dev/null'
       ]
 
-  pre_tasks:
-    - name: ansible_python_interpreter
-      debug:
-        var: ansible_python_interpreter
-
     - name: Load ENV and Default Values
       include_tasks: load-env-values.yml
 

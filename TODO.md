@@ -53,7 +53,7 @@
   * [x] !env
   * [x] !files
   * [x] !profiles
-* [x] BUG: splinter script, when using the option force the <profile> parameter is ignored
+* [x] BUG: splinter.sh script, when using the option force the <profile> parameter is ignored
 * [x] write README for custom envs and config file handling
 * [x] recover the definition of non_mas_apps from old installations
 * [*] see how to use `miniconda` to distribute python
@@ -61,15 +61,37 @@
 * [x] BUG: Desktop picture is not being copied and installed in the target user account
 * [x] BUG: some process is overriding `com.apple.AppleMultitouchTrackpad` `Clicking` and `Dragging` setting at first login, turing it to int and to False. maybe we need to apply that setting to another plist file?
 
-* [ ] find what setting is showing the 'input menu in menu bar'
+* [x] write function to update tools from repository `splinter update tools`
+* [ ] write function to import tools from repository during the first installation (maybe launching `splinter update tools` after the installation)
+
 * [ ] remove the dsimport file for the profile picture
+* [ ] write function to import profiles from repository
+- [ ] configfile type: ini
+  - [ ] look for the config file in the current directory and ~/splinter and ~/Downloads/splinter
+  - [ ] in the configuration file define the value of
+  - [ ] move all the parameters from config.yml to splinter.conf
+  - [ ] load all the values as environment variables, if they are not set by the cli yet
+  - [ ] splinter will take care of loading these basic settings and not Ansible anymore
+  - [ ] this will allow to to remove from playbook.yml:
+
+        vars_files:
+          # Will load ONLY the fist avalilable item of the below list
+          - [
+              "{{ lookup('env','CUSTOM_CONFIG_FILE') if lookup('env','CUSTOM_CONFIG_FILE')|length > 0 else omit }}",
+              "{{ splinter_dir + '/config.yml' }}",
+              '/dev/null'
+            ]
+
+* [ ] move splinter configurations to splinter.conf
+
+
 * [ ] add support for profiles from git repos
   profile_name: <githubuser>.<profilename> ( github.com/<githubuser>/splinter-profiles/<profilename>/)
   bash dowloads it '<githubuser>-.<profilename>' (if not already existing)
 * [ ] allow extra packages to be installed as target_user_id or for the current user
 
 * [ ] add a `prepare` action that will download the profile profiles and dependencies and create a DMG file to be deployed for an offline deployment
-
+* [ ] find what setting is showing the 'input menu in menu bar' to show the languages
 * [ ] BUG: after setting the taptoClick even if the checkbox is marked properly tapping is not working (tapBehavior), maybe there is some service to restart (but I don't think so), probably there is some other flag somewhere to set
 
 # When Provisioning the current user (and not a target user)
@@ -105,6 +127,9 @@
   * [ ] allow to specify which source to use for mackup
 
 # Future
+* [ ] add splinter and splinter-tools to homebrew
+* [ ] create a webpage that will allow to modify with a GUI a profile and to download it locally
+* [ ] distribute comiled version (made with `shc`)
 * [x] make conda to work: has issues linking libtinfo
 * [ ] filevault2 role: if FV is already enabled, check if the newuser is already added to Filevault, if not, add it
 * [ ] user custom keyboards shortcuts, only my private set if macprefs doesn't restore them
@@ -116,13 +141,13 @@
     * if 'upgrade' option is provided will install only if the version on the database is newer
     * if a version is specified it will install it if the version is available in the database
 * [x] see if it is possible to prevent Xcode to request confirmation
-* [x] Add `update` action to the splinter script that will download updated version of:
+* [x] Add `update` action to the splinter.sh script that will download updated version of:
   * [x] make backup and then update all the list below
   * [x] requirements.yml
   * [x] ansible.cfg
   * [x] playbook.yml
   * [x] README.md
   * [x] CHANGELOG.md
-  * [x] splinter
+  * [x] splinter.sh
   * [x] TODO.md
   * [x] tools/
