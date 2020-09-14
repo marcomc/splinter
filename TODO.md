@@ -60,9 +60,8 @@
 * [*] update usage functionx  
 * [x] BUG: Desktop picture is not being copied and installed in the target user account
 * [x] BUG: some process is overriding `com.apple.AppleMultitouchTrackpad` `Clicking` and `Dragging` setting at first login, turing it to int and to False. maybe we need to apply that setting to another plist file?
-
 * [x] write function to update tools from repository `splinter update tools`
-* [ ] write function to import tools from repository during the first installation (maybe launching `splinter update tools` after the installation)
+* [x] write function to import tools from repository during the first installation (maybe launching `splinter update tools` after the installation)
 
 * [ ] remove the dsimport file for the profile picture
 * [ ] write function to import profiles from repository

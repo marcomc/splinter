@@ -95,7 +95,7 @@ function show_usage {
   printf "       roles|galaxy|ansible     Force update all the Ansible Galaxy roles\n"
   printf "       tools                    Update the splinter tools\n"
   printf "       deps|dependencies        Update all the dependencies (Python envs and  Ansible Galaxy role)\n"
-  printf "       self|auto|splinter       Update Splinter itself (but not the dependencies)\n"
+  printf "       self|auto|splinter       Update Splinter itself (but not the tools or dependencies)\n"
   printf "\n"
   printf "settings: \n"
   printf "       -c file                  Specify a custom configuration file\n"
@@ -158,10 +158,10 @@ function update_splinter {
   splinter_archive="${my_name}.zip"
   temp_dir=$(mktemp -d)
 
-  _echo "Downloading Splinter in to '${temp_dir}/${splinter_archive}'" 'a'
+  _echo "Downloading Splinter into '${temp_dir}/${splinter_archive}'" 'a'
   _exec "curl" "-fsSL" "${splinter_archive_url}" "-o" "${temp_dir}/${splinter_archive}"
 
-  _echo "Decompressing Splinter archive in to '${temp_dir}'" 'a'
+  _echo "Decompressing Splinter archive into '${temp_dir}'" 'a'
   _exec "unzip" "-qq" "${temp_dir}/${splinter_archive}" "-d" "${temp_dir}"
   ls "${temp_dir}"
 
@@ -179,10 +179,10 @@ function update_tools {
   splinter_tools_archive="${my_name}-tools.zip"
   temp_dir=$(mktemp -d)
 
-  _echo "Downloading Splinter in to '${temp_dir}/${splinter_tools_archive}'" 'a'
+  _echo "Downloading Splinter tools into '${temp_dir}/${splinter_tools_archive}'" 'a'
   _exec "curl" "-fsSL" "${splinter_tools_url}" "-o" "${temp_dir}/${splinter_tools_archive}"
 
-  _echo "Decompressing Splinter archive in to '${temp_dir}'" 'a'
+  _echo "Decompressing Splinter tools into '${temp_dir}'" 'a'
   _exec "unzip" "-qq" "${temp_dir}/${splinter_tools_archive}" "-d" "${temp_dir}"
   ls "${temp_dir}"
 

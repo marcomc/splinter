@@ -129,7 +129,7 @@ To choose which python environment to run:
        roles|galaxy|ansible     Force update all the Ansible Galaxy roles
        tools                    Update the splinter tools
        deps|dependencies        Update all the dependencies (Python envs and  Ansible Galaxy role)
-       self|auto|splinter       Update Splinter itself (but not the dependencies)
+       self|auto|splinter       Update Splinter itself (but not the tools or dependencies)
 
     settings:
        -c file                  Specify a custom configuration file
