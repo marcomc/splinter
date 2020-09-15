@@ -1,12 +1,12 @@
 
 
 ```
-        _______  _____         _____ __   _ _______ _______  ______
-        |______ |_____] |        |   | \  |    |    |______ |_____/
-        ______| |       |_____ __|__ |  \_|    |    |______ |    \_
+  _______  _____         _____ __   _ _______ _______  ______
+  |______ |_____] |        |   | \  |    |    |______ |_____/
+  ______| |       |_____ __|__ |  \_|    |    |______ |    \_
 
-               2020 (c) MarcMC - github.com/marcomc/splinter
-      An opinionated provisioning tool for macOS automated with Ansible
+         2020 (c) MarcMC - github.com/marcomc/splinter
+An opinionated provisioning tool for macOS automated with Ansible
 ```
 # Install Splinter
 
