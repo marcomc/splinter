@@ -1,7 +1,13 @@
-![Splinter Logo](files/splinter_logo.png)
 
-# Splinter - Ansible Automated macOS Provisioning
 
+```
+        _______  _____         _____ __   _ _______ _______  ______
+        |______ |_____] |        |   | \  |    |    |______ |_____/
+        ______| |       |_____ __|__ |  \_|    |    |______ |    \_
+
+               2020 (c) MarcMC - github.com/marcomc/splinter
+      An opinionated provisioning tool for macOS automated with Ansible
+```
 # Install Splinter
 
 > It's preferable to use the `bash` installation (rather then git clone) because the installation script will execute some initial setup and cleanup
@@ -119,7 +125,7 @@ To choose which python environment to run:
        -elp                     Print help
        --version                Print Splinter version and release date
     actions:
-       list                     List available profiles
+       list  profiles           List available profiles
        provision [settings]     Provision the host
        update <object>          Update the object
 
@@ -138,8 +144,9 @@ To choose which python environment to run:
        -u username              New user username (all lowercase, without spaces)
        -f 'Full Name'           New user full name (quoted if has blank spaces)
        -p 'cleartext password'  New user's password in cleartext (quoted if has blank spaces)
-        Computer-Name           Computer host name, __no blank spaces allowed__
-       -v,                      Produce verbose output
+       -h Computer-Name         Computer host name, __no blank spaces allowed__
+       -q                       Suppress all non-Ansible output (except errors and warnings), __is overriden with '-v'__
+       -v                       Produce verbose output
 
     Create your own profiles in the './profiles' directory.
 
