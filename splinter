@@ -95,38 +95,42 @@ An opinionated provisioning tool for macOS automated with Ansible
 EOF
 }
 
+
 function show_usage {
-  printf "usage: %s [option] action [object] [settings]\n" "${my_name}"
-  printf "options: \n"
-  printf "       -e|--env conda|pyenv     List available profiles\n"
-  printf "       --help                   Print help\n"
-  printf "       --version                Print Splinter version and release date\n"
-  printf "actions: \n"
-  printf "       list profiles            List available profiles\n"
-  printf "       provision [settings]     Provision the host\n"
-  printf "       update <object>          Update the object\n"
-  printf "\n"
-  printf "obejcts: \n"
-  printf "       conda                    Reinstall the most recent Miniconda Python environment available for splinter\n"
-  printf "       pyenv                    Reinstall Pyenv Python environment\n"
-  printf "       roles|galaxy|ansible     Force update all the Ansible Galaxy roles\n"
-  printf "       tools                    Update the splinter tools\n"
-  printf "       deps|dependencies        Update all the dependencies (Python envs and  Ansible Galaxy role)\n"
-  printf "       self|auto|splinter       Update Splinter itself (but not the tools or dependencies)\n"
-  printf "\n"
-  printf "settings: \n"
-  printf "       -c file                  Specify a custom configuration file\n"
-  printf "       -b base_profile_name     Specify the the BASE profile to be used (default: 'default')\n"
-  printf "       -r role_profile_name     Specify the the ROLE profile to be used\n"
-  printf "       -u username              New user username (all lowercase  without spaces)\n"
-  printf "       -f 'Full Name'           New user full name (quoted if has blank spaces)\n"
-  printf "       -p 'cleartext password'  New user's password in cleartext (quoted if has blank spaces)\n"
-  printf "       -h Computer-Name         Computer host name no blank spaces allowed\n"
-  printf "       -q                       Suppress all non-Ansible output (except errors and warnings), is overriden with '-v'\n"
-  printf "       -v                       Produce verbose output\n"
-  printf "\n"
-  printf "Create your own profiles in the '%s' directory.\n" "${profiles_path}"
-  printf "\n"
+printf  "usage: %s [option] action [object] [settings]\n" "${my_name}"
+cat << 'EOF'
+
+options:
+       -e|--env conda|pyenv     List available profiles
+       --help                   Print help\
+       --version                Print Splinter version and release date
+
+actions:
+       list profiles            List available profiles
+       provision [settings]     Provision the host\
+       update <object>          Update the object
+
+obejcts:
+       conda                    Reinstall the most recent Miniconda Python environment available for splinter
+       pyenv                    Reinstall Pyenv Python environment
+       roles|galaxy|ansible     Force update all the Ansible Galaxy roles
+       tools                    Update the splinter tools
+       deps|dependencies        Update all the dependencies (Python envs and  Ansible Galaxy role)
+       self|auto|splinter       Update Splinter itself (but not the tools or dependencies)
+
+settings:
+       -c file                  Specify a custom configuration file
+       -b base_profile_name     Specify the the BASE profile to be used (default: 'default')
+       -r role_profile_name     Specify the the ROLE profile to be used
+       -u username              New user username (all lowercase  without spaces)
+       -f 'Full Name'           New user full name (quoted if has blank spaces)
+       -p 'cleartext password'  New user's password in cleartext (quoted if has blank spaces)
+       -h Computer-Name         Computer host name no blank spaces allowed
+       -q                       Suppress all non-Ansible output (except errors and warnings), is overriden with '-v'
+       -v                       Produce verbose output
+       
+EOF
+  printf  "Create your own profiles in the '%s' directory.\n" "${profiles_path}"
   return 0
 }
 
@@ -465,6 +469,7 @@ function run_ansible_playbook {
   export ANSIBLE_CONFIG="${ansible_config}"
   _echo "ANSIBLE_CONFIG: ${ANSIBLE_CONFIG}"
   export ANSIBLE_ROLES_PATH="${ansible_roles}"
+
   # this is not wrapped with `execute` because if an error occur during Ansible execution we want the script to keep going and run the cleanup tasks
   ansible-playbook "${ansible_playbook}" -i "${ansible_inventory}"
 }
