@@ -20,6 +20,9 @@ The installatio will download Splinter to `./splinter` directory and setup the f
     # FISH
     curl -fsSL https://raw.githubusercontent.com/marcomc/splinter-tools/master/install-splinter | /bin/bash
 
+# Why would I use Splinter?
+
+....
 
 ## What does Splinter do?
 Spliter uses a bash script to install the minimum requirements to run Ansible within a dedicated Python environment, then run an Ansible playbook that will run the full provisioning of a macOS system
@@ -119,33 +122,42 @@ To choose which python environment to run:
 ### Usage
 
     usage: ./splinter [option] action [object] [settings]
+
     options:
-       -e|--env conda|pyenv     List available profiles
-       -elp                     Print help
-       --version                Print Splinter version and release date
+           -e|--env conda|pyenv     List available profiles
+           --help                   Print help\
+           --version                Print Splinter version and release date
+
     actions:
-       list  profiles           List available profiles
-       provision [settings]     Provision the host
-       update <object>          Update the object
+           list profiles            List available profiles
+           provision [settings]     Provision the host\
+           update <object>          Update the object
 
     obejcts:
-       conda                    Reinstall the most recent Miniconda Python environment available for splinter
-       pyenv                    Reinstall Pyenv Python environment
-       roles|galaxy|ansible     Force update all the Ansible Galaxy roles
-       tools                    Update the splinter tools
-       deps|dependencies        Update all the dependencies (Python envs and  Ansible Galaxy role)
-       self|auto|splinter       Update Splinter itself (but not the tools or dependencies)
+           conda                    Reinstall the most recent Miniconda Python environment available for splinter
+           pyenv                    Reinstall Pyenv Python environment
+           galaxy|galaxy-roles      Force update all the Ansible Galaxy roles
+           tools                    Update the splinter tools
+           deps|dependencies        Update all the dependencies (Python envs and  Ansible Galaxy role)
+           self|auto|splinter       Update Splinter itself (but not the tools or dependencies)
+           profiles settings
 
     settings:
-       -c file                  Specify a custom configuration file
-       -b base_profile_name     Specify the the BASE profile to be used (default: 'default')
-       -r role_profile_name     Specify the the ROLE profile to be used
-       -u username              New user username (all lowercase, without spaces)
-       -f 'Full Name'           New user full name (quoted if has blank spaces)
-       -p 'cleartext password'  New user's password in cleartext (quoted if has blank spaces)
-       -h Computer-Name         Computer host name, __no blank spaces allowed__
-       -q                       Suppress all non-Ansible output (except errors and warnings), __is overriden with '-v'__
-       -v                       Produce verbose output
+           [ provision ]
+           -c file                  Specify a custom configuration file
+           -b base_profile_name     Specify the the BASE profile to be used (default: 'default')
+           -r role_profile_name     Specify the the ROLE profile to be used
+           -u username              New user username (all lowercase  without spaces)
+           -f 'Full Name'           New user full name (quoted if has blank spaces)
+           -p 'cleartext password'  New user's password in cleartext (quoted if has blank spaces)
+           -h Computer-Name         Computer host name, __no blank spaces allowed__
+           -q                       Suppress all non-Ansible output (except errors and warnings), __is overriden with '-v'__
+           -v                       Produce verbose output
+
+           [ provision, update profiles ]
+           -a account_name          Specify the the Github account name for the custom `splinter-profiles` repo
+           -g git-repo-name         Specify the the Github repository name for the custom `splinter-profiles` repo
+
 
     Create your own profiles in the './profiles' directory.
 

@@ -49,28 +49,28 @@ function _echo {
   case ${2} in
     a|action)
       colour="${cyan}" #green
-      tag='ACTION.'
+      tag='ACTION..'
     ;;
     w|warning)
       colour="${yellow}"
-      tag='WARNING'
+      tag='WARNING.'
       message_type="warning"
       output_device="/dev/stderr"
       ;;
     e|error)
       colour="${red}"
-      tag='ERROR..'
+      tag='ERROR...'
       message_type="error"
       output_device="/dev/stderr"
       ;;
     r|remark)
       colour="${purple}" #green
-      tag='#######'
+      tag='SPLINTER'
     ;;
     i|info|*)
       message_type="info"
       colour="${green}" #green
-      tag='INFO...'
+      tag='INFO....'
     ;;
   esac
   if [[ "${verbose}" == "yes" ]] || [[ "${message_type}" != "info" ]]; then
@@ -113,12 +113,14 @@ actions:
 obejcts:
        conda                    Reinstall the most recent Miniconda Python environment available for splinter
        pyenv                    Reinstall Pyenv Python environment
-       roles|galaxy|ansible     Force update all the Ansible Galaxy roles
+       galaxy|galaxy-roles      Force update all the Ansible Galaxy roles
        tools                    Update the splinter tools
        deps|dependencies        Update all the dependencies (Python envs and  Ansible Galaxy role)
        self|auto|splinter       Update Splinter itself (but not the tools or dependencies)
+       profiles settings
 
 settings:
+       [ provision ]
        -c file                  Specify a custom configuration file
        -b base_profile_name     Specify the the BASE profile to be used (default: 'default')
        -r role_profile_name     Specify the the ROLE profile to be used
@@ -128,10 +130,28 @@ settings:
        -h Computer-Name         Computer host name no blank spaces allowed
        -q                       Suppress all non-Ansible output (except errors and warnings), is overriden with '-v'
        -v                       Produce verbose output
-       
+
+       [ provision, update profiles ]
+       -a account_name          Specify the the Github account name for the custom `splinter-profiles` repo
+       -g git-repo-name         Specify the the Github repository name for the custom `splinter-profiles` repo
+
 EOF
   printf  "Create your own profiles in the '%s' directory.\n" "${profiles_path}"
   return 0
+}
+
+function show_envs {
+  _echo "VERBOSE: ${VERBOSE}"
+  [[ -n "${CUSTOM_CONFIG_FILE}" ]] && _echo "CUSTOM_CONFIG_FILE: ${CUSTOM_CONFIG_FILE}"
+  [[ -n "${SPLINTER_CONFIG_DIR}" ]] && _echo "SPLINTER_CONFIG_DIR: ${SPLINTER_CONFIG_DIR}"
+  [[ -n "${SPLINTER_BASE_PROFILE}" ]] && _echo "SPLINTER_BASE_PROFILE: ${SPLINTER_BASE_PROFILE}"
+  [[ -n "${SPLINTER_ROLE_PROFILE}" ]] && _echo "SPLINTER_ROLE_PROFILE: ${SPLINTER_ROLE_PROFILE}"
+  [[ -n "${CUSTOM_PROFILES_ACCOUNT}" ]] && _echo "CUSTOM_PROFILES_ACCOUNT: ${CUSTOM_PROFILES_ACCOUNT}"
+  [[ -n "${CUSTOM_PROFILES_REPO}" ]] && _echo "CUSTOM_PROFILES_REPO: ${CUSTOM_PROFILES_REPO}"
+  [[ -n "${COMPUTER_HOST_NAME}" ]] && _echo "COMPUTER_HOST_NAME: ${COMPUTER_HOST_NAME}"
+  [[ -n "${NEW_USER_FULL_NAME}" ]] && _echo "NEW_USER_FULL_NAME: '${NEW_USER_FULL_NAME}'"
+  [[ -n "${NEW_USER_PASSWORD_CLEARTEXT}" ]] && _echo "NEW_USER_PASSWORD_CLEARTEXT: ${NEW_USER_PASSWORD_CLEARTEXT}"
+  [[ -n "${NEW_USER_USERNAME}" ]] && _echo "NEW_USER_USERNAME: ${NEW_USER_USERNAME}"
 }
 
 function print_execution_time {
@@ -217,6 +237,77 @@ function update_tools {
   _echo "Tools updated successfully!" 'r'
 }
 
+function update_profiles {
+  if [[ "${VERBOSE}" == "no" ]]; then
+    quiet_rsync="yes"
+  else
+    quiet_rsync=""
+  fi
+  profile_name="${1}"
+  profile_to_single_out="${profile_name}"
+  if [[ -n "${profile_name//[^.]/}" ]]; then
+    # isolate the actual profile name located after the `.`
+    profile_to_single_out="${profile_name#*"."}"
+  fi
+
+  if [[ -n "${CUSTOM_PROFILES_ACCOUNT}" ]]; then
+    _echo "CUSTOM_PROFILES_ACCOUNT: ${CUSTOM_PROFILES_ACCOUNT} (detected)"
+    account_name="${CUSTOM_PROFILES_ACCOUNT}"
+  else
+    _echo "Critical Error: this should never happen:" 'e'
+    _echo "CUSTOM_PROFILES_ACCOUNT not defined althought we are cheking for a git repo" 'e'
+    exit 1
+  fi
+
+  target_profile_name="${account_name}.${profile_to_single_out}"
+  if [[ -n "${CUSTOM_PROFILES_REPO}" ]]; then
+    _echo "CUSTOM_PROFILES_REPO: ${CUSTOM_PROFILES_REPO}"
+    repository="${CUSTOM_PROFILES_REPO}"
+  else
+    repository="splinter-profiles";
+  fi
+  exclude_dir="files"
+  splinter_profiles_source_site="https://www.github.com"
+  splinter_profiles_archive="${account_name}-profiles.zip"
+  splinter_profiles_url="${splinter_profiles_source_site}/${account_name}/${repository}/archive/master.zip"
+  temp_dir=$(mktemp -d)
+
+  _echo "Updating profiles and files from custom repository" 'a'
+
+  _echo "Downloading custom profiles into '${temp_dir}/${splinter_profiles_archive}'" 'a'
+  _exec "curl" "-fsSL" "${splinter_profiles_url}" "-o" "${temp_dir}/${splinter_profiles_archive}"
+
+  _echo "Decompressing custom profiles into '${temp_dir}'" 'a'
+  _exec "unzip" "-qq" "${temp_dir}/${splinter_profiles_archive}" "-d" "${temp_dir}"
+
+  find "${temp_dir}"/* ! -path "*files" "-maxdepth" "1" "-mindepth" "1" -type directory -exec sh -c 'mv $1 "$(dirname $1)/$2.$(basename $1)"' -- {} "${account_name}" \;
+
+  if [[ "${profile_to_single_out}" != "" ]]; then
+
+    temp_profilepath="$(find "${temp_dir}" -type directory -name "${target_profile_name}")"
+
+    if [[ -d "${temp_profilepath}" ]];then
+      _echo "Installing custom profile '${target_profile_name}' to '${profiles_path}'" 'a'
+      # _exec "cp" "-a" "${temp_profilepath}" "${profiles_path}/${target_profile_name}"
+      _exec "rsync" "-rlWuv${quiet_rsync}" "--exclude" "${exclude_dir}" "${temp_profilepath}" "${profiles_path}/"
+    else
+      _echo "No profile '${target_profile_name}' found in '${splinter_profiles_url}'" 'e'
+      exit 1
+    fi
+  else
+    _echo "Installing custom profiles to '${profiles_path}'" 'a'
+    _exec "rsync" "-rlWuv${quiet_rsync}" "--exclude" "${exclude_dir}" "${temp_dir}"/*/* "${profiles_path}"
+  fi
+
+  _echo "Installing custom files to '${files_path}'" 'a'
+  _exec "rsync" "-rlWuv${quiet_rsync}" "${temp_dir}"/*/files/* "${files_path}"
+
+  _echo "Removing temporary files" 'a'
+  _exec "rm" "-rf" "${temp_dir}"
+
+  _echo "Profiles updated successfully!" 'r'
+}
+
 function check_install_path_permissions {
   current_path=$(pwd -P)
   third_level_dir=$(echo "${current_path}" | cut -d'/' -f-4)
@@ -266,14 +357,27 @@ function restore_path_permissions {
 }
 
 function profile_is_available {
-  if [ -z "${1}" ]; then
+  requested_profile="${1}"
+  if [ -z "${requested_profile}" ]; then
     # if the paramater is empty just keep going
     # ansible will only load default configs
-    _echo "No profile name has been provides. Will use the values set in Ansible"
+    _echo "No profile name has been provided" 'e'
     exit 1
-  elif [ ! -d "${profiles_path}/${1}" ]; then
-    _echo "The profile '${1}' does not exist" 'e'
-    exit 1
+  elif [[ ! -d "${profiles_path}/${requested_profile}" ]]; then
+    # if the profile doesn't exist locally we will try to find it a git repo
+    # take the fist part of the profile nale before the `.`
+    if [[ -n "${requested_profile//[^.]/}" ]]; then
+      # if the profile name is composed (contains a '.')
+      export CUSTOM_PROFILES_ACCOUNT="${requested_profile%"."*}"
+    fi
+
+    if [[ -n "${CUSTOM_PROFILES_ACCOUNT}" ]]; then
+      # if a git account has been provided look for it online
+      eval update_profiles "${requested_profile}"
+    else
+      _echo "The profile '${requested_profile}' does not exist" 'e'
+      exit 1
+    fi
   fi
 }
 
@@ -513,6 +617,11 @@ function cleanup_tasks {
 }
 
 function install_dependencies {
+  if [[ "${action}" == "update" ]]; then
+    eval show_title
+    _echo "${update_message}" 'w'
+    _echo "SPLINTER_CONFIG_DIR: ${SPLINTER_CONFIG_DIR}"
+  fi
   eval install_brew
   eval setup_python
   if [[ "${reinstall_conda}" == "yes" ]] || [[ "${reinstall_pyenv}" == yes ]]; then
@@ -526,9 +635,12 @@ function install_dependencies {
 function provision {
   _echo "$(eval show_version)"
   _echo "Starting time $( date )" 'r'
+  eval show_envs
   eval ask_for_ansible_sudo_password
   eval enable_passwordless_sudo
   eval check_install_path_permissions
+  [[ -n "${SPLINTER_BASE_PROFILE}" ]] && eval profile_is_available "${SPLINTER_BASE_PROFILE}"
+  [[ -n "${SPLINTER_ROLE_PROFILE}" ]] && eval profile_is_available "${SPLINTER_ROLE_PROFILE}"
   eval install_dependencies
   eval run_ansible_playbook
   eval cleanup_tasks
@@ -589,11 +701,11 @@ function main {
       action_option="${2}";# fetch the action's option
       # Process package options
       verbose='yes' # `update` will always be verbose
-      [[ ${quiet} == "no" ]] && eval show_title
-      _echo "SPLINTER_CONFIG_DIR: ${SPLINTER_CONFIG_DIR}"
+
+      shift
       case ${action_option} in
         deps|dependencies)
-          _echo "Will reinstall all the dependencies (Python and Ansible Galaxy roles)" 'w'
+          update_message="Will reinstall all the dependencies (Python and Ansible Galaxy roles)"
           ansible_force_roles_update='--force'
           reinstall_conda='yes'
           reinstall_pyenv='yes'
@@ -601,32 +713,65 @@ function main {
           exit 0
           ;;
         conda)
-          _echo "Will reinstall the Conda Python environemnt" 'w'
+          update_message="Will reinstall the Conda Python environemnt"
           python_provider="conda"
           reinstall_conda='yes'
           eval install_dependencies
           exit 0
           ;;
         pyenv)
-        _echo "Will reinstall the Pyenv Python environemnt" 'w'
+          update_message="Will reinstall the Pyenv Python environemnt"
           python_provider="pyenv"
           reinstall_pyenv='yes'
           eval install_dependencies
           exit 0
           ;;
+        profiles)
+          shift
+          update_message="Will update the custom profiles"
+          while getopts ":a:g:" profiles_option; do
+            case "${profiles_option}" in
+              a)
+                export CUSTOM_PROFILES_ACCOUNT="${OPTARG}"
+                ;;
+              g)
+                export CUSTOM_PROFILES_REPO="${OPTARG}"
+                ;;
+              \?)
+                echo "[Error] Action '${action} ${action_option}': Invalid setting '-${OPTARG}'" 1>&2
+                eval show_usage 1>&2
+                exit 1
+                ;;
+              :)
+                echo "[Error] Action '${action} ${action_option}': setting '-${OPTARG}' is missing an argument" 1>&2
+                eval show_usage 1>&2
+                exit 1
+                ;;
+            esac
+          done
+          shift $(( OPTIND - 1 ))
+          if [[ -n "${*}" ]];then
+            # if it is NOT empty it means it interrupted before evaluating all the parameters
+            # becaue it encountered a unexpected param or arg
+            echo "[Error] Provided unknow parameter: ${1}" 1>&2
+            eval show_usage 1>&2
+            exit 1
+          fi
+          eval update_profiles
+          ;;
         roles|galaxy|ansible)
-          _echo "Will reinstall all the Asnible Galaxy roles" 'w'
+          update_message="Will reinstall all the Asnible Galaxy roles"
           ansible_force_roles_update='--force'
           eval install_dependencies
           exit 0
           ;;
         tools)
-          _echo "Will update '${my_name}' tools" 'w'
+          update_message="Will update '${my_name}' tools"
           eval update_tools
           exit 0
           ;;
         self|auto|splinter)
-          _echo "Will update '${my_name}'" 'w'
+          update_message="Will update '${my_name}'"
           eval update_splinter
           exit 0
           ;;
@@ -645,42 +790,37 @@ function main {
       ;;
     provision )
       shift
-      while getopts ":c:b:f:h:p:r:u:qv" action_option; do
+      while getopts ":a:c:b:f:g:h:p:r:u:qv" action_option; do
         case "${action_option}" in
+          a)
+            export CUSTOM_PROFILES_ACCOUNT="${OPTARG}"
+            ;;
           c)
             export CUSTOM_CONFIG_FILE="${OPTARG}"
-            _echo "CUSTOM_CONFIG_FILE: ${CUSTOM_CONFIG_FILE}"
             ;;
           b)
-            if profile_is_available "${OPTARG}" 2>/dev/null ; then
-              export SPLINTER_BASE_PROFILE="${OPTARG}"
-              _echo "SPLINTER_BASE_PROFILE: ${SPLINTER_BASE_PROFILE}"
-            fi
+            export SPLINTER_BASE_PROFILE="${OPTARG}"
             ;;
           f)
             export NEW_USER_FULL_NAME="${OPTARG}"
-            _echo "NEW_USER_FULL_NAME: '${NEW_USER_FULL_NAME}'"
+            ;;
+          g)
+            export CUSTOM_PROFILES_REPO="${OPTARG}"
             ;;
           h)
             export COMPUTER_HOST_NAME="${OPTARG}"
-            _echo "COMPUTER_HOST_NAME: ${COMPUTER_HOST_NAME}"
             ;;
           p)
             export NEW_USER_PASSWORD_CLEARTEXT="${OPTARG}"
-            _echo "NEW_USER_PASSWORD_CLEARTEXT: ${NEW_USER_PASSWORD_CLEARTEXT}"
             ;;
           q)
             [[ ! $verbose == 'yes' ]] && quiet='yes'
             ;;
           r)
-            if profile_is_available "${OPTARG}" 2>/dev/null; then
-              export SPLINTER_ROLE_PROFILE="${OPTARG}"
-              _echo "SPLINTER_ROLE_PROFILE: ${SPLINTER_ROLE_PROFILE}"
-            fi
+            export SPLINTER_ROLE_PROFILE="${OPTARG}"
             ;;
           u)
             export NEW_USER_USERNAME="${OPTARG}"
-            _echo "NEW_USER_USERNAME: ${NEW_USER_USERNAME}"
             ;;
           v)
             verbose='yes'
@@ -710,8 +850,6 @@ function main {
 
       export VERBOSE="${verbose}"
       [[ ${quiet} == "no" ]] && eval show_title
-      _echo "VERBOSE: ${VERBOSE}"
-      _echo "SPLINTER_CONFIG_DIR: ${SPLINTER_CONFIG_DIR}"
       eval provision
       ;;
     '')
