@@ -37,44 +37,62 @@ function _exec {
 }
 
 function _echo {
-  purple="\e[35m"
-  red="\e[31m"
-  green="\e[32m"
-  cyan="\e[36m"
-  white="\e[39m"
-  yellow="\e[33m"
+  purple="35"
+  red="31"
+  green="32"
+  cyan="36"
+  white="39"
+  yellow="33"
   message_type=""
   output_device="/dev/stdin"
+
+  message="$1"
   case ${2} in
     a|action)
-      colour="${cyan}" #green
+      color="${yellow}"
+      bright="1"
       tag='ACTION..'
     ;;
     w|warning)
-      colour="${yellow}"
+      color="${purple}"
+      bright="1"
       tag='WARNING.'
       message_type="warning"
       output_device="/dev/stderr"
       ;;
     e|error)
-      colour="${red}"
+      color="${red}"
+      bright="1"
       tag='ERROR...'
       message_type="error"
       output_device="/dev/stderr"
       ;;
     r|remark)
-      colour="${purple}" #green
+      color="${cyan}"
+      bright="1"
       tag='SPLINTER'
     ;;
     i|info|*)
       message_type="info"
-      colour="${green}" #green
+      color="${green}" #green
+      bright="2"
       tag='INFO....'
     ;;
   esac
+
+  if [[ "${message_type}" == 'info' ]] && [[ -n "${message//[^:]/}" ]]; then
+    message_before_colum="${message%": "*}"
+    message_after_colum="${message#*": "}"
+  else
+    message_before_colum="${message}"
+    message_after_colum=""
+  fi
+  tag_color="\e[${bright};${color}m"
+  normal_text_color="\e[0;${white}m"
+  extra_text_color="\e[1;${white}m"
   if [[ "${verbose}" == "yes" ]] || [[ "${message_type}" != "info" ]]; then
     if [[ "${quiet}" == "no" ]] || [[ "${message_type}" == "error" ]] || [[ "${message_type}" == "warning" ]]; then
-      printf "${colour}[${tag}] ${white}%s\n" "${1}" > "${output_device}"
+      printf "${tag_color}[${tag}] ${normal_text_color}%s${extra_text_color} %s${normal_text_color}\n" "${message_before_colum}" "${message_after_colum}" > "${output_device}"
     fi
   fi
 }
