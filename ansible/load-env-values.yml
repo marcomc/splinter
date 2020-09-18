@@ -1,28 +1,13 @@
 ---
 - name: Load variables from ENVS (if set)
   set_fact:
-    verbose: "{{ lookup('env','VERBOSE') if lookup('env','VERBOSE')|length > 0 else omit }}"
+    verbose: "{{ lookup('env','VERBOSE') if lookup('env','VERBOSE')|length > 0 else no }}"
     ansible_become_pass: "{{ lookup('env','ANSIBLE_BECOME_PASS') if lookup('env','ANSIBLE_BECOME_PASS')|length > 0 else omit  }}"
-    base_profile: "{{ lookup('env','SPLINTER_BASE_PROFILE') if lookup('env','SPLINTER_BASE_PROFILE')|length > 0 else omit }}"
-    role_profile: "{{ lookup('env','SPLINTER_ROLE_PROFILE') if lookup('env','SPLINTER_ROLE_PROFILE')|length > 0 else omit }}"
-    new_user_username: "{{ lookup('env','NEW_USER_USERNAME') if lookup('env','NEW_USER_USERNAME')|length > 0 else omit }}"
-    new_user_fullname: "{{ lookup('env','NEW_USER_FULL_NAME') if lookup('env','NEW_USER_FULL_NAME')|length > 0 else omit }}"
-    new_user_password_cleartext: "{{ lookup('env','NEW_USER_PASSWORD_CLEARTEXT') if lookup('env','NEW_USER_PASSWORD_CLEARTEXT')|length > 0 else omit }}"
-    create_new_user: "{{ 'yes' if lookup('env','NEW_USER_USERNAME')|length > 0 else omit }}"
-    computer_name: "{{ lookup('env','COMPUTER_HOST_NAME') if lookup('env','COMPUTER_HOST_NAME')| length > 0 else omit }}"
-
-- name: Set default values
-  set_fact:
-    base_profile: "{{ base_profile if base_profile|default('')|length > 0 else 'default'}}"
-    role_profile: "{{ role_profile if role_profile|default('')|length > 0 else ''}}"
-    computer_name: "{{ computer_name if computer_name|default('')|length > 0 else 'My-New-Mac'}}"
-    new_user_password_cleartext: "{{ new_user_password_cleartext if new_user_password_cleartext|default('')|length > 0 else 'password' }}"
-    create_new_user: "{{ create_new_user|default('no') }}"
-
-- name: Detect the target user
-  set_fact:
-    target_user_id: "{{ item  }}"
-  loop:
-    - "{{ new_user_username if create_new_user|bool }}"
-    - "{{ ansible_user_id if not ( create_new_user|bool or new_user_username|default('')|length > 0 ) }}"
-  when: item|length > 0
+    base_profile: "{{ lookup('env','SPLINTER_BASE_PROFILE') if lookup('env','SPLINTER_BASE_PROFILE')|length > 0 else default }}"
+    role_profile: "{{ lookup('env','SPLINTER_ROLE_PROFILE') if lookup('env','SPLINTER_ROLE_PROFILE')|length > 0 else '' }}"
+    new_user_username: "{{ lookup('env','NEW_USER_USERNAME') if lookup('env','NEW_USER_USERNAME')|length > 0 else '' }}"
+    new_user_fullname: "{{ lookup('env','NEW_USER_FULL_NAME') if lookup('env','NEW_USER_FULL_NAME')|length > 0 else 'My-New-Mac' }}"
+    new_user_password_cleartext: "{{ lookup('env','NEW_USER_PASSWORD_CLEARTEXT') if lookup('env','NEW_USER_PASSWORD_CLEARTEXT')|length > 0 else 'password' }}"
+    create_new_user: "{{ lookup('env','CREATE_NEW_USER') if lookup('env','CREATE_NEW_USER')| length > 0 else 'no' }}"
+    computer_name: "{{ lookup('env','COMPUTER_HOST_NAME') if lookup('env','COMPUTER_HOST_NAME')| length > 0 else '' }}"
+    target_user_id: "{{ lookup('env','TARGET_USER_ID') if lookup('env','TARGET_USER_ID')| length > 0 else ansible_user_id }}"

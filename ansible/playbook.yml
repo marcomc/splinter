@@ -1,16 +1,6 @@
 ---
 - hosts: localhost
   connection: local
-  vars:
-    splinter_dir: "{{ lookup('env','SPLINTER_CONFIG_DIR') if lookup('env','SPLINTER_CONFIG_DIR')| length > 0 else playbook_dir + '/..' }}"
-
-  vars_files:
-    # Will load ONLY the fist avalilable item of the below list
-    - [
-        "{{ lookup('env','CUSTOM_CONFIG_FILE') if lookup('env','CUSTOM_CONFIG_FILE')|length > 0 else omit }}",
-        "{{ splinter_dir + '/config.yml' }}",
-        '/dev/null'
-      ]
 
   pre_tasks:
     - name: Load ENV and Default Values
@@ -20,6 +10,9 @@
       include_tasks: load-profiles.yml
 
   roles:
+    - role: marcomc.splinter-toolkit
+      tags: ['always']
+
     - role: ctorgalson.macos_hostname
       when: configure_system|bool
       tags: ['osx']

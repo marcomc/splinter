@@ -1,7 +1,7 @@
 #!/bin/bash
 version="0.4-beta"
 release_date="20200912"
-config_dir=""
+splinter_config_file="splinter.conf"
 my_name="$(basename "${0}")"
 start_time=$(date +%s)
 
@@ -14,7 +14,6 @@ ansible
 wheel
 passlib
 "
-pip_show_grep_filter='Version'  # 'Name\|Version\|Location' - it's a grep filter
 
 conda_package_name="splinter-conda.tar.gz"
 conda_package_version="v0.1"
@@ -117,16 +116,15 @@ obejcts:
        tools                    Update the splinter tools
        deps|dependencies        Update all the dependencies (Python envs and  Ansible Galaxy role)
        self|auto|splinter       Update Splinter itself (but not the tools or dependencies)
-       profiles settings
+       profiles [settings]      Update the profiles from a online git repo (for now only github is supported)
 
 settings:
        [ provision ]
        -c file                  Specify a custom configuration file
-       -b base_profile_name     Specify the the BASE profile to be used (default: 'default')
-       -r role_profile_name     Specify the the ROLE profile to be used
        -u username              New user username (all lowercase  without spaces)
        -f 'Full Name'           New user full name (quoted if has blank spaces)
        -p 'cleartext password'  New user's password in cleartext (quoted if has blank spaces)
+       -t username              Target user username, if different than the new user (can be used to provision the current account)
        -h Computer-Name         Computer host name no blank spaces allowed
        -q                       Suppress all non-Ansible output (except errors and warnings), is overriden with '-v'
        -v                       Produce verbose output
@@ -134,24 +132,91 @@ settings:
        [ provision, update profiles ]
        -a account_name          Specify the the Github account name for the custom `splinter-profiles` repo
        -g git-repo-name         Specify the the Github repository name for the custom `splinter-profiles` repo
+       -b profile_name          Specify the the BASE profile to be used (default: 'default')
+       -r profile_name          Specify the the ROLE profile to be used
 
 EOF
   printf  "Create your own profiles in the '%s' directory.\n" "${profiles_path}"
   return 0
 }
 
+function locate_config_file {
+    if [[ "${splinter_config_file}" != "$(basename ${splinter_config_file})" ]]; then
+      # if the config file has been declared WITH a path
+      # we assume that its path is the application config dir
+      # expand the config file path
+      splinter_config_file="$(realpath ${splinter_config_file})"
+      splinter_config_file_dir="$(dirname "${splinter_config_file}")"
+    else
+      if [[ -f "$(pwd)/${splinter_config_file}" ]]; then
+        # if the config file has been declared WITHOUT a path
+        # we check if it exists in the current directory
+        splinter_config_file_dir="$(pwd)"
+      else
+        # assumes the directory that contains the `splinter` script is the Splinter directory
+        splinter_config_file_dir="$(realpath "$(dirname "${0}")")"
+      fi
+      splinter_config_file="${splinter_config_file_dir}/${splinter_config_file}"
+    fi
+}
+
+function setup_environment {
+  # This order must be respected
+  eval export_envs         # step 1
+  eval set_app_directories # step 2
+}
+
+function export_envs {
+  eval locate_config_file
+  if [[ -n "${splinter_config_file}" ]] && [[ -f "${splinter_config_file}" ]]; then
+    # if a config file exist we will check the environemnts one by one
+    # if no value comes from the command line we will load the value in the config
+    [[ -z "${verbose}" ]] && verbose="$(read_ini_value 'verbose')"
+    [[ -z "${SPLINTER_CONFIG_DIR}" ]] && SPLINTER_CONFIG_DIR="$(read_ini_value 'config_dir')" && export SPLINTER_CONFIG_DIR
+    [[ -z "${SPLINTER_BASE_PROFILE}" ]] && SPLINTER_BASE_PROFILE="$(read_ini_value 'base_profile')" && export SPLINTER_BASE_PROFILE
+    [[ -z "${SPLINTER_ROLE_PROFILE}" ]] && SPLINTER_ROLE_PROFILE="$(read_ini_value 'role_profile')" && export SPLINTER_ROLE_PROFILE
+    [[ -z "${custom_profiles_repo_account}" ]] &&  custom_profiles_repo_account="$(read_ini_value 'custom_profiles_account')"
+    [[ -z "${CUSTOM_PROFILES_REPO}" ]] && CUSTOM_PROFILES_REPO="$(read_ini_value 'custom_profiles_repo')" && export CUSTOM_PROFILES_REPO
+    [[ -z "${NEW_USER_USERNAME}" ]] && NEW_USER_USERNAME="$(read_ini_value 'new_user_username')" && export NEW_USER_USERNAME
+    [[ -z "${NEW_USER_FULL_NAME}" ]] && NEW_USER_FULL_NAME="$(read_ini_value 'new_user_fullname')" && export NEW_USER_FULL_NAME
+    [[ -z "${NEW_USER_PASSWORD_CLEARTEXT}" ]] && NEW_USER_PASSWORD_CLEARTEXT="$(read_ini_value 'new_user_password_cleartext')" && export NEW_USER_PASSWORD_CLEARTEXT
+    [[ -z "${TARGET_USER_ID}" ]] && TARGET_USER_ID="$(read_ini_value 'target_user_username')" && export TARGET_USER_ID
+    [[ -z "${COMPUTER_HOST_NAME}" ]] && COMPUTER_HOST_NAME="$(read_ini_value 'computer_name')" && export COMPUTER_HOST_NAME
+  fi
+  if [[ -z "${SPLINTER_CONFIG_DIR}" ]]; then
+    SPLINTER_CONFIG_DIR="$(dirname "${splinter_config_file}")"
+    export SPLINTER_CONFIG_DIR
+  fi
+
+  if [[ -n "${NEW_USER_USERNAME}" ]]; then
+    export CREATE_NEW_USER='yes'
+    [[ -z "${TARGET_USER_ID}" ]] && export TARGET_USER_ID="${NEW_USER_USERNAME}"
+  else
+    export CREATE_NEW_USER='no'
+  fi
+
+  export ANSIBLE_CONFIG="${ansible_config}"
+  export ANSIBLE_ROLES_PATH="${ansible_roles}"
+  export VERBOSE="${verbose}"
+}
+
 function show_envs {
+  # [[ -n "${VERBOSE}" ]]                      &&
   _echo "VERBOSE: ${VERBOSE}"
-  [[ -n "${CUSTOM_CONFIG_FILE}" ]] && _echo "CUSTOM_CONFIG_FILE: ${CUSTOM_CONFIG_FILE}"
-  [[ -n "${SPLINTER_CONFIG_DIR}" ]] && _echo "SPLINTER_CONFIG_DIR: ${SPLINTER_CONFIG_DIR}"
-  [[ -n "${SPLINTER_BASE_PROFILE}" ]] && _echo "SPLINTER_BASE_PROFILE: ${SPLINTER_BASE_PROFILE}"
-  [[ -n "${SPLINTER_ROLE_PROFILE}" ]] && _echo "SPLINTER_ROLE_PROFILE: ${SPLINTER_ROLE_PROFILE}"
-  [[ -n "${CUSTOM_PROFILES_ACCOUNT}" ]] && _echo "CUSTOM_PROFILES_ACCOUNT: ${CUSTOM_PROFILES_ACCOUNT}"
-  [[ -n "${CUSTOM_PROFILES_REPO}" ]] && _echo "CUSTOM_PROFILES_REPO: ${CUSTOM_PROFILES_REPO}"
-  [[ -n "${COMPUTER_HOST_NAME}" ]] && _echo "COMPUTER_HOST_NAME: ${COMPUTER_HOST_NAME}"
-  [[ -n "${NEW_USER_FULL_NAME}" ]] && _echo "NEW_USER_FULL_NAME: '${NEW_USER_FULL_NAME}'"
-  [[ -n "${NEW_USER_PASSWORD_CLEARTEXT}" ]] && _echo "NEW_USER_PASSWORD_CLEARTEXT: ${NEW_USER_PASSWORD_CLEARTEXT}"
-  [[ -n "${NEW_USER_USERNAME}" ]] && _echo "NEW_USER_USERNAME: ${NEW_USER_USERNAME}"
+  [[ -n "${SPLINTER_CONFIG_DIR}" ]]          && _echo "SPLINTER_CONFIG_DIR: ${SPLINTER_CONFIG_DIR}"
+  [[ -n "${splinter_config_file}" ]]         && _echo "SPLINTER_CONFIG_FILE: ${splinter_config_file}"
+  [[ -n "${SPLINTER_BASE_PROFILE}" ]]        && _echo "SPLINTER_BASE_PROFILE: ${SPLINTER_BASE_PROFILE}"
+  [[ -n "${SPLINTER_ROLE_PROFILE}" ]]        && _echo "SPLINTER_ROLE_PROFILE: ${SPLINTER_ROLE_PROFILE}"
+  [[ -n "${custom_profiles_repo_account}" ]] && _echo "CUSTOM_PROFILES_REPO_ACCOUNT: ${custom_profiles_repo_account}"
+  [[ -n "${CUSTOM_PROFILES_REPO}" ]]         && _echo "CUSTOM_PROFILES_REPO: ${CUSTOM_PROFILES_REPO}"
+  [[ -n "${CREATE_NEW_USER}" ]]              && _echo "CREATE_NEW_USER: ${CREATE_NEW_USER}"
+  [[ -n "${NEW_USER_USERNAME}" ]]            && _echo "NEW_USER_USERNAME: ${NEW_USER_USERNAME}"
+  [[ -n "${NEW_USER_FULL_NAME}" ]]           && _echo "NEW_USER_FULL_NAME: ${NEW_USER_FULL_NAME}"
+  [[ -n "${NEW_USER_PASSWORD_CLEARTEXT}" ]]  && _echo "NEW_USER_PASSWORD_CLEARTEXT: ${NEW_USER_PASSWORD_CLEARTEXT}"
+  [[ -n "${TARGET_USER_ID}" ]]               && _echo "TARGET_USER_ID: ${TARGET_USER_ID}"
+  [[ -n "${COMPUTER_HOST_NAME}" ]]           && _echo "COMPUTER_HOST_NAME: ${COMPUTER_HOST_NAME}"
+  [[ -n "${ANSIBLE_CONFIG}" ]]               && _echo "ANSIBLE_CONFIG: ${ANSIBLE_CONFIG}"
+  [[ -n "${ANSIBLE_ROLES_PATH}" ]]           && _echo "ANSIBLE_ROLES_PATH: ${ANSIBLE_ROLES_PATH}"
 }
 
 function print_execution_time {
@@ -168,25 +233,32 @@ function print_execution_time {
   _echo "Execution time was ${total}" 'r'
 }
 
-function set_app_directories {
-  if [[ -z "${SPLINTER_CONFIG_DIR}" ]]; then
-    if [[ -z "${config_dir}" ]]; then
-      # assumes the directory that contains `splinter` is the Splinter directory
-      config_dir="$(realpath "$(dirname "${0}")")"
-    fi
-    export SPLINTER_CONFIG_DIR="${config_dir}"
+function read_ini_value {
+  if [[ -n "${1}" ]]; then
+    parameter="${1}"
   else
-    # makes sure that `config_dir` is assigned
-    config_dir="${SPLINTER_CONFIG_DIR}"
+    _echo "No parameter specified to read from the ini file '${splinter_config_file}'" 'e'
+    exit 1
   fi
 
-  files_path="${SPLINTER_CONFIG_DIR}/files"
-  tools_path="${SPLINTER_CONFIG_DIR}/tools"
-  profiles_path="${SPLINTER_CONFIG_DIR}/profiles"
-  ansible_dir="${SPLINTER_CONFIG_DIR}/ansible"
-  pyenv_dir="${SPLINTER_CONFIG_DIR}/pyenv"
-  conda_path="${SPLINTER_CONFIG_DIR}/conda"
-  pip_config_file="${SPLINTER_CONFIG_DIR}/pip.conf"
+  if [[ ! -f "${splinter_config_file}" ]]; then
+    _echo "The config file '${splinter_config_file}' is not present" 'e'
+    exit 1
+  else
+    # _echo "Reading parameter '${parameter}' from config file"
+    awk -F '=' '{gsub(/"/, "", $0); if (! ($0 ~ /^;/) && $0 ~ /'"${parameter}"'/) print $2}' "${splinter_config_file}"
+  fi
+}
+
+function set_app_directories {
+  config_dir="${SPLINTER_CONFIG_DIR}"
+  files_path="${config_dir}/files"
+  tools_path="${config_dir}/tools"
+  profiles_path="${config_dir}/profiles"
+  ansible_dir="${config_dir}/ansible"
+  pyenv_dir="${config_dir}/pyenv"
+  conda_path="${config_dir}/conda"
+  pip_config_file="${config_dir}/pip.conf"
 
   ansible_roles="${ansible_dir}/roles"
   ansible_config="${ansible_dir}/ansible.cfg"
@@ -238,6 +310,11 @@ function update_tools {
 }
 
 function update_profiles {
+  if [[ -z "${custom_profiles_repo_account}" ]]; then
+    _echo "No account name was provided to update the profiles from a repository. Use '-a <account_name>' option" 'e'
+    exit 1
+  fi
+
   if [[ "${VERBOSE}" == "no" ]]; then
     quiet_rsync="yes"
   else
@@ -250,26 +327,16 @@ function update_profiles {
     profile_to_single_out="${profile_name#*"."}"
   fi
 
-  if [[ -n "${CUSTOM_PROFILES_ACCOUNT}" ]]; then
-    _echo "CUSTOM_PROFILES_ACCOUNT: ${CUSTOM_PROFILES_ACCOUNT} (detected)"
-    account_name="${CUSTOM_PROFILES_ACCOUNT}"
-  else
-    _echo "Critical Error: this should never happen:" 'e'
-    _echo "CUSTOM_PROFILES_ACCOUNT not defined althought we are cheking for a git repo" 'e'
-    exit 1
-  fi
-
-  target_profile_name="${account_name}.${profile_to_single_out}"
+  target_profile_name="${custom_profiles_repo_account}.${profile_to_single_out}"
   if [[ -n "${CUSTOM_PROFILES_REPO}" ]]; then
-    _echo "CUSTOM_PROFILES_REPO: ${CUSTOM_PROFILES_REPO}"
     repository="${CUSTOM_PROFILES_REPO}"
   else
     repository="splinter-profiles";
   fi
   exclude_dir="files"
   splinter_profiles_source_site="https://www.github.com"
-  splinter_profiles_archive="${account_name}-profiles.zip"
-  splinter_profiles_url="${splinter_profiles_source_site}/${account_name}/${repository}/archive/master.zip"
+  splinter_profiles_archive="${custom_profiles_repo_account}-profiles.zip"
+  splinter_profiles_url="${splinter_profiles_source_site}/${custom_profiles_repo_account}/${repository}/archive/master.zip"
   temp_dir=$(mktemp -d)
 
   _echo "Updating profiles and files from custom repository" 'a'
@@ -280,7 +347,8 @@ function update_profiles {
   _echo "Decompressing custom profiles into '${temp_dir}'" 'a'
   _exec "unzip" "-qq" "${temp_dir}/${splinter_profiles_archive}" "-d" "${temp_dir}"
 
-  find "${temp_dir}"/* ! -path "*files" "-maxdepth" "1" "-mindepth" "1" -type directory -exec sh -c 'mv $1 "$(dirname $1)/$2.$(basename $1)"' -- {} "${account_name}" \;
+  # Rename each single 'profile' to 'account.profile' format
+  find "${temp_dir}"/* ! -path "*files" "-maxdepth" "1" "-mindepth" "1" -type directory -exec sh -c 'mv $2 "$(dirname $2)/$1.$(basename $2)"' -- "${custom_profiles_repo_account}" {} \;
 
   if [[ "${profile_to_single_out}" != "" ]]; then
 
@@ -289,7 +357,7 @@ function update_profiles {
     if [[ -d "${temp_profilepath}" ]];then
       _echo "Installing custom profile '${target_profile_name}' to '${profiles_path}'" 'a'
       # _exec "cp" "-a" "${temp_profilepath}" "${profiles_path}/${target_profile_name}"
-      _exec "rsync" "-rlWuv${quiet_rsync}" "--exclude" "${exclude_dir}" "${temp_profilepath}" "${profiles_path}/"
+      _exec "rsync" "-rlWuv${quiet_rsync}" "--delete" "--exclude" "${exclude_dir}" "${temp_profilepath}" "${profiles_path}/"
     else
       _echo "No profile '${target_profile_name}' found in '${splinter_profiles_url}'" 'e'
       exit 1
@@ -309,7 +377,7 @@ function update_profiles {
 }
 
 function check_install_path_permissions {
-  current_path=$(pwd -P)
+  current_path="$(pwd -P)"
   third_level_dir=$(echo "${current_path}" | cut -d'/' -f-4)
   dir_stats=$(stat -f '%N %g %p' "${third_level_dir}")
   read -ra DIR_STATS <<< "${dir_stats}"
@@ -384,7 +452,7 @@ function profile_is_available {
 function enable_passwordless_sudo {
   sudo_stdin=''
   if sudo -n true 2>/dev/null; then
-    _echo "Passwordless sudo is seems to be already available"
+    _echo "Passwordless sudo seems to be already enabled"
   else
     if [ -n "${ANSIBLE_BECOME_PASS}" ]; then
       sudo_stdin='--stdin'
@@ -406,6 +474,7 @@ function disable_passwordless_sudo {
 }
 
 function install_pip_dependencies {
+  pip_show_grep_filter='Version'  # 'Name\|Version\|Location' - it's a grep filter
   for pip_dependecy in ${pip_dependecies}; do
     if ! pip show "${pip_dependecy}" >/dev/null 2>&1; then
       _echo "${pip_dependecy} not installed" w
@@ -507,19 +576,16 @@ function install_pyenv {
 function install_pip_ansible {
   _echo "PIP - Installing Ansible ${desired_ansible_version}" 'a'
   _exec "pip" "install" "ansible==${desired_ansible_version}"
-  # pip show ansible | grep "${pip_show_grep_filter}"
 }
 
 function install_pip_wheel {
   _echo "PIP - Installing Wheel ${desired_wheel_version}" 'a'
   _exec "pip" "install" "wheel==${desired_wheel_version}"
-  # pip show "wheel"  | grep "${pip_show_grep_filter}"
 }
 
 function install_pip_passlib {
   _echo "PIP - Installing passlib ${desired_passlib_version}" 'a'
   _exec "pip" "install" "passlib==${desired_passlib_version}"
-  # pip show "passlib" | grep "${pip_show_grep_filter}"
 }
 
 function install_pyenv_python {
@@ -570,11 +636,10 @@ function install_ansible_galaxy_roles {
 
 function run_ansible_playbook {
   _echo "Running Ansible provisioning" 'a'
-  export ANSIBLE_CONFIG="${ansible_config}"
-  _echo "ANSIBLE_CONFIG: ${ANSIBLE_CONFIG}"
-  export ANSIBLE_ROLES_PATH="${ansible_roles}"
 
-  # this is not wrapped with `execute` because if an error occur during Ansible execution we want the script to keep going and run the cleanup tasks
+  # this is not wrapped with `execute` because
+  # we want the script to keep going and run the cleanup tasks
+  # even if an error occur during Ansible execution
   ansible-playbook "${ansible_playbook}" -i "${ansible_inventory}"
 }
 
@@ -587,7 +652,7 @@ function ask_for_ansible_sudo_password {
         export ANSIBLE_BECOME_PASS="${ansible_become_pass}"
         printf "\n"
   else
-        _echo "'ANSIBLE_BECOME_PASS' is already set"
+        _echo "ANSIBLE_BECOME_PASS is already set"
   fi
 }
 
@@ -617,11 +682,6 @@ function cleanup_tasks {
 }
 
 function install_dependencies {
-  if [[ "${action}" == "update" ]]; then
-    eval show_title
-    _echo "${update_message}" 'w'
-    _echo "SPLINTER_CONFIG_DIR: ${SPLINTER_CONFIG_DIR}"
-  fi
   eval install_brew
   eval setup_python
   if [[ "${reinstall_conda}" == "yes" ]] || [[ "${reinstall_pyenv}" == yes ]]; then
@@ -635,12 +695,11 @@ function install_dependencies {
 function provision {
   _echo "$(eval show_version)"
   _echo "Starting time $( date )" 'r'
-  eval show_envs
   eval ask_for_ansible_sudo_password
   eval enable_passwordless_sudo
   eval check_install_path_permissions
-  [[ -n "${SPLINTER_BASE_PROFILE}" ]] && eval profile_is_available "${SPLINTER_BASE_PROFILE}"
-  [[ -n "${SPLINTER_ROLE_PROFILE}" ]] && eval profile_is_available "${SPLINTER_ROLE_PROFILE}"
+  [[ -n "${SPLINTER_BASE_PROFILE}" ]] && eval retrieve_profile "${SPLINTER_BASE_PROFILE}"
+  [[ -n "${SPLINTER_ROLE_PROFILE}" ]] && eval retrieve_profile "${SPLINTER_ROLE_PROFILE}"
   eval install_dependencies
   eval run_ansible_playbook
   eval cleanup_tasks

@@ -1,6 +1,6 @@
 ---
-mh_computername: "{{ computer_name|default('My-New-Mac') }}"
-mh_localhostname: "{{ mh_computername }}"
+mh_computername: "{{ computer_name }}"
+mh_localhostname: "{{ computer_name }}"
 
 ActivityMonitor_Enabled:     yes # Enable ActivityMonitor configuration
 AppStore_Enabled:            yes # Enable AppStore configuration

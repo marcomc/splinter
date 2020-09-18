@@ -140,16 +140,15 @@ To choose which python environment to run:
            tools                    Update the splinter tools
            deps|dependencies        Update all the dependencies (Python envs and  Ansible Galaxy role)
            self|auto|splinter       Update Splinter itself (but not the tools or dependencies)
-           profiles settings
+           profiles [settings]      Update the profiles from a online git repo (for now only github is supported)
 
     settings:
            [ provision ]
            -c file                  Specify a custom configuration file
-           -b base_profile_name     Specify the the BASE profile to be used (default: 'default')
-           -r role_profile_name     Specify the the ROLE profile to be used
            -u username              New user username (all lowercase  without spaces)
            -f 'Full Name'           New user full name (quoted if has blank spaces)
            -p 'cleartext password'  New user's password in cleartext (quoted if has blank spaces)
+           -t username              Target user username, if different than the new user (can be used to provision the current account)
            -h Computer-Name         Computer host name, __no blank spaces allowed__
            -q                       Suppress all non-Ansible output (except errors and warnings), __is overriden with '-v'__
            -v                       Produce verbose output
@@ -157,6 +156,8 @@ To choose which python environment to run:
            [ provision, update profiles ]
            -a account_name          Specify the the Github account name for the custom `splinter-profiles` repo
            -g git-repo-name         Specify the the Github repository name for the custom `splinter-profiles` repo
+           -b profile_name          Specify the the BASE profile to be used (default: 'default')
+           -r profile_name          Specify the the ROLE profile to be used
 
 
     Create your own profiles in the './profiles' directory.
