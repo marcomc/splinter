@@ -2,7 +2,7 @@
 version="0.4-beta"
 release_date="20200912"
 splinter_config_file="splinter.cfg"
-my_name="$(basename "${0}")"
+my_name="$(basename "$0")"
 start_time=$(date +%s)
 
 ansible_force_roles_update=''
@@ -33,72 +33,91 @@ splinter_archive_url="https://github.com/marcomc/splinter/archive/master.zip"
 splinter_tools_url="https://github.com/marcomc/splinter-tools/archive/master.zip"
 
 function _exec {
-  "$@" || { _echo "Failed during: ${*}" 'e'; exit 1; }
+  "$@" || { _echo "Failed during: $*" 'e'; exit 1; }
+}
+
+function abs_path {
+  local file="$1"
+  local absolute_path=""
+  directory=$(dirname "$file")
+  # shellcheck disable=SC2001 # can't avoid the use of sed
+  directory=$(echo "$directory" | sed 's+~+'"${HOME}"'+g' )
+  absolute_path="$(cd "$directory"|| exit 1; pwd )"
+  echo "${absolute_path}/$(basename "$file")"
+
 }
 
 function _echo {
-  purple="35"
-  red="31"
-  green="32"
-  cyan="36"
-  white="39"
-  yellow="33"
-  message_type=""
-  output_device="/dev/stdin"
+  local bright="0"
+  local purple="35"
+  local red="31"
+  local green="32"
+  local cyan="36"
+  local white="39"
+  local yellow="33"
+  local color="$white"
+  local extra_text_color="\e[1;${white}m"
+  local message_after_colum=""
+  local message_before_colum=""
+  local message_type=""
+  local message_type=""
+  local normal_text_color="\e[0;${white}m"
+  local output_device="/dev/stdin"
+  local tag_color=""
+  local tag=""
 
   message="$1"
-  case ${2} in
+  case $2 in
     a|action)
-      color="${yellow}"
+      color="$yellow"
       bright="1"
       tag='ACTION..'
     ;;
     w|warning)
-      color="${purple}"
+      color="$purple"
       bright="1"
       tag='WARNING.'
       message_type="warning"
       output_device="/dev/stderr"
       ;;
     e|error)
-      color="${red}"
+      color="$red"
       bright="1"
       tag='ERROR...'
       message_type="error"
       output_device="/dev/stderr"
       ;;
     r|remark)
-      color="${cyan}"
+      color="$cyan"
       bright="1"
       tag='SPLINTER'
     ;;
     i|info|*)
       message_type="info"
-      color="${green}" #green
+      color="$green"
       bright="2"
       tag='INFO....'
     ;;
   esac
+  tag_color="\e[${bright};${color}m"
 
-  if [[ "${message_type}" == 'info' ]] && [[ -n "${message//[^:]/}" ]]; then
-    message_before_colum="${message%": "*}"
-    message_after_colum="${message#*": "}"
+  if [[ $message_type == 'info' ]] && [[ -n ${message//[^:]/} ]]; then
+    message_before_colum="${message%': '*}"
+    message_after_colum="${message#*': '}"
   else
-    message_before_colum="${message}"
+    message_before_colum="$message"
     message_after_colum=""
   fi
-  tag_color="\e[${bright};${color}m"
-  normal_text_color="\e[0;${white}m"
-  extra_text_color="\e[1;${white}m"
-  if [[ "${verbose}" == "yes" ]] || [[ "${message_type}" != "info" ]]; then
-    if [[ "${quiet}" == "no" ]] || [[ "${message_type}" == "error" ]] || [[ "${message_type}" == "warning" ]]; then
-      printf "${tag_color}[${tag}] ${normal_text_color}%s${extra_text_color} %s${normal_text_color}\n" "${message_before_colum}" "${message_after_colum}" > "${output_device}"
+
+  if [[ $verbose == 'yes' ]] || [[ $message_type != 'info' ]]; then
+    if [[ $quiet == 'no' ]] || [[ $message_type == 'error' ]] || [[ $message_type == 'warning' ]]; then
+      printf "${tag_color}[$tag] ${normal_text_color}%s${extra_text_color} %s${normal_text_color}\n" "$message_before_colum" "$message_after_colum" > "$output_device"
     fi
   fi
 }
 
 function show_version {
-  echo "Splinter ${version} ${release_date}"
+  echo "Splinter $version $release_date"
 }
 
 function show_title {
@@ -117,7 +136,7 @@ EOF
 }
 
 function show_usage {
-printf  "usage: %s [option] action [object] [settings]\n" "${my_name}"
+printf  "usage: %s [option] action [object] [settings]\n" "$my_name"
 cat << 'EOF'
 
 options:
@@ -157,22 +176,23 @@ settings:
        -r profile_name          Specify the the ROLE profile to be used
 
 EOF
-  printf  "Create your own profiles in the '%s' directory.\n" "${profiles_path}"
+  printf  "Create your own profiles in the '%s' directory.\n" "$profiles_path"
   return 0
 }
 
 function locate_config_file {
-    if [[ "${splinter_config_file}" != "$(basename ${splinter_config_file})" ]]; then
+    if [[ $splinter_config_file != "$(basename $splinter_config_file)" ]]; then
       # if the config file has been declared WITH a path we expand the path
-      splinter_config_file="$(realpath ${splinter_config_file})"
+      splinter_config_file="$(abs_path $splinter_config_file)"
     else
+      user_path=$(pwd)
       # if the config file has been declared WITHOUT a path
-      if [[ -f "$(pwd)/${splinter_config_file}" ]]; then
+      if [[ -f ${user_path}/${splinter_config_file} ]]; then
         # we check if it exists in the current directory
-        splinter_config_file_dir="$(pwd)"
+        splinter_config_file_dir="$user_path"
       else
         # assumes the directory that contains the `splinter` script is the Splinter directory
-        splinter_config_file_dir="$(realpath "$(dirname "${0}")")"
+        splinter_config_file_dir="$(abs_path "$(dirname "$0")")"
       fi
       splinter_config_file="${splinter_config_file_dir}/${splinter_config_file}"
     fi
@@ -186,90 +206,90 @@ function setup_environment {
 
 function export_envs {
   eval locate_config_file
-  if [[ -n "${splinter_config_file}" ]] && [[ -f "${splinter_config_file}" ]]; then
+  if [[ -n $splinter_config_file ]] && [[ -f $splinter_config_file ]]; then
     # if a config file exist we will check the environemnts one by one
     # if no value comes from the command line we will load the value in the config
-    [[ -z "${verbose}" ]] && verbose="$(read_ini_value 'verbose')"
-    [[ -z "${SPLINTER_CONFIG_DIR}" ]] && SPLINTER_CONFIG_DIR="$(read_ini_value 'config_dir')" && export SPLINTER_CONFIG_DIR
-    [[ -z "${SPLINTER_BASE_PROFILE}" ]] && SPLINTER_BASE_PROFILE="$(read_ini_value 'base_profile')" && export SPLINTER_BASE_PROFILE
-    [[ -z "${SPLINTER_ROLE_PROFILE}" ]] && SPLINTER_ROLE_PROFILE="$(read_ini_value 'role_profile')" && export SPLINTER_ROLE_PROFILE
-    [[ -z "${custom_profiles_repo_account}" ]] &&  custom_profiles_repo_account="$(read_ini_value 'custom_profiles_account')"
-    [[ -z "${CUSTOM_PROFILES_REPO}" ]] && CUSTOM_PROFILES_REPO="$(read_ini_value 'custom_profiles_repo')" && export CUSTOM_PROFILES_REPO
-    [[ -z "${NEW_USER_USERNAME}" ]] && NEW_USER_USERNAME="$(read_ini_value 'new_user_username')" && export NEW_USER_USERNAME
-    [[ -z "${NEW_USER_FULL_NAME}" ]] && NEW_USER_FULL_NAME="$(read_ini_value 'new_user_fullname')" && export NEW_USER_FULL_NAME
-    [[ -z "${NEW_USER_PASSWORD_CLEARTEXT}" ]] && NEW_USER_PASSWORD_CLEARTEXT="$(read_ini_value 'new_user_password_cleartext')" && export NEW_USER_PASSWORD_CLEARTEXT
-    [[ -z "${TARGET_USER_ID}" ]] && TARGET_USER_ID="$(read_ini_value 'target_user_username')" && export TARGET_USER_ID
-    [[ -z "${COMPUTER_HOST_NAME}" ]] && COMPUTER_HOST_NAME="$(read_ini_value 'computer_name')" && export COMPUTER_HOST_NAME
+    [[ -z $verbose ]] && verbose=$(read_ini_value 'verbose')
+    [[ -z $SPLINTER_CONFIG_DIR ]] && SPLINTER_CONFIG_DIR=$(read_ini_value 'config_dir') && export SPLINTER_CONFIG_DIR
+    [[ -z $SPLINTER_BASE_PROFILE ]] && SPLINTER_BASE_PROFILE=$(read_ini_value 'base_profile') && export SPLINTER_BASE_PROFILE
+    [[ -z $SPLINTER_ROLE_PROFILE ]] && SPLINTER_ROLE_PROFILE=$(read_ini_value 'role_profile') && export SPLINTER_ROLE_PROFILE
+    [[ -z $custom_profiles_repo_account ]] &&  custom_profiles_repo_account=$(read_ini_value 'custom_profiles_account')
+    [[ -z $CUSTOM_PROFILES_REPO ]] && CUSTOM_PROFILES_REPO=$(read_ini_value 'custom_profiles_repo') && export CUSTOM_PROFILES_REPO
+    [[ -z $NEW_USER_USERNAME ]] && NEW_USER_USERNAME=$(read_ini_value 'new_user_username') && export NEW_USER_USERNAME
+    [[ -z $NEW_USER_FULL_NAME ]] && NEW_USER_FULL_NAME=$(read_ini_value 'new_user_fullname') && export NEW_USER_FULL_NAME
+    [[ -z $NEW_USER_PASSWORD_CLEARTEXT ]] && NEW_USER_PASSWORD_CLEARTEXT=$(read_ini_value 'new_user_password_cleartext') && export NEW_USR_PASSWORD_CLEARTEXT
+    [[ -z $TARGET_USER_ID ]] && TARGET_USER_ID=$(read_ini_value 'target_user_username') && export TARGET_USER_ID
+    [[ -z $COMPUTER_HOST_NAME ]] && COMPUTER_HOST_NAME=$(read_ini_value 'computer_name') && export COMPUTER_HOST_NAME
   fi
-  if [[ -z "${SPLINTER_CONFIG_DIR}" ]]; then
-    SPLINTER_CONFIG_DIR="$(dirname "${splinter_config_file}")"
+  if [[ -z $SPLINTER_CONFIG_DIR ]]; then
+    SPLINTER_CONFIG_DIR=$(dirname "$splinter_config_file")
     export SPLINTER_CONFIG_DIR
   fi
 
-  if [[ -n "${NEW_USER_USERNAME}" ]]; then
+  if [[ -n $NEW_USER_USERNAME ]]; then
     export CREATE_NEW_USER='yes'
-    [[ -z "${TARGET_USER_ID}" ]] && export TARGET_USER_ID="${NEW_USER_USERNAME}"
+    [[ -z $TARGET_USER_ID ]] && export TARGET_USER_ID="$NEW_USER_USERNAME"
   else
     export CREATE_NEW_USER='no'
   fi
 
-  export ANSIBLE_CONFIG="${ansible_config}"
-  export ANSIBLE_ROLES_PATH="${ansible_roles}"
-  export VERBOSE="${verbose}"
+  export ANSIBLE_CONFIG="$ansible_config"
+  export ANSIBLE_ROLES_PATH="$ansible_roles"
+  export VERBOSE="$verbose"
 }
 
 function show_envs {
-  # [[ -n "${VERBOSE}" ]]                      &&
-  _echo "VERBOSE: ${VERBOSE}"
-  [[ -n "${SPLINTER_CONFIG_DIR}" ]]          && _echo "SPLINTER_CONFIG_DIR: ${SPLINTER_CONFIG_DIR}"
-  [[ -n "${splinter_config_file}" ]]         && _echo "SPLINTER_CONFIG_FILE: ${splinter_config_file}"
-  [[ -n "${SPLINTER_BASE_PROFILE}" ]]        && _echo "SPLINTER_BASE_PROFILE: ${SPLINTER_BASE_PROFILE}"
-  [[ -n "${SPLINTER_ROLE_PROFILE}" ]]        && _echo "SPLINTER_ROLE_PROFILE: ${SPLINTER_ROLE_PROFILE}"
-  [[ -n "${custom_profiles_repo_account}" ]] && _echo "CUSTOM_PROFILES_REPO_ACCOUNT: ${custom_profiles_repo_account}"
-  [[ -n "${CUSTOM_PROFILES_REPO}" ]]         && _echo "CUSTOM_PROFILES_REPO: ${CUSTOM_PROFILES_REPO}"
-  [[ -n "${CREATE_NEW_USER}" ]]              && _echo "CREATE_NEW_USER: ${CREATE_NEW_USER}"
-  [[ -n "${NEW_USER_USERNAME}" ]]            && _echo "NEW_USER_USERNAME: ${NEW_USER_USERNAME}"
-  [[ -n "${NEW_USER_FULL_NAME}" ]]           && _echo "NEW_USER_FULL_NAME: ${NEW_USER_FULL_NAME}"
-  [[ -n "${NEW_USER_PASSWORD_CLEARTEXT}" ]]  && _echo "NEW_USER_PASSWORD_CLEARTEXT: ${NEW_USER_PASSWORD_CLEARTEXT}"
-  [[ -n "${TARGET_USER_ID}" ]]               && _echo "TARGET_USER_ID: ${TARGET_USER_ID}"
-  [[ -n "${COMPUTER_HOST_NAME}" ]]           && _echo "COMPUTER_HOST_NAME: ${COMPUTER_HOST_NAME}"
-  [[ -n "${ANSIBLE_CONFIG}" ]]               && _echo "ANSIBLE_CONFIG: ${ANSIBLE_CONFIG}"
-  [[ -n "${ANSIBLE_ROLES_PATH}" ]]           && _echo "ANSIBLE_ROLES_PATH: ${ANSIBLE_ROLES_PATH}"
+  # [[ -n "${VERBOSE" ]]                      &&
+  _echo "VERBOSE: $VERBOSE"
+  [[ -n $SPLINTER_CONFIG_DIR ]]          && _echo "SPLINTER_CONFIG_DIR: $SPLINTER_CONFIG_DIR"
+  [[ -n $splinter_config_file ]]         && _echo "SPLINTER_CONFIG_FILE: $splinter_config_file"
+  [[ -n $SPLINTER_BASE_PROFILE ]]        && _echo "SPLINTER_BASE_PROFILE: $SPLINTER_BASE_PROFILE"
+  [[ -n $SPLINTER_ROLE_PROFILE ]]        && _echo "SPLINTER_ROLE_PROFILE: $SPLINTER_ROLE_PROFILE"
+  [[ -n $custom_profiles_repo_account ]] && _echo "CUSTOM_PROFILES_REPO_ACCOUNT: $custom_profiles_repo_account"
+  [[ -n $CUSTOM_PROFILES_REPO ]]         && _echo "CUSTOM_PROFILES_REPO: $CUSTOM_PROFILES_REPO"
+  [[ -n $CREATE_NEW_USER ]]              && _echo "CREATE_NEW_USER: $CREATE_NEW_USER"
+  [[ -n $NEW_USER_USERNAME ]]            && _echo "NEW_USER_USERNAME: $NEW_USER_USERNAME"
+  [[ -n $NEW_USER_FULL_NAME ]]           && _echo "NEW_USER_FULL_NAME: $NEW_USER_FULL_NAME"
+  [[ -n $NEW_USER_PASSWORD_CLEARTEXT ]]  && _echo "NEW_USER_PASSWORD_CLEARTEXT: $NEW_USER_PASSWORD_CLEARTEXT"
+  [[ -n $TARGET_USER_ID ]]               && _echo "TARGET_USER_ID: $TARGET_USER_ID"
+  [[ -n $COMPUTER_HOST_NAME ]]           && _echo "COMPUTER_HOST_NAME: $COMPUTER_HOST_NAME"
+  [[ -n $ANSIBLE_CONFIG ]]               && _echo "ANSIBLE_CONFIG: $ANSIBLE_CONFIG"
+  [[ -n $ANSIBLE_ROLES_PATH ]]           && _echo "ANSIBLE_ROLES_PATH: $ANSIBLE_ROLES_PATH"
 }
 
 function print_execution_time {
-  start_seconds="${1}"
+  start_seconds="$1"
   end_seconds=$(date +%s)
   total_seconds=$(( end_seconds - start_seconds ))
   total_minutes=$(( total_seconds / 60 ))
 
-  if [[ ${total_minutes} -gt 0 ]]; then
+  if [[ $total_minutes -gt 0 ]]; then
     total="${total_minutes} minutes"
   else
     total="${total_seconds} seconds"
   fi
-  _echo "Execution time was ${total}" 'r'
+  _echo "Execution time was $total" 'r'
 }
 
 function read_ini_value {
-  if [[ -n "${1}" ]]; then
-    parameter="${1}"
+  if [[ -n $1 ]]; then
+    parameter="$1"
   else
-    _echo "No parameter specified to read from the ini file '${splinter_config_file}'" 'e'
+    _echo "No parameter specified to read from the ini file '$splinter_config_file'" 'e'
     exit 1
   fi
 
-  if [[ ! -f "${splinter_config_file}" ]]; then
-    _echo "The config file '${splinter_config_file}' is not present" 'e'
+  if [[ ! -f $splinter_config_file ]]; then
+    _echo "The config file '$splinter_config_file' is not present" 'e'
     exit 1
   else
-    # _echo "Reading parameter '${parameter}' from config file"
-    awk -F '=' '{gsub(/"/, "", $0); if (! ($0 ~ /^;/) && $0 ~ /'"${parameter}"'/) print $2}' "${splinter_config_file}"
+    # _echo "Reading parameter '$parameter' from config file"
+    awk -F '=' '{gsub(/"/, "", $0); if (! ($0 ~ /^;/) && $0 ~ /'"${parameter}"'/) print $2}' "$splinter_config_file"
   fi
 }
 
 function set_app_directories {
-  config_dir="${SPLINTER_CONFIG_DIR}"
+  config_dir="$(abs_path "$SPLINTER_CONFIG_DIR")"
   files_path="${config_dir}/files"
   tools_path="${config_dir}/tools"
   profiles_path="${config_dir}/profiles"
@@ -291,17 +311,17 @@ function update_splinter {
   temp_dir=$(mktemp -d)
 
   _echo "Downloading Splinter into '${temp_dir}/${splinter_archive}'" 'a'
-  _exec "curl" "-fsSL" "${splinter_archive_url}" "-o" "${temp_dir}/${splinter_archive}"
+  _exec "curl" "-fsSL" "$splinter_archive_url" "-o" "${temp_dir}/${splinter_archive}"
 
-  _echo "Decompressing Splinter archive into '${temp_dir}'" 'a'
+  _echo "Decompressing Splinter archive into '$temp_dir'" 'a'
   _exec "unzip" "-qq" "${temp_dir}/${splinter_archive}" "-d" "${temp_dir}"
-  ls "${temp_dir}"
+  ls "$temp_dir"
 
-  _echo "Installing Splinter files to '${config_dir}'" 'a'
-  _exec "rsync" "-rlWuv" "${temp_dir}"/*/* "${config_dir}"
+  _echo "Installing Splinter files to '$config_dir'" 'a'
+  _exec "rsync" "-rlWuv" "$temp_dir"/*/* "$config_dir"
 
   _echo "Removing temporary files" 'a'
-  _exec "rm" "-rf" "${temp_dir}"
+  _exec "rm" "-rf" "$temp_dir"
 
   _echo "Update successful!" 'r'
 }
@@ -311,43 +331,43 @@ function update_tools {
   splinter_tools_archive="${my_name}-tools.zip"
   temp_dir=$(mktemp -d)
 
-  _echo "Downloading Splinter tools into '${temp_dir}/${splinter_tools_archive}'" 'a'
-  _exec "curl" "-fsSL" "${splinter_tools_url}" "-o" "${temp_dir}/${splinter_tools_archive}"
+  _echo "Downloading Splinter tools into '$temp_dir}/${splinter_tools_archive}'" 'a'
+  _exec "curl" "-fsSL" "$splinter_tools_url" "-o" "${temp_dir}/${splinter_tools_archive}"
 
-  _echo "Decompressing Splinter tools into '${temp_dir}'" 'a'
-  _exec "unzip" "-qq" "${temp_dir}/${splinter_tools_archive}" "-d" "${temp_dir}"
-  ls "${temp_dir}"
+  _echo "Decompressing Splinter tools into '$temp_dir'" 'a'
+  _exec "unzip" "-qq" "${temp_dir}/${splinter_tools_archive}" "-d" "$temp_dir"
+  ls "$temp_dir"
 
-  _echo "Installing Splinter tools to '${tools_path}'" 'a'
-  _exec "rsync" "-rlWuv" "${temp_dir}"/*/* "${tools_path}"
+  _echo "Installing Splinter tools to '$tools_path'" 'a'
+  _exec "rsync" "-rlWuv" "$temp_dir"/*/* "$tools_path"
 
   _echo "Removing temporary files" 'a'
-  _exec "rm" "-rf" "${temp_dir}"
+  _exec "rm" "-rf" "$temp_dir"
 
   _echo "Tools updated successfully!" 'r'
 }
 
 function update_profiles {
-  if [[ -z "${custom_profiles_repo_account}" ]]; then
+  if [[ -z $custom_profiles_repo_account ]]; then
     _echo "No account name was provided to update the profiles from a repository. Use '-a <account_name>' option" 'e'
     exit 1
   fi
 
-  if [[ "${VERBOSE}" == "no" ]]; then
-    quiet_rsync="yes"
+  if [[ $VERBOSE == 'no' ]]; then
+    quiet_rsync='yes'
   else
     quiet_rsync=""
   fi
-  profile_name="${1}"
-  profile_to_single_out="${profile_name}"
-  if [[ -n "${profile_name//[^.]/}" ]]; then
+  profile_name="$1"
+  profile_to_single_out="$profile_name"
+  if [[ -n ${profile_name//[^.]/} ]]; then
     # isolate the actual profile name located after the `.`
     profile_to_single_out="${profile_name#*"."}"
   fi
 
   target_profile_name="${custom_profiles_repo_account}.${profile_to_single_out}"
-  if [[ -n "${CUSTOM_PROFILES_REPO}" ]]; then
-    repository="${CUSTOM_PROFILES_REPO}"
+  if [[ -n $CUSTOM_PROFILES_REPO ]]; then
+    repository="$CUSTOM_PROFILES_REPO"
   else
     repository="splinter-profiles";
   fi
@@ -360,74 +380,73 @@ function update_profiles {
   _echo "Updating profiles and files from custom repository" 'a'
 
   _echo "Downloading custom profiles into '${temp_dir}/${splinter_profiles_archive}'" 'a'
-  _exec "curl" "-fsSL" "${splinter_profiles_url}" "-o" "${temp_dir}/${splinter_profiles_archive}"
+  _exec "curl" "-fsSL" "$splinter_profiles_url" "-o" "${temp_dir}/${splinter_profiles_archive}"
 
-  _echo "Decompressing custom profiles into '${temp_dir}'" 'a'
-  _exec "unzip" "-qq" "${temp_dir}/${splinter_profiles_archive}" "-d" "${temp_dir}"
+  _echo "Decompressing custom profiles into '$temp_dir'" 'a'
+  _exec "unzip" "-qq" "${temp_dir}/$splinter_profiles_archive" "-d" "$temp_dir"
 
   # Rename each single 'profile' to 'account.profile' format
-  find "${temp_dir}"/* ! -path "*files" "-maxdepth" "1" "-mindepth" "1" -type directory -exec sh -c 'mv $2 "$(dirname $2)/$1.$(basename $2)"' -- "${custom_profiles_repo_account}" {} \;
+  find "$temp_dir"/* ! -path "*files" "-maxdepth" "1" "-mindepth" "1" -type directory -exec sh -c 'mv $2 "$(dirname $2)/$1.$(basename $2)" ' -- "$custom_profiles_repo_account" {} \;
 
-  if [[ "${profile_to_single_out}" != "" ]]; then
+  if [[ $profile_to_single_out != '' ]]; then
 
-    temp_profilepath="$(find "${temp_dir}" -type directory -name "${target_profile_name}")"
+    temp_profilepath="$(find "$temp_dir" -type directory -name "$target_profile_name")"
 
-    if [[ -d "${temp_profilepath}" ]];then
-      _echo "Installing custom profile '${target_profile_name}' to '${profiles_path}'" 'a'
-      # _exec "cp" "-a" "${temp_profilepath}" "${profiles_path}/${target_profile_name}"
-      _exec "rsync" "-rlWuv${quiet_rsync}" "--delete" "--exclude" "${exclude_dir}" "${temp_profilepath}" "${profiles_path}/"
+    if [[ -d $temp_profilepath ]];then
+      _echo "Installing custom profile '$target_profile_name' to '$profiles_path'" 'a'
+      _exec "rsync" "-rlWuv${quiet_rsync}" "--delete" "--exclude" "$exclude_dir" "$temp_profilepath" "${profiles_path}/"
     else
-      _echo "No profile '${target_profile_name}' found in '${splinter_profiles_url}'" 'e'
+      _echo "No profile '$target_profile_name' found in '$splinter_profiles_url'" 'e'
       exit 1
     fi
   else
-    _echo "Installing custom profiles to '${profiles_path}'" 'a'
-    _exec "rsync" "-rlWuv${quiet_rsync}" "--exclude" "${exclude_dir}" "${temp_dir}"/*/* "${profiles_path}"
+    _echo "Installing custom profiles to '$profiles_path'" 'a'
+    _exec "rsync" "-rlWuv${quiet_rsync}" "--exclude" "$exclude_dir" "$temp_dir"/*/* "$profiles_path"
   fi
 
-  _echo "Installing custom files to '${files_path}'" 'a'
-  _exec "rsync" "-rlWuv${quiet_rsync}" "${temp_dir}"/*/files/* "${files_path}"
+  _echo "Installing custom files to '$files_path'" 'a'
+  _exec "rsync" "-rlWuv$quiet_rsync" "$temp_dir"/*/files/* "$files_path"
 
   _echo "Removing temporary files" 'a'
-  _exec "rm" "-rf" "${temp_dir}"
+  _exec "rm" "-rf" "$temp_dir"
 
   _echo "Profiles updated successfully!" 'r'
 }
 
 function check_install_path_permissions {
   current_path="$(pwd -P)"
-  third_level_dir=$(echo "${current_path}" | cut -d'/' -f-4)
-  dir_stats=$(stat -f '%N %g %p' "${third_level_dir}")
-  read -ra DIR_STATS <<< "${dir_stats}"
+  third_level_dir=$(echo "$current_path"| cut -d'/' -f-4)
+  dir_stats=$(stat -f '%N %g %p' "$third_level_dir")
+  read -ra DIR_STATS <<< "$dir_stats"
   dir_name="${DIR_STATS[0]}"
   dir_group_id="${DIR_STATS[1]}"
   dir_pemissions="${DIR_STATS[2]:(-3)}"
   dir_group_pemissions="${DIR_STATS[2]:(-2):1}"
 
-  if [[ "${current_path}" == "${HOME}"* ]]; then
+  if [[ $current_path == "$HOME" ]]; then
     _echo 'You are running this script within your home directory' 'w'
     _echo 'Ansible might fail if your home directories are protected' 'w'
     _echo "(not allowing group memebers to 'read' AND 'exec' them)" 'w'
     _echo "Checking the permissions on the containing dir" 'a'
-    _echo "DIR_NAME: ${dir_name}"
-    _echo "dir_group_id: ${dir_group_id}"
-    _echo "DIR_PEMISSIONS: ${dir_pemissions}"
-    if [[ "${staff_guid}" != "${dir_group_id}" ]]; then
-      _echo "The '${dir_name}' group is not 'staff(${staff_guid})'" 'w'
-    elif [[ "${dir_group_pemissions}" -lt "5" || "${dir_group_pemissions}" -eq "6" ]]; then
-      _echo "'${dir_name}' does NOT allow the 'staff' group to 'read' AND 'exec'" 'w'
+    _echo "DIR_NAME: $dir_name"
+    _echo "dir_group_id: $dir_group_id"
+    _echo "DIR_PEMISSIONS: $dir_pemissions"
+    if [[ $staff_guid != "$dir_group_id" ]]; then
+      _echo "The '$dir_name' group is not 'staff($staff_guid)'" 'w'
+    elif [[ $dir_group_pemissions -lt 5 || $dir_group_pemissions -eq 6 ]]; then
+      _echo "'$dir_name' does NOT allow the 'staff' group to 'read' AND 'exec'" 'w'
       _echo "(this might lead to issues during the execution of some Ansible tasks)" 'w'
-      _echo "Adding POSIX 'g+rx' permissions to ${third_level_dir}" 'a'
-      _exec "chmod" "g+rx" "${third_level_dir}"
-      export ORIGINAL_DIR_PEMISSIONS="${dir_pemissions}"
-      export THIRD_LEVEL_DIR="${third_level_dir}"
+      _echo "Adding POSIX 'g+rx' permissions to $third_level_dir" 'a'
+      _exec "chmod" "g+rx" "$third_level_dir"
+      export ORIGINAL_DIR_PEMISSIONS="$dir_pemissions"
+      export THIRD_LEVEL_DIR="$third_level_dir"
     fi
-    if [[ "${quiet}" == "no" ]]; then
-      _echo "Pausing for ${pause_seconds} seconds for you to read the above message..." 'a'
+    if [[ $quiet == 'no' ]]; then
+      _echo "Pausing for $pause_seconds seconds for you to read the above message..." 'a'
       printf ">>>>>>>>> "
       for ((i=1; i<=pause_seconds; i++)); do
         # running the countdown before resuming operations
-        printf "..%s" "${i}"
+        printf "..%s" "$i"
         sleep 1
       done
       printf "\n" # add newline after the countdown
@@ -436,33 +455,33 @@ function check_install_path_permissions {
 }
 
 function restore_path_permissions {
-  if [ -n "${ORIGINAL_DIR_PEMISSIONS}" ] && [ -n "${THIRD_LEVEL_DIR}" ]; then
-    _echo "Restoring original permissions '${ORIGINAL_DIR_PEMISSIONS}' to the directory '${THIRD_LEVEL_DIR}'" 'a'
-    chmod "${ORIGINAL_DIR_PEMISSIONS}" "${THIRD_LEVEL_DIR}"
+  if [[ -n $ORIGINAL_DIR_PEMISSIONS ]] && [[ -n $THIRD_LEVEL_DIR ]]; then
+    _echo "Restoring original permissions '$ORIGINAL_DIR_PEMISSIONS' to the directory '$THIRD_LEVEL_DIR'" 'a'
+    chmod "$ORIGINAL_DIR_PEMISSIONS" "$THIRD_LEVEL_DIR"
   fi
 }
 
 function retrieve_profile {
-  requested_profile="${1}"
-  _echo "profiles_path: ${profiles_path}"
-  _echo "requested_profile: ${requested_profile}"
-  if [ -z "${requested_profile}" ]; then
+  requested_profile="$1"
+  _echo "profiles_path: $profiles_path"
+  _echo "requested_profile: $requested_profile"
+  if [[ -z $requested_profile ]]; then
     _echo "No profile name has been provided" 'e'
     exit 1
-  elif [[ -d "${profiles_path}/${requested_profile}" ]] && [[ "${action}" != "update" ]]; then
-    _echo "The profile '${requested_profile}' is already installed"
+  elif [[ -d ${profiles_path}/${requested_profile} ]] && [[ $action != 'update' ]]; then
+    _echo "The profile '$requested_profile' is already installed"
   else
-    if [[ -n "${requested_profile//[^.]/}" ]]; then
+    if [[ -n ${requested_profile//[^.]/} ]]; then
       # if the profile name is contains a '.'
       #we just talke the first part of the name as the git repo custom_profiles_repo_account
       custom_profiles_repo_account="${requested_profile%"."*}"
     fi
 
-    if [[ -n "${custom_profiles_repo_account}" ]]; then
+    if [[ -n $custom_profiles_repo_account ]]; then
       eval update_profiles "${requested_profile}"
     else
-      [[ "${action}" != "update" ]] && _echo "The profile '${requested_profile}' does not exists locally" 'e'
-      _echo "No account name was provided to fetch '${requested_profile}' from a repository. Use '-a <account_name>' option" 'e'
+      [[ $action != 'update' ]] && _echo "The profile '$requested_profile' not found in '$profiles_path'" 'e'
+      _echo "No account name was provided to fetch '$requested_profile' from a repository. Use '-a <account_name>' option" 'e'
       exit 1
     fi
   fi
@@ -473,12 +492,12 @@ function enable_passwordless_sudo {
   if sudo -n true 2>/dev/null; then
     _echo "Passwordless sudo seems to be already enabled"
   else
-    if [ -n "${ANSIBLE_BECOME_PASS}" ]; then
+    if [[ -n "$ANSIBLE_BECOME_PASS" ]]; then
       sudo_stdin='--stdin'
     fi
     # Enable passwordless sudo for the provisioning
     _echo "Enabling passwordless sudo for the provisioning" 'a'
-    echo "${ANSIBLE_BECOME_PASS}" | sudo "${sudo_stdin}" sed -i -e "s/^%admin (.*)ALL.*/%admin ALL=(ALL) NOPASSWD: ALL/" /etc/sudoers >/dev/null 2>&1
+    echo "$ANSIBLE_BECOME_PASS" | sudo "$sudo_stdin" sed -i -e "s/^%admin (.*)ALL.*/%admin ALL=(ALL) NOPASSWD: ALL/" /etc/sudoers > /dev/null 2>&1
   fi
 }
 
@@ -494,13 +513,13 @@ function disable_passwordless_sudo {
 
 function install_pip_dependencies {
   pip_show_grep_filter='Version'  # 'Name\|Version\|Location' - it's a grep filter
-  for pip_dependecy in ${pip_dependecies}; do
-    if ! pip show "${pip_dependecy}" >/dev/null 2>&1; then
-      _echo "${pip_dependecy} not installed" w
+  for pip_dependecy in $pip_dependecies; do
+    if ! pip show "$pip_dependecy" > /dev/null 2>&1; then
+      _echo "$pip_dependecy not installed" w
       eval "install_pip_${pip_dependecy}"
     else
-      dep_version=$(pip show "${pip_dependecy}" | grep "${pip_show_grep_filter}")
-      _echo "${pip_dependecy} ${dep_version} is installed "
+      dep_version=$(pip show "$pip_dependecy" | grep "$pip_show_grep_filter")
+      _echo "$pip_dependecy: $dep_version is installed "
     fi
   done
 }
@@ -508,36 +527,36 @@ function install_pip_dependencies {
 function install_brew {
   if ! command -v "brew" >/dev/null 2>&1; then
     _echo "Installing Homebrew" 'a'
-    /bin/bash -c "$(curl -fsSL ${homebrew_installer_url})" < /dev/null
+    /bin/bash -c "$(curl -fsSL $homebrew_installer_url)" < /dev/null
   else
     tool_version=$(command -v "brew")
-    _echo "Homebrew ${tool_version} is installed"
+    _echo "Homebrew $tool_version} is installed"
   fi
 
 }
 
 function install_conda {
   conda_package_path="${files_path}/${conda_package_name}"
-  if [[ "${reinstall_conda}" == "yes" ]];then
-    if [[ -f "${conda_package_path}" ]]; then
-      _echo "Removing old Miniconda Python package '${conda_package_path}'" 'a'
+  if [[ $reinstall_conda == 'yes' ]];then
+    if [[ -f $conda_package_path ]]; then
+      _echo "Removing old Miniconda Python package '$conda_package_path'" 'a'
       _exec "rm" "${conda_package_path}"
     fi
-    if [[ -d "${conda_path}" ]]; then
-      _echo "Removing old Miniconda Python directory '${conda_path}'" 'a'
+    if [[ -d $conda_path ]]; then
+      _echo "Removing old Miniconda Python directory '$conda_path'" 'a'
       _exec "rm" "-rf" "${conda_path}"
     fi
   fi
-  if [[ ! -d "${conda_path}/bin" ]];then
-    if [[ ! -f "${conda_package_path}" ]];then
-      _echo "Downloading Miniconda Python package to '${conda_package_path}'" 'a'
-      _exec "curl" "-fsSL" "${conda_package_url}" "-o" "${conda_package_path}"
+  if [[ ! -d ${conda_path}/bin ]];then
+    if [[ ! -f $conda_package_path ]];then
+      _echo "Downloading Miniconda Python package to '$conda_package_path'" 'a'
+      _exec "curl" "-fsSL" "$conda_package_url" "-o" "$conda_package_path"
     fi
-    _echo "Unpacking Miniconda Python package to '${conda_path}' directory" 'a'
-    _exec "mkdir" "-p" "${conda_path}"
-    _exec "tar" "-xzf" "${conda_package_path}" "-C" "${conda_path}"
+    _echo "Unpacking Miniconda Python package to '$conda_path' directory" 'a'
+    _exec "mkdir" "-p" "$conda_path"
+    _exec "tar" "-xzf" "$conda_package_path" "-C" "$conda_path"
   else
-    _echo "Miniconda Python package is already installed in '${conda_path}' directory" 'i'
+    _echo "Miniconda Python package is already installed in '$conda_path' directory" 'i'
   fi
 }
 
@@ -558,20 +577,20 @@ function activate_conda {
 
   # Fix issues with SSL Certificates
   cert_path=$(python -m certifi)
-  export SSL_CERT_FILE="${cert_path}"
-  export REQUESTS_CA_BUNDLE="${cert_path}"
-  _echo "SSL_CERT_FILE: ${cert_path}"
-  _echo "REQUESTS_CA_BUNDLE: ${cert_path}"
+  export SSL_CERT_FILE="$cert_path"
+  export REQUESTS_CA_BUNDLE="$cert_path"
+  _echo "SSL_CERT_FILE: $cert_path"
+  _echo "REQUESTS_CA_BUNDLE: $cert_path"
 
 }
 
 function activate_pyenv {
   _echo "USING PROJECT'S OWN PYENV PYTHON VERSION" 'r'
-  export PYENV_ROOT="${pyenv_dir}"
+  export PYENV_ROOT="$pyenv_dir"
   export PATH="${PYENV_ROOT}/bin:${PATH}"
-  export PYENV_VERSION="${desired_python_version}"
-  python_root="${pyenv_dir}"
-  _echo "PYENV_ROOT: ${PYENV_ROOT}"
+  export PYENV_VERSION="$desired_python_version"
+  python_root="$pyenv_dir"
+  _echo "PYENV_ROOT: $PYENV_ROOT"
   _echo "PYTHON_VERSION: $(pyenv version)"
 }
 
@@ -588,41 +607,41 @@ function install_pyenv {
     _exec "brew" "install" "pyenv"
   else
     tool_version=$(command -v "pyenv")
-    _echo "Pyenv ${tool_version} is installed"
+    _echo "Pyenv $tool_version is installed"
   fi
 }
 
 function install_pip_ansible {
-  _echo "PIP - Installing Ansible ${desired_ansible_version}" 'a'
+  _echo "PIP - Installing Ansible $desired_ansible_version" 'a'
   _exec "pip" "install" "ansible==${desired_ansible_version}"
 }
 
 function install_pip_wheel {
-  _echo "PIP - Installing Wheel ${desired_wheel_version}" 'a'
+  _echo "PIP - Installing Wheel $desired_wheel_version" 'a'
   _exec "pip" "install" "wheel==${desired_wheel_version}"
 }
 
 function install_pip_passlib {
-  _echo "PIP - Installing passlib ${desired_passlib_version}" 'a'
+  _echo "PIP - Installing passlib $desired_passlib_version" 'a'
   _exec "pip" "install" "passlib==${desired_passlib_version}"
 }
 
 function install_pyenv_python {
-  if [[ "${reinstall_pyenv}" == "yes" ]]; then
-    if [[ -d "${pyenv_dir}" ]]; then
-      _echo "Removing old Pyenv Python directory '${pyenv_dir}'" 'a'
-      _exec "rm" "-rf" "${pyenv_dir}"
+  if [[ $reinstall_pyenv == 'yes' ]]; then
+    if [[ -d $pyenv_dir ]]; then
+      _echo "Removing old Pyenv Python directory '$pyenv_dir'" 'a'
+      _exec "rm" "-rf" "$pyenv_dir"
     fi
   fi
-  if ! pyenv versions | grep "${desired_python_version}" >/dev/null 2>&1; then
+  if ! pyenv versions | grep "$desired_python_version" > /dev/null 2>&1; then
     # •	install python3 with pyenv
-    _echo "Installing Pyenv Python ${desired_python_version}" 'a'
-    _exec "pyenv" "install" "${desired_python_version}"
+    _echo "Installing Pyenv Python $desired_python_version" 'a'
+    _exec "pyenv" "install" "$desired_python_version"
     _exec "ln" "-fs" "shims" "${pyenv_dir}/bin"
-    _echo "Rehashing Pyenv Python shims ${desired_python_version}" 'a'
+    _echo "Rehashing Pyenv Python shims $desired_python_version" 'a'
     _exec "pyenv" "rehash"
   else
-    _echo "Pyenv Python ${desired_python_version} is already installed"
+    _echo "Pyenv Python $desired_python_version is already installed"
   fi
 }
 
@@ -643,14 +662,14 @@ function install_ansible {
 
 function install_ansible_galaxy_roles {
 
-  if [ "${verbose}" == "yes" ];then
+  if [[ $verbose == 'yes' ]];then
     dev_output="/dev/stdout"
   else
     dev_output="/dev/null"
   fi
-  ansible_galaxy_command="ansible-galaxy role install -r '${ansible_requirements}' -p '${ansible_roles}' ${ansible_force_roles_update}"
+  ansible_galaxy_command="ansible-galaxy role install -r '$ansible_requirements' -p '$ansible_roles' $ansible_force_roles_update"
   _echo "Installing Ansible Galaxy roles" 'a'
-  eval "${ansible_galaxy_command}" 1> "${dev_output}"
+  eval "$ansible_galaxy_command" 1> "$dev_output"
 }
 
 function run_ansible_playbook {
@@ -659,13 +678,13 @@ function run_ansible_playbook {
   # this is not wrapped with `execute` because
   # we want the script to keep going and run the cleanup tasks
   # even if an error occur during Ansible execution
-  ansible-playbook "${ansible_playbook}" -i "${ansible_inventory}"
+  ansible-playbook "$ansible_playbook" -i "$ansible_inventory"
 }
 
 function ask_for_ansible_sudo_password {
   # temporarely store the password in cleartext in the environment
   # so it can be used by Ansible throughout the whole execution
-  if [ -z "${ANSIBLE_BECOME_PASS}" ]; then
+  if [[ -z $ANSIBLE_BECOME_PASS ]]; then
         _echo "Requesting the admin password to be used for 'sudo' throughout the deployment process" 'a'
         read -r -p ">>>>>>>>> Insert the current user password: " -s ansible_become_pass
         export ANSIBLE_BECOME_PASS="${ansible_become_pass}"
@@ -676,23 +695,23 @@ function ask_for_ansible_sudo_password {
 }
 
 function setup_python {
-  if [ "${python_provider}" == "pyenv" ];then
+  if [[ $python_provider == 'pyenv' ]];then
     eval install_pyenv
     eval activate_pyenv
     eval install_pyenv_python
-  elif [ "${python_provider}" == "conda" ];then
+  elif [[ $python_provider == 'conda' ]];then
     eval install_conda
     eval activate_conda
   else
-    _echo "Unknow python provider '${python_provider}'" 'e'
+    _echo "Unknow python provider '$python_provider'" 'e'
     exit 1
   fi
   export PYTHON_PROVIDER="${python_provider}"
-  _echo "PYTHON_PROVIDER: ${PYTHON_PROVIDER}"
+  _echo "PYTHON_PROVIDER: $PYTHON_PROVIDER}"
   export PYTHON_ROOT="${python_root}"
-  _echo "PYTHON_ROOT: ${PYTHON_ROOT}"
+  _echo "PYTHON_ROOT: $PYTHON_ROOT}"
   export PIP_CONFIG_FILE="${pip_config_file}"
-  _echo "PIP_CONFIG_FILE: ${PIP_CONFIG_FILE}"
+  _echo "PIP_CONFIG_FILE: $PIP_CONFIG_FILE}"
 }
 
 function cleanup_tasks {
@@ -701,14 +720,14 @@ function cleanup_tasks {
 }
 
 function list_profiles {
-  _echo "${profiles_path}" 'r' 1>&2
-  _exec "find" "${profiles_path}"  "-maxdepth" "1" "-mindepth" "1" "-type" "directory" "-exec" "basename" "{}" "\\" ";"
+  _echo "$profiles_path" 'r' 1>&2
+  _exec "find" "$profiles_path" "-maxdepth" "1" "-mindepth" "1" "-type" "directory" "-exec" "basename" "{" "\\" ";"
 }
 
 function install_dependencies {
   eval install_brew
   eval setup_python
-  if [[ "${reinstall_conda}" == "yes" ]] || [[ "${reinstall_pyenv}" == yes ]]; then
+  if [[ $reinstall_conda == 'yes' ]] || [[ $reinstall_pyenv == 'yes' ]]; then
     eval upgrade_pip
   fi
   eval install_pip_dependencies
@@ -722,8 +741,8 @@ function provision {
   eval ask_for_ansible_sudo_password
   eval enable_passwordless_sudo
   eval check_install_path_permissions
-  [[ -n "${SPLINTER_BASE_PROFILE}" ]] && eval retrieve_profile "${SPLINTER_BASE_PROFILE}"
-  [[ -n "${SPLINTER_ROLE_PROFILE}" ]] && eval retrieve_profile "${SPLINTER_ROLE_PROFILE}"
+  [[ -n $SPLINTER_BASE_PROFILE ]] && eval retrieve_profile "$SPLINTER_BASE_PROFILE"
+  [[ -n $SPLINTER_ROLE_PROFILE ]] && eval retrieve_profile "$SPLINTER_ROLE_PROFILE"
   eval install_dependencies
   eval run_ansible_playbook
   eval cleanup_tasks
@@ -734,18 +753,18 @@ function provision {
 function action_list {
   action_option=$1; # fetch the action's option
   # Process package options
-  case ${action_option} in
+  case $action_option in
     profiles)
       quiet="yes"
       action_requested="list_profiles"
       ;;
     '')
-      echo "[Error] Missing option for action '${action}'" 1>&2
+      echo "[Error] Missing option for action '$action'" 1>&2
       eval show_usage 1>&2
       exit 1
       ;;
     *)
-      echo "[Error] Incorrect option '${action_option}' for action '${action}'" 1>&2
+      echo "[Error] Incorrect option '$action_option' for action '$action'" 1>&2
       eval show_usage 1>&2
       exit 1
       ;;
@@ -753,8 +772,8 @@ function action_list {
 }
 
 function action_update {
-  action_option="${1}";# fetch the action's option
-  case ${action_option} in
+  action_option="$1"; # fetch the action's option
+  case $action_option in
     deps|dependencies)
       action_message="Will reinstall all the dependencies (Python and Ansible Galaxy roles)"
       ansible_force_roles_update='--force'
@@ -778,7 +797,7 @@ function action_update {
       shift
       action_message="Will update the custom profiles"
       while getopts ":a:b:g:r:" profiles_setting; do
-        case "${profiles_setting}" in
+        case "$profiles_setting" in
           a)
             custom_profiles_repo_account="${OPTARG}"
             ;;
@@ -789,12 +808,12 @@ function action_update {
             requested_profile="${OPTARG}"
             ;;
           \?)
-            echo "[Error] Action '${action} ${action_option}': Invalid setting '-${OPTARG}'" 1>&2
+            echo "[Error] Action '$action $action_option': Invalid setting '-${OPTARG}'" 1>&2
             eval show_usage 1>&2
             exit 1
             ;;
           :)
-            echo "[Error] Action '${action} ${action_option}': setting '-${OPTARG}' is missing an argument" 1>&2
+            echo "[Error] Action '$action $action_option': setting '-${OPTARG}' is missing an argument" 1>&2
             eval show_usage 1>&2
             exit 1
             ;;
@@ -803,14 +822,14 @@ function action_update {
 
       shift $(( OPTIND - 1 ))
 
-      if [[ -n "${*}" ]];then
+      if [[ -n $* ]];then
         # if it is NOT empty it means it interrupted before evaluating all the parameters
         # becaue it encountered a unexpected param or arg
-        echo "[Error] Provided unknow parameter: ${1}" 1>&2
+        echo "[Error] Provided unknow parameter: $1" 1>&2
         eval show_usage 1>&2
         exit 1
       fi
-      if [[ -n "${requested_profile}" ]];then
+      if [[ -n $requested_profile ]];then
         action_requested="retrieve_profile"
         action_requested_options="${requested_profile}"
       else
@@ -823,20 +842,20 @@ function action_update {
       action_requested="install_dependencies"
       ;;
     tools)
-      action_message="Will update '${my_name}' tools"
+      action_message="Will update '$my_name' tools"
       action_requested="update_tools"
       ;;
     self|auto|splinter)
-      action_message="Will update '${my_name}'"
+      action_message="Will update '$my_name'"
       action_requested="update_splinter"
       ;;
     '')
-      echo "[Error] Missing option for action '${action}'" 1>&2
+      echo "[Error] Missing option for action '$action'" 1>&2
       eval show_usage 1>&2
       exit 1
       ;;
     *)
-      echo "[Error] Incorrect option '${action_option}' for action '${action}'" 1>&2
+      echo "[Error] Incorrect option '$action_option' for action '$action'" 1>&2
       eval show_usage 1>&2
       exit 1
       ;;
@@ -845,7 +864,7 @@ function action_update {
 
 function action_provision {
   while getopts ":a:c:b:f:g:h:p:r:t:u:qv" action_setting; do
-    case "${action_setting}" in
+    case "$action_setting" in
       a)
         custom_profiles_repo_account="${OPTARG}"
         ;;
@@ -884,12 +903,12 @@ function action_provision {
         quiet='no'
         ;;
       \?)
-        echo "[Error] Action '${action}': Invalid setting '-${OPTARG}'" 1>&2
+        echo "[Error] Action '$action': Invalid setting '-${OPTARG}'" 1>&2
         eval show_usage 1>&2
         exit 1
         ;;
       :)
-        echo "[Error] Action '${action}': setting '-${OPTARG}' is missing an argument" 1>&2
+        echo "[Error] Action '$action': setting '-${OPTARG}' is missing an argument" 1>&2
         eval show_usage 1>&2
         exit 1
         ;;
@@ -897,10 +916,10 @@ function action_provision {
   done
 
   shift $(( OPTIND - 1 ))
-  if [[ -n "${*}" ]];then
+  if [[ -n $* ]];then
     # if it is NOT empty it means it interrupted before evaluating all the parameters
     # becaue it encountered a unexpected param or arg
-    echo "[Error] Provided unknow parameter: ${1}" 1>&2
+    echo "[Error] Provided unknow parameter: $1" 1>&2
     eval show_usage 1>&2
     exit 1
   fi
@@ -909,9 +928,9 @@ function action_provision {
 
 function main {
   quiet='no'
-  case "${1}" in
+  case "$1" in
     -e|--env)
-      python_provider="${2}"
+      python_provider="$2"
       shift 2
       ;;
     --help)
@@ -923,23 +942,23 @@ function main {
       exit 0
       ;;
     -*)
-      echo "[Error] Invalid option: ${1}" 1>&2
+      echo "[Error] Invalid option: $1" 1>&2
       eval show_usage 1>&2
       exit 1
       ;;
   esac
 
-  action="${1}"; shift
-  case "${action}" in
+  action="$1"; shift
+  case "$action" in
     list)
-      eval action_list "${1}"
+      eval action_list "$1"
       ;;
     update)
       verbose='yes' # `update` will always be verbose
-      eval action_update "${@}"
+      eval action_update "$@"
       ;;
     provision)
-      eval action_provision "${@}"
+      eval action_provision "$@"
       ;;
     '')
       echo "[Error] Missing action" 1>&2
@@ -954,12 +973,12 @@ function main {
   esac
 
   eval setup_environment
-  [[ ${quiet} == "no" ]] && eval show_title
+  [[ $quiet == 'no' ]] && eval show_title
+  _echo "action + option: $action $action_option"
   eval show_envs
-  _echo "action + option: ${action} ${action_option}"
-  [[ -n "${action_message}" ]] && _echo "${action_message}" 'w'
-  [[ -n "${action_requested}" ]] && eval "${action_requested}" "${action_requested_options}"
+  [[ -n $action_message ]] && _echo "$action_message" 'w'
+  [[ -n $action_requested ]] && eval "$action_requested" "$action_requested_options"
   exit 0
 }
 
-main "${@}"
+main "$@"

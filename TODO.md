@@ -68,9 +68,9 @@
   bash dowloads it '<githubuser>-.<profilename>' (if not already existing)
 * [x] splinter list profiles doesn't work
 
-* [ ] move splinter configurations to splinter.cfg
-  * [ ] look for the config file in the current directory and ~/splinter and ~/Downloads/splinter
+* [x] move splinter configurations to splinter.cfg
   * [x] configfile type: ini
+  * [x] look for the config file in the current directory
   * [x] replace config-example.yml from `install` script with `splinter-example.conf`
   * [x] move all the parameters from config.yml to splinter.cfg
   * [x] load all the values as environment variables, if they are not set by the cli yet

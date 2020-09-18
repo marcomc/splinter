@@ -104,7 +104,7 @@ __Ansible playbook__:
 * Install SetApp applications store (from which you can install additional apps)
 * Run custom post-provision tasks
 
-__You can can chose which of the above modules to run customising the the modules.yml file in your profiles__
+__You can can chose which of the above modules to run customising the the 'modules.yml' file in your profiles__
 
 ## Python
 
@@ -167,7 +167,7 @@ To choose which python environment to run:
 __On the old machine:__
 1. preconfigure Splinter:
   * define your `profiles`.
-  * personalise `config.yml`.
+  * personalise `splinter.cfg`.
 
 __On the new machine:__
 2.  Login in the new machine as the company admin account, the first account you create in the machine, *not the new employee user account* (that will be created by this script).
@@ -185,40 +185,69 @@ __On the new machine:__
 
 The required configuration settings are:
 
-    verbose:                     yes
-    base_profile:                "my-base-profile"
-    role_profile:                "my-role-profile"
-    create_new_user:             no
-    new_user_username:           "newuser"
-    new_user_fullname:           "New User"
-    new_user_password_cleartext: "password"
-    target_user_id:              "newuser"
-    computer_name:               "My-New-Mac"
+      verbose="no"
+      base_profile="default"
+      ; this is the profile to be used as base of all your profiles.
+      ; The project already includes one default profile set that you can customise
+      ; you can rename and copy the default profile and have multiple different `default` profiles
 
-See the [content of config.yml](config.yml) for a detailed description of the parameters.
+      custom_profiles_repo="my-splinter-profiles"
+      ; only necessary if the repository is NOT called `splinter-profiles`
+
+      custom_profiles_repo_account="my_github_username"
+      ; not necessary if using local profiles or if specifying the profile names with the long format `account.profile`
+
+      role_profile="my_github_username.test"
+      ; You can leave this `empty` to use only the `default` profile settings.
+      ; Custom setup profiles can be created inside the './profiles' directory
+      ; You can have many different profile to override specific settings of the `default` profile
+
+      new_user_username="newuser"
+      ; omit if you do not want to create any user
+      ; name of the new user to be created if you want to create one
+      ; will be ignored if `create_new_user` is set to `no`
+
+      new_user_fullname="MarcoMC test"
+      ; full name of the new user
+      ; will be ignored if `create_new_user` is set to `no`
+
+      new_user_password_cleartext="password"
+      ; will be ignored if `create_new_user` is set to `no`
+
+      target_user_username="newuser"
+      ; The user to which the configuration will be applied
+      ; if commented or left `empty` the target user will be the (current) user that is running the provisioning
+
+      computer_name="My-New-Mac"
+      ; DO NOT ADD MORE OPTIONS HERE
+      ; ANY OTHER OPTION IN THIS FILE WILL BE OVERRIDDEN
+      ; BY THE PROFILE SETTINGS IN the `./profiles/*` directories
+
+
+See the [content of splinter.cfg](splinter.cfg) for a detailed description of the parameters.
 
 Splinter supports 3 levels of configurations listed here from least to most important:
 
-1. `config.yml` - __optional__:
+1. `splinter.cfg` - __optional__:
 
 
-2. `<custom_config>.yml` - __optional__:
+2. `<custom_config>.cfg` - __optional__:
 
     you can have as many custom config YAML file with different sets of settings in case you need different kind of setup.
 
     To load your custom config file run:
 
-            splinter provision -c <custom_config>.yml
+            splinter provision -c <custom_config>.cfg
 
-    This will __completely override__ the values in `config.yml` (if present).
+    This will __completely override__ the values in `splinter.cfg` (if present).
 
 3. command line parameters:
 
    You can pass the above values as command line parameters to `splinter`
 
-        splinter provision -v -u newuser -p password -f "New User" -b my-base-profile -r my-role-profile -h My-New-Mac -c <custom_config>.yml
+        splinter provision -v -u newuser -p password -f "New User" -b my-base-profile -r my-role-profile -h My-New-Mac -c <custom_config>.cfg
 
-   you can specify only some of those parameters and they will override any value contained in `config.yml` or `<custom_config>.yml`
+   you can specify only some of those parameters and they will override any value contained in `splinter.cfg` or `<custom_config>.cfg`
 
    > when using the command line options `create_new_user` is assumed as `yes` if a `username` is provided
 
