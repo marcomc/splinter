@@ -102,16 +102,19 @@ function show_version {
 }
 
 function show_title {
+printf "\e[1;39m"
   cat << 'EOF'
    _______  _____         _____ __   _ _______ _______  ______
    |______ |_____] |        |   | \  |    |    |______ |_____/
    ______| |       |_____ __|__ |  \_|    |    |______ |    \_
+EOF
+printf "\e[0;39m"
+cat << 'EOF'
         2020 (c) MarcMC - github.com/marcomc/splinter
 An opinionated provisioning tool for macOS automated with Ansible
 
 EOF
 }
-
 
 function show_usage {
 printf  "usage: %s [option] action [object] [settings]\n" "${my_name}"
