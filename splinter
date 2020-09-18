@@ -163,11 +163,8 @@ EOF
 
 function locate_config_file {
     if [[ "${splinter_config_file}" != "$(basename ${splinter_config_file})" ]]; then
-      # if the config file has been declared WITH a path
-      # we assume that its path is the application config dir
-      # expand the config file path
+      # if the config file has been declared WITH a path we expand the path
       splinter_config_file="$(realpath ${splinter_config_file})"
-      splinter_config_file_dir="$(dirname "${splinter_config_file}")"
     else
       if [[ -f "$(pwd)/${splinter_config_file}" ]]; then
         # if the config file has been declared WITHOUT a path
