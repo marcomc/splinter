@@ -66,23 +66,19 @@
 * [x] add support for profiles from git repos
   profile_name: <githubuser>.<profilename> ( github.com/<githubuser>/splinter-profiles/<profilename>/)
   bash dowloads it '<githubuser>-.<profilename>' (if not already existing)
+* [x] splinter list profiles doesn't work
 
-* [ ] move splinter configurations to splinter.conf
-  * [ ] configfile type: ini
+* [ ] move splinter configurations to splinter.cfg
   * [ ] look for the config file in the current directory and ~/splinter and ~/Downloads/splinter
-  * [ ] in the configuration file define the value of
-  * [ ] move all the parameters from config.yml to splinter.conf
-  * [ ] load all the values as environment variables, if they are not set by the cli yet
-  * [ ] splinter will take care of loading these basic settings and not Ansible anymore
-  * [ ] this will allow to to remove from playbook.yml:
+  * [x] configfile type: ini
+  * [x] replace config-example.yml from `install` script with `splinter-example.conf`
+  * [x] move all the parameters from config.yml to splinter.cfg
+  * [x] load all the values as environment variables, if they are not set by the cli yet
+  * [x] splinter will take care of loading these basic settings and not Ansible anymore
+  * [x] this will allow to to remove `vars_files` from playbook.yml:
 
-        vars_files:
-          # Will load ONLY the fist avalilable item of the below list
-          * [
-              "{{ lookup('env','CUSTOM_CONFIG_FILE') if lookup('env','CUSTOM_CONFIG_FILE')|length > 0 else omit }}",
-              "{{ splinter_dir + '/config.yml' }}",
-              '/dev/null'
-            ]
+
+* [ ] BUG: when the config file is placed out of the config dir or the current directory is not the config dir ansible is not picking up the `ansible.cfg` file it would be good to specify the path to the `cfg` file via an Ansible ENV
 
 * [ ] add a `prepare` action that will download the profile profiles and dependencies and create a DMG file to be deployed for an offline deployment
 
@@ -92,6 +88,8 @@
 
 
 * [ ] find what setting is showing the 'input menu in menu bar' to show the languages
+
+* [ ] BUG: [ACTION..] Disabling passwordless sudo after the provisioning is not actually fixing the sudoers
 
 * [ ] BUG: after setting the taptoClick even if the checkbox is marked properly tapping is not working (tapBehavior), maybe there is some service to restart (but I don't think so), probably there is some other flag somewhere to set
 
