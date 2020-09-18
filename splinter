@@ -424,26 +424,27 @@ function restore_path_permissions {
   fi
 }
 
-function profile_is_available {
+function retrieve_profile {
   requested_profile="${1}"
+  _echo "profiles_path: ${profiles_path}"
+  _echo "requested_profile: ${requested_profile}"
   if [ -z "${requested_profile}" ]; then
-    # if the paramater is empty just keep going
-    # ansible will only load default configs
     _echo "No profile name has been provided" 'e'
     exit 1
-  elif [[ ! -d "${profiles_path}/${requested_profile}" ]]; then
-    # if the profile doesn't exist locally we will try to find it a git repo
-    # take the fist part of the profile nale before the `.`
+  elif [[ -d "${profiles_path}/${requested_profile}" ]] && [[ "${action}" != "update" ]]; then
+    _echo "The profile '${requested_profile}' is already installed"
+  else
     if [[ -n "${requested_profile//[^.]/}" ]]; then
-      # if the profile name is composed (contains a '.')
-      export CUSTOM_PROFILES_ACCOUNT="${requested_profile%"."*}"
+      # if the profile name is contains a '.'
+      #we just talke the first part of the name as the git repo custom_profiles_repo_account
+      custom_profiles_repo_account="${requested_profile%"."*}"
     fi
 
-    if [[ -n "${CUSTOM_PROFILES_ACCOUNT}" ]]; then
-      # if a git account has been provided look for it online
+    if [[ -n "${custom_profiles_repo_account}" ]]; then
       eval update_profiles "${requested_profile}"
     else
-      _echo "The profile '${requested_profile}' does not exist" 'e'
+      [[ "${action}" != "update" ]] && _echo "The profile '${requested_profile}' does not exists locally" 'e'
+      _echo "No account name was provided to fetch '${requested_profile}' from a repository. Use '-a <account_name>' option" 'e'
       exit 1
     fi
   fi
