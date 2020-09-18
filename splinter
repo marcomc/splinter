@@ -707,10 +707,185 @@ function provision {
   eval print_execution_time "${start_time}"
 }
 
+function action_list {
+  action_option=$1; # fetch the action's option
+  # Process package options
+  case ${action_option} in
+    profiles)
+      _echo "${profiles_path}" 'r' 1>&2
+      _exec "find" "${profiles_path}"  "-maxdepth" "1" "-mindepth" "1" "-type" "directory" "-exec" "basename" "{}" "\\" ";"
+      ;;
+    '')
+      echo "[Error] Missing option for action '${action}'" 1>&2
+      eval show_usage 1>&2
+      exit 1
+      ;;
+    *)
+      echo "[Error] Incorrect option '${action_option}' for action '${action}'" 1>&2
+      eval show_usage 1>&2
+      exit 1
+      ;;
+    esac
+}
+
+function action_update {
+  action_option="${1}";# fetch the action's option
+  case ${action_option} in
+    deps|dependencies)
+      action_message="Will reinstall all the dependencies (Python and Ansible Galaxy roles)"
+      ansible_force_roles_update='--force'
+      reinstall_conda='yes'
+      reinstall_pyenv='yes'
+      action_requested="install_dependencies"
+      ;;
+    conda)
+      action_message="Will reinstall the Conda Python environemnt"
+      python_provider="conda"
+      reinstall_conda='yes'
+      action_requested="install_dependencies"
+      ;;
+    pyenv)
+      action_message="Will reinstall the Pyenv Python environemnt"
+      python_provider="pyenv"
+      reinstall_pyenv='yes'
+      action_requested="install_dependencies"
+      ;;
+    profiles)
+      shift
+      action_message="Will update the custom profiles"
+      while getopts ":a:b:g:r:" profiles_setting; do
+        case "${profiles_setting}" in
+          a)
+            custom_profiles_repo_account="${OPTARG}"
+            ;;
+          g)
+            export CUSTOM_PROFILES_REPO="${OPTARG}"
+            ;;
+          b|r)
+            requested_profile="${OPTARG}"
+            ;;
+          \?)
+            echo "[Error] Action '${action} ${action_option}': Invalid setting '-${OPTARG}'" 1>&2
+            eval show_usage 1>&2
+            exit 1
+            ;;
+          :)
+            echo "[Error] Action '${action} ${action_option}': setting '-${OPTARG}' is missing an argument" 1>&2
+            eval show_usage 1>&2
+            exit 1
+            ;;
+        esac
+      done
+
+      shift $(( OPTIND - 1 ))
+
+      if [[ -n "${*}" ]];then
+        # if it is NOT empty it means it interrupted before evaluating all the parameters
+        # becaue it encountered a unexpected param or arg
+        echo "[Error] Provided unknow parameter: ${1}" 1>&2
+        eval show_usage 1>&2
+        exit 1
+      fi
+      if [[ -n "${requested_profile}" ]];then
+        action_requested="retrieve_profile"
+        action_requested_options="${requested_profile}"
+      else
+        action_requested="update_profiles"
+      fi
+      ;;
+    roles|galaxy|ansible)
+      action_message="Will reinstall all the Asnible Galaxy roles"
+      ansible_force_roles_update='--force'
+      action_requested="install_dependencies"
+      ;;
+    tools)
+      action_message="Will update '${my_name}' tools"
+      action_requested="update_tools"
+      ;;
+    self|auto|splinter)
+      action_message="Will update '${my_name}'"
+      action_requested="update_splinter"
+      ;;
+    '')
+      echo "[Error] Missing option for action '${action}'" 1>&2
+      eval show_usage 1>&2
+      exit 1
+      ;;
+    *)
+      echo "[Error] Incorrect option '${action_option}' for action '${action}'" 1>&2
+      eval show_usage 1>&2
+      exit 1
+      ;;
+  esac
+}
+
+function action_provision {
+  while getopts ":a:c:b:f:g:h:p:r:t:u:qv" action_setting; do
+    case "${action_setting}" in
+      a)
+        custom_profiles_repo_account="${OPTARG}"
+        ;;
+      c)
+        splinter_config_file="${OPTARG}"
+        ;;
+      b)
+        export SPLINTER_BASE_PROFILE="${OPTARG}"
+        ;;
+      f)
+        export NEW_USER_FULL_NAME="${OPTARG}"
+        ;;
+      g)
+        export CUSTOM_PROFILES_REPO="${OPTARG}"
+        ;;
+      h)
+        export COMPUTER_HOST_NAME="${OPTARG}"
+        ;;
+      p)
+        export NEW_USER_PASSWORD_CLEARTEXT="${OPTARG}"
+        ;;
+      q)
+        [[ $verbose != 'yes' ]] && quiet='yes'
+        ;;
+      r)
+        export SPLINTER_ROLE_PROFILE="${OPTARG}"
+        ;;
+      t)
+        export TARGET_USER_ID="${OPTARG}"
+        ;;
+      u)
+        export NEW_USER_USERNAME="${OPTARG}"
+        ;;
+      v)
+        verbose='yes'
+        quiet='no'
+        ;;
+      \?)
+        echo "[Error] Action '${action}': Invalid setting '-${OPTARG}'" 1>&2
+        eval show_usage 1>&2
+        exit 1
+        ;;
+      :)
+        echo "[Error] Action '${action}': setting '-${OPTARG}' is missing an argument" 1>&2
+        eval show_usage 1>&2
+        exit 1
+        ;;
+    esac
+  done
+
+  shift $(( OPTIND - 1 ))
+  if [[ -n "${*}" ]];then
+    # if it is NOT empty it means it interrupted before evaluating all the parameters
+    # becaue it encountered a unexpected param or arg
+    echo "[Error] Provided unknow parameter: ${1}" 1>&2
+    eval show_usage 1>&2
+    exit 1
+  fi
+  action_requested="provision"
+}
+
 function main {
-  verbose='no'
   quiet='no'
-  eval set_app_directories
+  # eval set_app_directories
   # Parse options to the `install` command
   case "${1}" in
     -e|--env)
@@ -732,184 +907,17 @@ function main {
       ;;
   esac
 
-  action="${1}";
+  action="${1}"; shift
   case "${action}" in
     list)
-      action_option=$2; # fetch the action's option
-      # Process package options
-      _echo "OPTION: ${action_option}"
-      case ${action_option} in
-        profiles)
-          _echo "${profiles_path}" 'r' 1>&2
-          _exec "find" "${profiles_path}"  "-maxdepth" "1" "-mindepth" "1" "-type" "directory" "-exec" "basename" "{}" "\\" ";"
-          ;;
-        '')
-          echo "[Error] Missing option for action '${action}'" 1>&2
-          eval show_usage 1>&2
-          exit 1
-          ;;
-        *)
-          echo "[Error] Incorrect option '${action_option}' for action '${action}'" 1>&2
-          eval show_usage 1>&2
-          exit 1
-          ;;
-      esac
+      eval action_list "${1}"
       ;;
-    # Parse options to the install sub command
     update)
-      action_option="${2}";# fetch the action's option
-      # Process package options
       verbose='yes' # `update` will always be verbose
-
-      shift
-      case ${action_option} in
-        deps|dependencies)
-          update_message="Will reinstall all the dependencies (Python and Ansible Galaxy roles)"
-          ansible_force_roles_update='--force'
-          reinstall_conda='yes'
-          reinstall_pyenv='yes'
-          eval install_dependencies
-          exit 0
-          ;;
-        conda)
-          update_message="Will reinstall the Conda Python environemnt"
-          python_provider="conda"
-          reinstall_conda='yes'
-          eval install_dependencies
-          exit 0
-          ;;
-        pyenv)
-          update_message="Will reinstall the Pyenv Python environemnt"
-          python_provider="pyenv"
-          reinstall_pyenv='yes'
-          eval install_dependencies
-          exit 0
-          ;;
-        profiles)
-          shift
-          update_message="Will update the custom profiles"
-          while getopts ":a:g:" profiles_option; do
-            case "${profiles_option}" in
-              a)
-                export CUSTOM_PROFILES_ACCOUNT="${OPTARG}"
-                ;;
-              g)
-                export CUSTOM_PROFILES_REPO="${OPTARG}"
-                ;;
-              \?)
-                echo "[Error] Action '${action} ${action_option}': Invalid setting '-${OPTARG}'" 1>&2
-                eval show_usage 1>&2
-                exit 1
-                ;;
-              :)
-                echo "[Error] Action '${action} ${action_option}': setting '-${OPTARG}' is missing an argument" 1>&2
-                eval show_usage 1>&2
-                exit 1
-                ;;
-            esac
-          done
-          shift $(( OPTIND - 1 ))
-          if [[ -n "${*}" ]];then
-            # if it is NOT empty it means it interrupted before evaluating all the parameters
-            # becaue it encountered a unexpected param or arg
-            echo "[Error] Provided unknow parameter: ${1}" 1>&2
-            eval show_usage 1>&2
-            exit 1
-          fi
-          eval update_profiles
-          ;;
-        roles|galaxy|ansible)
-          update_message="Will reinstall all the Asnible Galaxy roles"
-          ansible_force_roles_update='--force'
-          eval install_dependencies
-          exit 0
-          ;;
-        tools)
-          update_message="Will update '${my_name}' tools"
-          eval update_tools
-          exit 0
-          ;;
-        self|auto|splinter)
-          update_message="Will update '${my_name}'"
-          eval update_splinter
-          exit 0
-          ;;
-        '')
-          echo "[Error] Missing option for action '${action}'" 1>&2
-          eval show_usage 1>&2
-          exit 1
-          ;;
-        *)
-          echo "[Error] Incorrect option '${action_option}' for action '${action}'" 1>&2
-          eval show_usage 1>&2
-          exit 1
-          ;;
-      esac
-      _echo "OPTION: ${action_option}"
+      eval action_update "${@}"
       ;;
-    provision )
-      shift
-      while getopts ":a:c:b:f:g:h:p:r:u:qv" action_option; do
-        case "${action_option}" in
-          a)
-            export CUSTOM_PROFILES_ACCOUNT="${OPTARG}"
-            ;;
-          c)
-            export CUSTOM_CONFIG_FILE="${OPTARG}"
-            ;;
-          b)
-            export SPLINTER_BASE_PROFILE="${OPTARG}"
-            ;;
-          f)
-            export NEW_USER_FULL_NAME="${OPTARG}"
-            ;;
-          g)
-            export CUSTOM_PROFILES_REPO="${OPTARG}"
-            ;;
-          h)
-            export COMPUTER_HOST_NAME="${OPTARG}"
-            ;;
-          p)
-            export NEW_USER_PASSWORD_CLEARTEXT="${OPTARG}"
-            ;;
-          q)
-            [[ ! $verbose == 'yes' ]] && quiet='yes'
-            ;;
-          r)
-            export SPLINTER_ROLE_PROFILE="${OPTARG}"
-            ;;
-          u)
-            export NEW_USER_USERNAME="${OPTARG}"
-            ;;
-          v)
-            verbose='yes'
-            quiet='no'
-            ;;
-          \?)
-            echo "[Error] Action '${action}': Invalid setting '-${OPTARG}'" 1>&2
-            eval show_usage 1>&2
-            exit 1
-            ;;
-          :)
-            echo "[Error] Action '${action}': setting '-${OPTARG}' is missing an argument" 1>&2
-            eval show_usage 1>&2
-            exit 1
-            ;;
-        esac
-      done
-
-      shift $(( OPTIND - 1 ))
-      if [[ -n "${*}" ]];then
-        # if it is NOT empty it means it interrupted before evaluating all the parameters
-        # becaue it encountered a unexpected param or arg
-        echo "[Error] Provided unknow parameter: ${1}" 1>&2
-        eval show_usage 1>&2
-        exit 1
-      fi
-
-      export VERBOSE="${verbose}"
-      [[ ${quiet} == "no" ]] && eval show_title
-      eval provision
+    provision)
+      eval action_provision "${@}"
       ;;
     '')
       echo "[Error] Missing action" 1>&2
@@ -922,5 +930,14 @@ function main {
       exit 1
       ;;
   esac
+
+  eval setup_environment
+  [[ ${quiet} == "no" ]] && eval show_title
+  eval show_envs
+  _echo "action + option: ${action} ${action_option}"
+  [[ -n "${action_message}" ]] && _echo "${action_message}" 'w'
+  [[ -n "${action_requested}" ]] && eval "${action_requested}" "${action_requested_options}"
+  exit 0
 }
+
 main "${@}"
