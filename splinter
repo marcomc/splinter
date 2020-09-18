@@ -703,6 +703,11 @@ function cleanup_tasks {
   eval disable_passwordless_sudo
 }
 
+function list_profiles {
+  _echo "${profiles_path}" 'r' 1>&2
+  _exec "find" "${profiles_path}"  "-maxdepth" "1" "-mindepth" "1" "-type" "directory" "-exec" "basename" "{}" "\\" ";"
+}
+
 function install_dependencies {
   eval install_brew
   eval setup_python
@@ -734,8 +739,8 @@ function action_list {
   # Process package options
   case ${action_option} in
     profiles)
-      _echo "${profiles_path}" 'r' 1>&2
-      _exec "find" "${profiles_path}"  "-maxdepth" "1" "-mindepth" "1" "-type" "directory" "-exec" "basename" "{}" "\\" ";"
+      quiet="yes"
+      action_requested="list_profiles"
       ;;
     '')
       echo "[Error] Missing option for action '${action}'" 1>&2
@@ -907,8 +912,6 @@ function action_provision {
 
 function main {
   quiet='no'
-  # eval set_app_directories
-  # Parse options to the `install` command
   case "${1}" in
     -e|--env)
       python_provider="${2}"
