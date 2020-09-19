@@ -23,7 +23,7 @@
   src: https://github.com/juju4/ansible-macos-apps-install.git
   version: '1e52c49'
 
-- name: lafarer.osx_defaults
+- name: lafarer.osx-defaults
   version: 'marcomc/trackpad-boolean-options-fix'
 
 - name: macstadium.xcode
