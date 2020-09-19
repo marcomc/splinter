@@ -69,7 +69,7 @@ function _echo {
   message="$1"
   case $2 in
     a|action)
-      color="$yellow"
+      color="$green"
       bright="1"
       tag='ACTION..'
     ;;
@@ -94,7 +94,7 @@ function _echo {
     ;;
     i|info|*)
       message_type="info"
-      color="$green"
+      color="$yellow"
       bright="2"
       tag='INFO....'
     ;;
