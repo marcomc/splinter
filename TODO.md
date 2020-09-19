@@ -67,7 +67,6 @@
   profile_name: <githubuser>.<profilename> ( github.com/<githubuser>/splinter-profiles/<profilename>/)
   bash dowloads it '<githubuser>-.<profilename>' (if not already existing)
 * [x] splinter list profiles doesn't work
-
 * [x] move splinter configurations to splinter.cfg
   * [x] configfile type: ini
   * [x] look for the config file in the current directory
@@ -76,11 +75,10 @@
   * [x] load all the values as environment variables, if they are not set by the cli yet
   * [x] splinter will take care of loading these basic settings and not Ansible anymore
   * [x] this will allow to to remove `vars_files` from playbook.yml:
+* [x] BUG: when the config file is placed out of the config dir or the current directory is not the config dir ansible is not picking up the `ansible.cfg` file it would be good to specify the path to the `cfg` file via an Ansible ENV
+* [x] BUG: [ACTION..] Disabling passwordless sudo after the provisioning is not actually fixing the sudoers
 
-
-* [ ] BUG: when the config file is placed out of the config dir or the current directory is not the config dir ansible is not picking up the `ansible.cfg` file it would be good to specify the path to the `cfg` file via an Ansible ENV
-
-* [ ] add a `prepare` action that will download the profile profiles and dependencies and create a DMG file to be deployed for an offline deployment
+* [ ] add a `prepare` action that will download the profiles and dependencies and create a DMG file to be deployed for an offline deployment
 
 * [ ] write "Why would I use Splinter?"
 
@@ -89,7 +87,6 @@
 
 * [ ] find what setting is showing the 'input menu in menu bar' to show the languages
 
-* [ ] BUG: [ACTION..] Disabling passwordless sudo after the provisioning is not actually fixing the sudoers
 
 * [ ] BUG: after setting the taptoClick even if the checkbox is marked properly tapping is not working (tapBehavior), maybe there is some service to restart (but I don't think so), probably there is some other flag somewhere to set
 

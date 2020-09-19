@@ -5,7 +5,8 @@
 #   version: '3.1.0'
 #
 - name: ctorgalson.macos_hostname
-  version: 'v0.2.3'
+  src: https://github.com/marcomc/ansible-role-macos-hostname.git
+  # version: 'v0.2.3'
 
 - name: elliotweiser.osx-command-line-tools
   version: '2.3.0'
