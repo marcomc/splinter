@@ -2,7 +2,7 @@
 - name: "Loading settings from profiles"
   include_vars: "{{ item }}"
   with_fileglob:
-    - "{{ config_dir + '/profiles/' + base_profile + '/*.yml' if base_profile|length>0 }}"
-    - "{{ config_dir + '/profiles/' + role_profile + '/*.yml' if role_profile|length>0 }}"
+    - "{{ project_dir + '/profiles/' + base_profile + '/*.yml' if base_profile|length>0 }}"
+    - "{{ project_dir + '/profiles/' + role_profile + '/*.yml' if role_profile|length>0 }}"
   vars:
-    config_dir: "{{ lookup('env','SPLINTER_CONFIG_DIR') if lookup('env','SPLINTER_CONFIG_DIR')| length > 0 else playbook_dir + '/..' }}"
+    project_dir: "{{ lookup('env','SPLINTER_PROJECT_DIR') if lookup('env','SPLINTER_PROJECT_DIR')| length > 0 else playbook_dir + '/..' }}"

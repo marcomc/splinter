@@ -211,7 +211,7 @@ function export_envs {
     # if a config file exist we will check the environemnts one by one
     # if no value comes from the command line we will load the value in the config
     [[ -z $verbose ]] && verbose=$(read_ini_value 'verbose')
-    [[ -z $SPLINTER_CONFIG_DIR ]] && SPLINTER_CONFIG_DIR=$(read_ini_value 'config_dir') && export SPLINTER_CONFIG_DIR
+    [[ -z $SPLINTER_PROJECT_DIR ]] && SPLINTER_PROJECT_DIR=$(read_ini_value 'project_dir') && export SPLINTER_PROJECT_DIR
     [[ -z $SPLINTER_BASE_PROFILE ]] && SPLINTER_BASE_PROFILE=$(read_ini_value 'base_profile') && export SPLINTER_BASE_PROFILE
     [[ -z $SPLINTER_ROLE_PROFILE ]] && SPLINTER_ROLE_PROFILE=$(read_ini_value 'role_profile') && export SPLINTER_ROLE_PROFILE
     [[ -z $custom_profiles_repo_account ]] &&  custom_profiles_repo_account=$(read_ini_value 'custom_profiles_account')
@@ -222,9 +222,9 @@ function export_envs {
     [[ -z $TARGET_USER_ID ]] && TARGET_USER_ID=$(read_ini_value 'target_user_username') && export TARGET_USER_ID
     [[ -z $COMPUTER_HOST_NAME ]] && COMPUTER_HOST_NAME=$(read_ini_value 'computer_name') && export COMPUTER_HOST_NAME
   fi
-  if [[ -z $SPLINTER_CONFIG_DIR ]]; then
-    SPLINTER_CONFIG_DIR=$(dirname "$splinter_config_file")
-    export SPLINTER_CONFIG_DIR
+  if [[ -z $SPLINTER_PROJECT_DIR ]]; then
+    SPLINTER_PROJECT_DIR=$(dirname "$splinter_config_file")
+    export SPLINTER_PROJECT_DIR
   fi
 
   if [[ -n $NEW_USER_USERNAME ]]; then
@@ -242,9 +242,9 @@ function export_ansible_envs {
 }
 
 function show_envs {
-  # [[ -n "${VERBOSE" ]]                      &&
+  _echo "$(eval show_version)"
   _echo "VERBOSE: $VERBOSE"
-  [[ -n $SPLINTER_CONFIG_DIR ]]          && _echo "SPLINTER_CONFIG_DIR: $SPLINTER_CONFIG_DIR"
+  [[ -n $SPLINTER_PROJECT_DIR ]]          && _echo "SPLINTER_PROJECT_DIR: $SPLINTER_PROJECT_DIR"
   [[ -n $splinter_config_file ]]         && _echo "SPLINTER_CONFIG_FILE: $splinter_config_file"
   [[ -n $SPLINTER_BASE_PROFILE ]]        && _echo "SPLINTER_BASE_PROFILE: $SPLINTER_BASE_PROFILE"
   [[ -n $SPLINTER_ROLE_PROFILE ]]        && _echo "SPLINTER_ROLE_PROFILE: $SPLINTER_ROLE_PROFILE"
@@ -292,14 +292,14 @@ function read_ini_value {
 }
 
 function set_app_directories {
-  config_dir="$(abs_path "$SPLINTER_CONFIG_DIR")"
-  files_path="${config_dir}/files"
-  tools_path="${config_dir}/tools"
-  profiles_path="${config_dir}/profiles"
-  ansible_dir="${config_dir}/ansible"
-  pyenv_dir="${config_dir}/pyenv"
-  conda_path="${config_dir}/conda"
-  pip_config_file="${config_dir}/pip.conf"
+  project_dir="$(abs_path "$SPLINTER_PROJECT_DIR")"
+  files_path="${project_dir}/files"
+  tools_path="${project_dir}/tools"
+  profiles_path="${project_dir}/profiles"
+  ansible_dir="${project_dir}/ansible"
+  pyenv_dir="${project_dir}/pyenv"
+  conda_path="${project_dir}/conda"
+  pip_config_file="${project_dir}/pip.conf"
 
   ansible_roles="${ansible_dir}/roles"
   ansible_config="${ansible_dir}/ansible.cfg"
@@ -320,8 +320,8 @@ function update_splinter {
   _exec "unzip" "-qq" "${temp_dir}/${splinter_archive}" "-d" "${temp_dir}"
   ls "$temp_dir"
 
-  _echo "Installing Splinter files to '$config_dir'" 'a'
-  _exec "rsync" "-rlWuv" "$temp_dir"/*/* "$config_dir"
+  _echo "Installing Splinter files to '$project_dir'" 'a'
+  _exec "rsync" "-rlWuv" "$temp_dir"/*/* "$project_dir"
 
   _echo "Removing temporary files" 'a'
   _exec "rm" "-rf" "$temp_dir"
