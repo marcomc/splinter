@@ -533,7 +533,7 @@ function install_brew {
     /bin/bash -c "$(curl -fsSL $homebrew_installer_url)" < /dev/null
   else
     tool_version=$(command -v "brew")
-    _echo "Homebrew $tool_version} is installed"
+    _echo "Homebrew $tool_version is installed"
   fi
 
 }
@@ -708,12 +708,12 @@ function setup_python {
     _echo "Unknow python provider '$python_provider'" 'e'
     exit 1
   fi
-  export PYTHON_PROVIDER="${python_provider}"
-  _echo "PYTHON_PROVIDER: $PYTHON_PROVIDER}"
-  export PYTHON_ROOT="${python_root}"
-  _echo "PYTHON_ROOT: $PYTHON_ROOT}"
-  export PIP_CONFIG_FILE="${pip_config_file}"
-  _echo "PIP_CONFIG_FILE: $PIP_CONFIG_FILE}"
+  export PYTHON_PROVIDER="$python_provider"
+  _echo "PYTHON_PROVIDER: $PYTHON_PROVIDER"
+  export PYTHON_ROOT="$python_root"
+  _echo "PYTHON_ROOT: $PYTHON_ROOT"
+  export PIP_CONFIG_FILE="$pip_config_file"
+  _echo "PIP_CONFIG_FILE: $PIP_CONFIG_FILE"
 }
 
 function cleanup_tasks {
@@ -976,7 +976,7 @@ function main {
 
   eval setup_environment
   [[ $quiet == 'no' ]] && eval show_title
-  _echo "action + option: $action $action_option"
+  _echo "action: $action $action_option"
   eval show_envs
   [[ -n $action_message ]] && _echo "$action_message" 'w'
   [[ -n $action_requested ]] && eval "$action_requested" "$action_requested_options"
