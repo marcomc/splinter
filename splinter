@@ -497,7 +497,7 @@ function enable_passwordless_sudo {
     fi
     # Enable passwordless sudo for the provisioning
     _echo "Enabling passwordless sudo for the provisioning" 'a'
-    echo "$ANSIBLE_BECOME_PASS" | sudo "$sudo_stdin" sed -i -e "s/^%admin (.*)ALL.*/%admin ALL=(ALL) NOPASSWD: ALL/" /etc/sudoers > /dev/null 2>&1
+    echo "$ANSIBLE_BECOME_PASS" | sudo "$sudo_stdin" sed -i -e "s/^%admin .*ALL=.*/%admin ALL=(ALL) NOPASSWD: ALL/" /etc/sudoers > /dev/null 2>&1
   fi
 }
 
@@ -505,7 +505,7 @@ function disable_passwordless_sudo {
   if sudo -n true 2>/dev/null; then
     # Enable passwordless sudo for the provisioning
     _echo "Disabling passwordless sudo after the provisioning" 'a'
-    sudo sed -i -e "s/^%admin (.*)ALL.*/%admin ALL=(ALL) ALL/" /etc/sudoers
+    sudo sed -i -e "s/^%admin .*ALL=.*/%admin ALL=(ALL) ALL/" /etc/sudoers
   else
     _echo "Passwordless sudo is disabled"
   fi
