@@ -10,7 +10,7 @@
       include_tasks: load-profiles.yml
 
   roles:
-    - role: marcomc.splinter-toolkit
+    - role: marcomc.splinter_toolkit
       tags: ['always']
 
     - role: ctorgalson.macos_hostname
@@ -18,27 +18,27 @@
       tags: ['osx']
       ignore_errors: yes
 
-    - role: marcomc.sophos-endpoint
+    - role: marcomc.sophos_endpoint
       when: configure_sophos_endpoint|bool
       tags: ['non_mas']
       ignore_errors: yes
 
-    - role: marcomc.macos-new-user
+    - role: marcomc.macos_new_user
       when: create_new_user|bool
       tags: ['new-user']
       ignore_errors: yes
 
-    - role: marcomc.user-ssh-config
+    - role: marcomc.user_ssh_config
       when: create_new_user|bool
       tags: ['new-user']
       ignore_errors: yes
 
-    - role: marcomc.filevault2
+    - role: marcomc.macos_filevault2
       when: configure_filevault|bool
       tags: ['osx']
       ignore_errors: yes
 
-    - role: marcomc.homebrew-multi-user
+    - role: marcomc.homebrew_multi_user
       when: configure_homebrew|bool
       tags: ['homebrew']
       ignore_errors: yes
@@ -49,27 +49,27 @@
       tags: ['homebrew']
       ignore_errors: yes
 
-    - role: marcomc.homebrew-autoupdate
+    - role: marcomc.homebrew_autoupdate
       when: configure_homebrew|bool
       tags: ['homebrew']
       ignore_errors: yes
 
-    - role: marcomc.splinter-extra-packages
+    - role: marcomc.splinter_extra_packages
       when: configure_extra_packages|bool
       tags: ['extra-packages']
       ignore_errors: yes
 
-    - role: lafarer.osx-defaults
+    - role: lafarer.osx_defaults
       when: configure_system|bool
       tags: ['osx']
       ignore_errors: yes
 
-    - role: marcomc.macprefs-restore
+    - role: marcomc.macos_macprefs_restore
       when: restore_dotfiles_with_macprefs|bool
       tags: ['dotfiles']
       ignore_errors: yes
 
-    - role: marcomc.mackup
+    - role: marcomc.macos_mackup
       when: restore_dotfiles_with_mackup|bool
       tags: ['dotfiles']
       ignore_errors: yes
@@ -88,7 +88,7 @@
       environments:
         PATH: "{{ gnubin_path }}:{{ ansible_env.PATH }}"
 
-    - role: marcomc.setapp
+    - role: marcomc.macos_setapp
       when: configure_setapp|bool
       ignore_errors: yes
 
@@ -100,7 +100,7 @@
   tasks:
     - name: Load the Splinter post provision tasks.
       include_role:
-        name: marcomc.splinter-toolkit
+        name: marcomc.splinter_toolkit
         tasks_from: post-provision
       tags: ['always']
 

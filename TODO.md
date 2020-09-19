@@ -1,3 +1,4 @@
+# TO DO
 * [x] brew cleanup
 * [x] pyenv rehash
 * [x] set hostname
@@ -79,18 +80,16 @@
 * [x] BUG: [ACTION..] Disabling passwordless sudo after the provisioning is not actually fixing the sudoers
 
 * [ ] add a `prepare` action that will download the profiles and dependencies and create a DMG file to be deployed for an offline deployment
+      $hdiutil create /tmp/tmp.dmg -ov -volname "RecitalInstall" -fs HFS+ -srcfolder "/tmp/macosxdist/"
 
 * [ ] write "Why would I use Splinter?"
-
 * [ ] allow extra packages to be installed as target_user_id or for the current user
-
-
 * [ ] find what setting is showing the 'input menu in menu bar' to show the languages
 
 
 * [ ] BUG: after setting the taptoClick even if the checkbox is marked properly tapping is not working (tapBehavior), maybe there is some service to restart (but I don't think so), probably there is some other flag somewhere to set
 
-* [ ] rename SPLINTER to SPLINTER
+* [ ] rename SPLINTER to SPLINTR ??
 # When Provisioning the current user (and not a target user)
 * [x] dotfiles: export personal System Configs
 * [x] dotfiles: import personal System Configs (mackup?)
@@ -117,17 +116,19 @@
 * [ ] App settings (with mackup?)
 * [ ] add ShareMouse config to Mackup
 * [ ] add ShareMouse config to Macprefs
+  * [ ] allow to specify which source to use for mackup
 * [ ] Internet login
 * [ ] Gmail account(s)
 * [ ] User Login items
 * [ ] TimeMachine Settings
-  * [ ] allow to specify which source to use for mackup
+
 
 # Future
-* [ ] add splinter and splinter-tools to homebrew
-* [ ] create a webpage that will allow to modify with a GUI a profile and to download it locally
-* [ ] distribute comiled version (made with `shc`)
+* [x] add splinter and splinter-tools to homebrew
 * [x] make conda to work: has issues linking libtinfo
+
+* [ ] create a webpage that will allow to modify with a GUI a profile and to download it locally
+* [ ] distribute compiled version (made with `shc`)
 * [ ] filevault2 role: if FV is already enabled, check if the newuser is already added to Filevault, if not, add it
 * [ ] user custom keyboards shortcuts, only my private set if macprefs doesn't restore them
 * [ ] convert mac-app-install into ansible-brew like repo

@@ -23,52 +23,52 @@
   src: https://github.com/juju4/ansible-macos-apps-install.git
   version: '1e52c49'
 
-- name: lafarer.osx-defaults
+- name: lafarer.osx_defaults
   version: 'marcomc/trackpad-boolean-options-fix'
 
 - name: macstadium.xcode
   version: '501d7ac'
 
-- name: marcomc.filevault2
+- name: marcomc.macos_filevault2
   src: https://github.com/marcomc/ansible-role-filevault2.git
   version: 'master'
 
-- name: marcomc.homebrew-autoupdate
+- name: marcomc.homebrew_autoupdate
   src: https://github.com/marcomc/ansible-role-homebrew-autoupdate.git
   version: 'master'
 
-- name: marcomc.homebrew-multi-user
+- name: marcomc.homebrew_multi_user
   src: https://github.com/marcomc/ansible-role-homebrew-multi-user.git
   version: 'master'
 
-- name: marcomc.macos-new-user
+- name: marcomc.macos_new_user
   src: https://github.com/marcomc/ansible-role-macos-new-user.git
   version: 'master'
 
-- name: marcomc.macprefs-restore
+- name: marcomc.macos_macprefs_restore
   src: https://github.com/marcomc/ansible-role-macprefs-restore.git
   version: 'master'
 
-- name: marcomc.mackup
+- name: marcomc.macos_mackup
   src: https://github.com/marcomc/ansible-role-mackup.git
   version: 'master'
 
-- name: marcomc.setapp
+- name: marcomc.macos_setapp
   src: https://github.com/marcomc/ansible-role-setapp.git
   version: 'master'
 
-- name: marcomc.sophos-endpoint
+- name: marcomc.sophos_endpoint
   src: https://github.com/marcomc/ansible-role-sophos-endpoint.git
   version: 'master'
 
-- name: marcomc.splinter-toolkit
+- name: marcomc.splinter_toolkit
   src: https://github.com/marcomc/ansible-role-splinter-toolkit.git
   version: 'master'
 
-- name: marcomc.splinter-extra-packages
+- name: marcomc.splinter_extra_packages
   src: https://github.com/marcomc/ansible-role-splinter-extra-packages.git
   version: 'master'
 
-- name: marcomc.user-ssh-config
+- name: marcomc.user_ssh_config
   src: https://github.com/marcomc/ansible-role-user-ssh-config.git
   version: 'master'

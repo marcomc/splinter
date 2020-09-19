@@ -254,7 +254,7 @@ Splinter supports 3 levels of configurations listed here from least to most impo
 #### Profiles
 Splinter supports 3 levels of profile listed here from least to most important:
 
-1. `marcomc.splinter-toolkit default values`:
+1. `marcomc.splinter_toolkit default values`:
    This is a collection of sensible default values
 
 2. `profiles/default`:
