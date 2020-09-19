@@ -202,6 +202,7 @@ function setup_environment {
   # This order must be respected
   eval export_envs         # step 1
   eval set_app_directories # step 2
+  eval export_ansible_envs # step 3
 }
 
 function export_envs {
@@ -232,10 +233,12 @@ function export_envs {
   else
     export CREATE_NEW_USER='no'
   fi
-
-  export ANSIBLE_CONFIG="$ansible_config"
-  export ANSIBLE_ROLES_PATH="$ansible_roles"
   export VERBOSE="$verbose"
+}
+
+function export_ansible_envs {
+    export ANSIBLE_CONFIG="$ansible_config"
+    export ANSIBLE_ROLES_PATH="$ansible_roles"
 }
 
 function show_envs {
@@ -519,7 +522,7 @@ function install_pip_dependencies {
       eval "install_pip_${pip_dependecy}"
     else
       dep_version=$(pip show "$pip_dependecy" | grep "$pip_show_grep_filter")
-      _echo "$pip_dependecy: $dep_version is installed "
+      _echo "$pip_dependecy $dep_version is installed "
     fi
   done
 }
@@ -674,7 +677,6 @@ function install_ansible_galaxy_roles {
 
 function run_ansible_playbook {
   _echo "Running Ansible provisioning" 'a'
-
   # this is not wrapped with `execute` because
   # we want the script to keep going and run the cleanup tasks
   # even if an error occur during Ansible execution
