@@ -81,16 +81,19 @@
 * [x] add a `create package` action that will download the profiles and dependencies and create a DMG file to be deployed for an offline deployment
   * [x] dmg
   * [x] zip
-
-* [ ] write "Why would I use Splinter?"
+* [x] write "Use cases"
 
 * [ ] allow extra packages to be installed as target_user_id or for the current user
 * [ ] find what setting is showing the 'input menu in menu bar' to show the languages
 
+* [ ] write unit tests
+  * [ ] bash
+  * [ ] TravisCI
+
+* [ ] Write step-by-step guides for each use case
 
 * [ ] BUG: after setting the taptoClick even if the checkbox is marked properly tapping is not working (tapBehavior), maybe there is some service to restart (but I don't think so), probably there is some other flag somewhere to set
 
-* [ ] rename SPLINTER to SPLINTR ??
 # When Provisioning the current user (and not a target user)
 * [x] dotfiles: export personal System Configs
 * [x] dotfiles: import personal System Configs (mackup?)

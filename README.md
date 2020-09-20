@@ -20,9 +20,66 @@ The installatio will download Splinter to `./splinter` directory and setup the f
     # FISH
     curl -fsSL https://raw.githubusercontent.com/marcomc/splinter-tools/master/install-splinter | /bin/bash
 
-# Why would I use Splinter?
+# Use cases
 
-....
+1. [Build a Mac for a new employee](#new-company-machine)
+2. [Build a backup Mac](#backup-machine)
+3. [Migrate to a new Mac](#migration-machine)
+4. [Rebuild your Mac to a clean state](#clean-state-machine)
+5. [Restore your Mac favourite settings and software](#restore-settings)
+6. [Create an additional account for your kid or partner](#additional-account)
+
+## Build a machine for a new employee<a name="new-company-machine"></a>
+__Build a machine with the company chosen settings and software with different flavours for each department or employee role.__
+
+You can create a base profile with standard settings that will apply to all the machine.
+In addition to that, you can assign a specific role profile with settings dedicated to the department or employee role.
+For example:
+
+`base` profile:
+* Common admin username and profile picture.
+* Corporate FileVault2 recovery key certificate.
+* Company unified desktop picture.
+* Default applications set: Slack, Skype, LastPass, Jira Client, Google Drive File Stream, Chrome, Firefox, Zoom...
+
+`admin` role:
+* Additional applications set: Microsoft Office, Citrix...
+
+`developer `role:
+* Additional applications set: Atom, Visual Studio, iTerm2, Docker Desktop, MacVim, Tunnelblick, VirtualBox ...
+* Homebrew packages: awscli, lastpass-cli, curl ...
+* System settings: show all extensions, show hidden files, show ~/Library folder ...
+
+`creative` role:
+* Additional applications set: Adobe Creative Suite ...
+
+## Build a backup Mac<a name="backup-machine"></a>
+Set up a spare machine ready to be used __with your preferred configurations where you find yourself comfortable and productive quickly__, prepared in case your main computer fails and need to go on repair for a few days. It happens!
+
+## Migrate to a new Mac<a name="migration-machine"></a>
+When migrating to a newer Mac, it is __sometimes preferable to start with a clean installation__ rather than a Mac-to-Mac migration to avoid bringing with you clutter files and configurations, but __with the perk of having your favourite settings and apps ready to go__.
+_For instance, when you think some virus or ad-ware might have compromised your machine_.
+
+## Rebuild a Mac to a clean state<a name="clean-state-machine"></a>
+When you want a fresh start and wipe your Mac to factory defaults to get reed of al the clutter accumulated in years.
+__You can have a quick restore of all your favourite settings and applications at once__ without manually go through the burden to chase, download and configure everything.
+
+___This is ideal for your kids' Mac___
+
+## Restore your Mac favourite settings and software<a name="restore-settings"></a>
+In case you have been playing with your Mac settings and have lost track of what and where you have applied changes, __you can restore your favourite settings and applications on your current system.__
+
+For example, If you have messed with Homebrew:
+*  __you could
+run Splinter and let it fix the folder permissions__
+
+or remove the broken Homebrew directory and:
+* __let Splinter reinstall it from scratch with all your desired Casks and packages__
+
+## Create an additional account for your kids or partner<a name="additional-account"></a>
+You can create other accounts and __skip the hassle of going through all the Setup Assistant questions and manual configurations__ of custom Dock, Finder and Trackpad and other user-specific settings.
+
+
 
 ## What does Splinter do?
 Spliter uses a bash script to install the minimum requirements to run Ansible within a dedicated Python environment, then run an Ansible playbook that will run the full provisioning of a macOS system
@@ -105,6 +162,21 @@ __Ansible playbook__:
 * Run custom post-provision tasks
 
 __You can can chose which of the above modules to run customising the the 'modules.yml' file in your profiles__
+
+### Other Capabilities
+#### Custom Profiles repositories
+Splinter support custom profiles stored in a Github repository.
+>They can be download on-the-fly during the provisioning.
+
+__This is helpful for a central support team to maintain profiles to be used company wise while letting the employees in a satellite office to run their own provisioning__
+
+#### Deployable packages
+Splinter can create deployable packages with pre-installed dependencies such as Python, Ansible, Galaxy roles and profiles to copied to the target machines.
+You could also include manually download installation packages for non-MacAppsStore applications (i.e. antivirus software)
+
+Advantages:
+1. __reduce the provisioning time if you have a limited internet bandwidth__
+2. __can configure pre-packages provisioning to distribute to various offices__
 
 ## Python
 
