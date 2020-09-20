@@ -62,7 +62,7 @@ function _echo {
   local message_type=""
   local message_type=""
   local normal_text_color="\e[0;${white}m"
-  local output_device="/dev/stdin"
+  local output_device="/dev/stdout"
   local tag_color=""
   local tag=""
 
