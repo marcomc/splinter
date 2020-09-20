@@ -78,11 +78,12 @@
   * [x] this will allow to to remove `vars_files` from playbook.yml:
 * [x] BUG: when the config file is placed out of the config dir or the current directory is not the config dir ansible is not picking up the `ansible.cfg` file it would be good to specify the path to the `cfg` file via an Ansible ENV
 * [x] BUG: [ACTION..] Disabling passwordless sudo after the provisioning is not actually fixing the sudoers
-
-* [ ] add a `prepare` action that will download the profiles and dependencies and create a DMG file to be deployed for an offline deployment
-      $hdiutil create /tmp/tmp.dmg -ov -volname "RecitalInstall" -fs HFS+ -srcfolder "/tmp/macosxdist/"
+* [x] add a `create package` action that will download the profiles and dependencies and create a DMG file to be deployed for an offline deployment
+  * [x] dmg
+  * [x] zip
 
 * [ ] write "Why would I use Splinter?"
+
 * [ ] allow extra packages to be installed as target_user_id or for the current user
 * [ ] find what setting is showing the 'input menu in menu bar' to show the languages
 

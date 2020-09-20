@@ -7,7 +7,7 @@
 *bk*
 *iniconda*.sh
 *test*
-config.yml
+splinter.cfg
 
 # exclude these directories patterns
 ansible/roles
