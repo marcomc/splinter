@@ -22,14 +22,14 @@ The installatio will download Splinter to `./splinter` directory and setup the f
 
 # Use cases
 
-1. [Build a Mac for a new employee](#new-company-machine)
-2. [Build a backup Mac](#backup-machine)
-3. [Migrate to a new Mac](#migration-machine)
-4. [Rebuild your Mac to a clean state](#clean-state-machine)
-5. [Restore your Mac favourite settings and software](#restore-settings)
-6. [Create an additional account for your kid or partner](#additional-account)
+1. [Build a Mac for a new employee](#build-a-mac-for-a-new-employee)
+2. [Build a backup Mac](#build-a-backup-mac)
+3. [Migrate to a new Mac](#migrate-to-a-new-mac)
+4. [Rebuild your Mac to a clean state](#rebuild-a-mac-to-a-clean-state)
+5. [Restore your Mac favourite settings and software](#restore-your-mac-favourite-settings-and-software)
+6. [Create an additional account for your kids or partner](#create-an-additional-account-for-your-kids-or-partner)
 
-## Build a machine for a new employee<a name="new-company-machine"></a>
+## Build a Mac for a new employee
 __Build a machine with the company chosen settings and software with different flavours for each department or employee role.__
 
 You can create a base profile with standard settings that will apply to all the machine.
@@ -53,20 +53,20 @@ For example:
 `creative` role:
 * Additional applications set: Adobe Creative Suite ...
 
-## Build a backup Mac<a name="backup-machine"></a>
+## Build a backup Mac
 Set up a spare machine ready to be used __with your preferred configurations where you find yourself comfortable and productive quickly__, prepared in case your main computer fails and need to go on repair for a few days. It happens!
 
-## Migrate to a new Mac<a name="migration-machine"></a>
+## Migrate to a new Mac
 When migrating to a newer Mac, it is __sometimes preferable to start with a clean installation__ rather than a Mac-to-Mac migration to avoid bringing with you clutter files and configurations, but __with the perk of having your favourite settings and apps ready to go__.
 _For instance, when you think some virus or ad-ware might have compromised your machine_.
 
-## Rebuild a Mac to a clean state<a name="clean-state-machine"></a>
+## Rebuild a Mac to a clean state
 When you want a fresh start and wipe your Mac to factory defaults to get reed of al the clutter accumulated in years.
 __You can have a quick restore of all your favourite settings and applications at once__ without manually go through the burden to chase, download and configure everything.
 
 ___This is ideal for your kids' Mac___
 
-## Restore your Mac favourite settings and software<a name="restore-settings"></a>
+## Restore your Mac favourite settings and software
 In case you have been playing with your Mac settings and have lost track of what and where you have applied changes, __you can restore your favourite settings and applications on your current system.__
 
 For example, If you have messed with Homebrew:
@@ -76,10 +76,8 @@ run Splinter and let it fix the folder permissions__
 or remove the broken Homebrew directory and:
 * __let Splinter reinstall it from scratch with all your desired Casks and packages__
 
-## Create an additional account for your kids or partner<a name="additional-account"></a>
+## Create an additional account for your kids or partner
 You can create other accounts and __skip the hassle of going through all the Setup Assistant questions and manual configurations__ of custom Dock, Finder and Trackpad and other user-specific settings.
-
-
 
 ## What does Splinter do?
 Spliter uses a bash script to install the minimum requirements to run Ansible within a dedicated Python environment, then run an Ansible playbook that will run the full provisioning of a macOS system
