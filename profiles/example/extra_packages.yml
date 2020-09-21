@@ -5,11 +5,12 @@
 # Install packages from other package managers.
 # Note: You are responsible for making sure the required package managers are
 # installed, eg. through homebrew.
-composer_packages: []
-  # - name: drush
-  #   state: present # present/absent, default: present
-  #   version: "^8.1" # default: N/A
-gem_packages: []
+
+# ruby_gems_packages_list_file values will be merged to ruby_gems values
+ruby_gems_packages_list_file: ""
+
+# This list is complemented by {{ruby_gems_packages_list_file}}
+ruby_gems: []
   # - name: bundler
   #   state: present # present/absent/latest, default: present
   #   version: "~> 1.15.1" # default: N/A
