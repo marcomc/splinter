@@ -1,20 +1,14 @@
 #!/bin/bash
+set -e # Exit immediately if anything returns a non-zero status.
 version="0.4-beta"
 release_date="20200912"
-splinter_config_file="splinter.cfg"
 my_name="$(basename "$0")"
 start_time=$(date +%s)
 
-ansible_force_roles_update=''
+splinter_config_file="splinter.cfg"
 
 python_provider="conda"
-
-pip_dependecies="
-ansible
-wheel
-passlib
-"
-
+pip_dependecies="ansible wheel passlib"
 conda_package_name="splinter-conda.tar.gz"
 conda_package_version="v0.1"
 conda_package_url="https://github.com/marcomc/splinter-conda/releases/download/${conda_package_version}/${conda_package_name}"
@@ -937,6 +931,7 @@ function action_list {
 }
 
 function action_update {
+  ansible_force_roles_update=''
   action_option="$1"; # fetch the action's option
   case $action_option in
     deps|dependencies)
@@ -1145,6 +1140,7 @@ function action_provision {
 
 function main {
   quiet='no'
+  verbose='no'
   case "$1" in
     -e|--env)
       python_provider="$2"
