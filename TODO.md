@@ -84,12 +84,7 @@
 * [x] write "Use cases"
 * [x] allow extra packages to be installed as target_user_id or for the current user
 * [x] add command to export extra packages lists
-
-* [ ] add support for recovery-key-cert-generator
-
-* [ ] add support for Atom packages https://github.com/gantsign/ansible-role-atom-packages
-  * [ ] export lists tool
-  * [ ] splinter-extra-packages
+* [x] add support for filevault-recovery-key-generator
 
 * [ ] write unit tests
   * [ ] bash
@@ -130,6 +125,10 @@
 * [ ] Gmail account(s)
 * [ ] User Login items
 * [ ] TimeMachine Settings
+
+* [ ] add support for Atom packages https://github.com/gantsign/ansible-role-atom-packages
+  * [ ] export lists tool
+  * [ ] splinter-extra-packages
 
 
 # Future

@@ -44,7 +44,6 @@ function abs_path {
   directory=$(echo "$directory" | sed 's+~+'"${HOME}"'+g' )
   absolute_path="$(cd "$directory"|| exit 1; pwd )"
   echo "${absolute_path}/$(basename "$file")"
-
 }
 
 function _echo {
@@ -317,8 +316,11 @@ function read_ini_value {
 
 function set_app_directories {
   project_dir="$(abs_path "$SPLINTER_PROJECT_DIR")"
+
   files_path="${project_dir}/files"
   lists_path="${files_path}/lists"
+  certificates_path="$files_path/certificates"
+
   tools_path="${project_dir}/tools"
   profiles_path="${project_dir}/profiles"
   ansible_dir="${project_dir}/ansible"
@@ -332,7 +334,9 @@ function set_app_directories {
   ansible_playbook="${ansible_dir}/playbook.yml"
   ansible_requirements="${ansible_dir}/requirements.yml"
 
-  export_tool_script="$tools_path/export-apps-lists.sh"
+  tools_script_export_apps_lists="$tools_path/export-apps-lists.sh"
+  tools_script_create_recovery_key="$tools_path/filevault-recovery-key-generator.sh"
+
 }
 
 function update_splinter {
@@ -343,7 +347,7 @@ function update_splinter {
   _echo "Updating splinter" 'a'
 
   _echo "Downloading Splinter into '${temp_dir}/${splinter_archive}'" 'a'
-  _exec "curl" "-fsSL" "$splinter_archive_url" "-o" "${temp_dir}/${splinter_archive}"
+  _exec "curl" "-H" "'Cache-Control: no-cache'" "-fsSL" "$splinter_archive_url" "-o" "${temp_dir}/${splinter_archive}"
 
   _echo "Decompressing Splinter archive into '$temp_dir'" 'a'
   _exec "unzip" "-qq" "${temp_dir}/${splinter_archive}" "-d" "${temp_dir}"
@@ -364,7 +368,7 @@ function update_tools {
   temp_dir=$(mktemp -d)
 
   _echo "Downloading Splinter tools into '$temp_dir}/${splinter_tools_archive}'" 'a'
-  _exec "curl" "-fsSL" "$splinter_tools_url" "-o" "${temp_dir}/${splinter_tools_archive}"
+  _exec "curl" "-H" "'Cache-Control: no-cache'" "-fsSL" "$splinter_tools_url" "-o" "${temp_dir}/${splinter_tools_archive}"
 
   _echo "Decompressing Splinter tools into '$temp_dir'" 'a'
   _exec "unzip" "-qq" "${temp_dir}/${splinter_tools_archive}" "-d" "$temp_dir"
@@ -412,7 +416,7 @@ function update_profiles {
   _echo "Updating profiles and files from custom repository" 'a'
 
   _echo "Downloading custom profiles into '${temp_dir}/${splinter_profiles_archive}'" 'a'
-  _exec "curl" "-fsSL" "$splinter_profiles_url" "-o" "${temp_dir}/${splinter_profiles_archive}"
+  _exec "curl" "-H" "'Cache-Control: no-cache'" "-fsSL" "$splinter_profiles_url" "-o" "${temp_dir}/${splinter_profiles_archive}"
 
   _echo "Decompressing custom profiles into '$temp_dir'" 'a'
   _exec "unzip" "-qq" "${temp_dir}/$splinter_profiles_archive" "-d" "$temp_dir"
@@ -488,6 +492,7 @@ function create_package {
         --exclude ".git" \
         --exclude ".gitignore" \
         --exclude ".DS_Store" \
+        --exclude "*keychain-password.txt" \
         "$project_dir"/* \
         "$source_dir" | pv -ples "$project_dir_number_of_files"  > /dev/null || rsync_failed="true"
 
@@ -668,7 +673,7 @@ function install_conda {
   if [[ ! -d ${conda_path}/bin ]];then
     if [[ ! -f $conda_package_path ]];then
       _echo "Downloading Miniconda Python package to '$conda_package_path'" 'a'
-      _exec "curl" "-fsSL" "$conda_package_url" "-o" "$conda_package_path"
+      _exec "curl" "-H" "'Cache-Control: no-cache'" "-fsSL" "$conda_package_url" "-o" "$conda_package_path"
     fi
     _echo "Unpacking Miniconda Python package to '$conda_path' directory" 'a'
     _exec "mkdir" "-p" "$conda_path"
@@ -831,13 +836,24 @@ function setup_python {
   _echo "PIP_CONFIG_FILE: $PIP_CONFIG_FILE"
 }
 
+function create_recovery_key {
+  if [[ -f $tools_script_create_recovery_key ]];then
+    _echo "Creating FileVaultMaster recovery key" 'a'
+    _exec "$tools_script_create_recovery_key" "-d" "$certificates_path" "$@"
+    _echo "FileVaultMaster created successfully!" 'r'
+  else
+    _echo "The script '$tools_script_export_apps_lists' is not installed in './tools'." 'e'
+    _echo "Run '$0 update tools' to install the latest version" 'e'
+  fi
+}
+
 function export_apps_lists {
-  if [[ -f $export_tool_script ]];then
+  if [[ -f $tools_script_export_apps_lists ]];then
     _echo "Exporting lists for $*" 'a'
-    _exec "$export_tool_script" "-d" "$lists_path" "$@"
+    _exec "$tools_script_export_apps_lists" "-d" "$lists_path" "$@"
     _echo "Export successful!" 'r'
   else
-    _echo "The script '$export_tool_script' is not installed in './tools'." 'e'
+    _echo "The script '$tools_script_export_apps_lists' is not installed in './tools'." 'e'
     _echo "Run '$0 update tools' to install the latest version" 'e'
   fi
 }
@@ -876,7 +892,6 @@ function provision {
   _echo "Ending time $( date )" 'r'
   eval print_execution_time "${start_time}"
 }
-
 
 function action_export {
   action_option=$1; # fetch the action's option
@@ -1014,9 +1029,14 @@ function action_update {
 
 function action_create {
   action_option="$1"; # fetch the action's option
+  shift
   case $action_option in
+    filevault-recovery-key)
+      [[ $verbose != "yes" ]] && quiet="yes"
+      action_requested="create_recovery_key"
+      action_requested_options=("$@") # assign as an array
+    ;;
     package)
-      shift
       action_message="Will create a provisioning package"
       while getopts ":d:n:t:" create_setting; do
         case $create_setting in
@@ -1051,6 +1071,7 @@ function action_create {
         eval show_usage 1>&2
         exit 1
       fi
+      action_requested="create_package"
       ;;
     '')
       echo "[Error] Missing option for action '$action'" 1>&2
@@ -1063,7 +1084,6 @@ function action_create {
       exit 1
       ;;
   esac
-  action_requested="create_package"
 }
 
 function action_provision {
