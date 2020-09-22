@@ -141,6 +141,8 @@ cat << 'EOF'
 
 options:
        -e|--env conda|pyenv      List available profiles
+       -v|--verbose              Produce verbose output
+       -q|--quiet                Suppress all non-Ansible output (except errors and warnings)
        --help                    Print help
        --version                 Print Splinter version and release date
 
@@ -161,25 +163,23 @@ obejcts:
 
 settings:
        [ provision ]
-       -c file                    Specify a custom configuration file
-       -u username                New user username (all lowercase  without spaces)
-       -f 'Full Name'             New user full name (quoted if has blank spaces)
-       -p 'cleartext password'    New user's password in cleartext (quoted if has blank spaces)
-       -t username                Target user username, if different than the new user (can be used to provision the current account)
-       -h Computer-Name           Computer host name no blank spaces allowed
-       -q                         Suppress all non-Ansible output (except errors and warnings), is overriden with '-v'
-       -v                         Produce verbose output
+       -c file                   Specify a custom configuration file
+       -u username               New user username (all lowercase  without spaces)
+       -f 'Full Name'            New user full name (quoted if has blank spaces)
+       -p 'cleartext password'   New user's password in cleartext (quoted if has blank spaces)
+       -t username               Target user username, if different than the new user (can be used to provision the current account)
+       -h Computer-Name          Computer host name no blank spaces allowed
 
        [ provision, update profiles ]
-       -a account_name            Specify the the Github account name for the custom `splinter-profiles` repo
-       -g git-repo-name           Specify the the Github repository name for the custom `splinter-profiles` repo
-       -b profile_name            Specify the the BASE profile to be used (default: 'default')
-       -r profile_name            Specify the the ROLE profile to be used
+       -a account_name           Specify the the Github account name for the custom `splinter-profiles` repo
+       -g git-repo-name          Specify the the Github repository name for the custom `splinter-profiles` repo
+       -b profile_name           Specify the the BASE profile to be used (default: 'default')
+       -r profile_name           Specify the the ROLE profile to be used
 
        [ create package ]
-       -n Package-Name            The name of the package (without extension)
-       -d directory_path          The destination directory where to place the package
-       -t dmg|zip                 The type of package
+       -n Package-Name           The name of the package (without extension)
+       -d directory_path         The destination directory where to place the package
+       -t dmg|zip                The type of package
 
 EOF
   printf  "Create your own profiles in the project's profiles directory.\n"
@@ -877,6 +877,7 @@ function action_export {
       exit 1
       ;;
     *)
+      [[ $verbose != "yes" ]] && quiet="yes"
       action_requested="export_apps_lists"
       action_requested_options=("$@") # assign as an array
       ;;
@@ -888,7 +889,7 @@ function action_list {
   # Process package options
   case $action_option in
     profiles)
-      quiet="yes"
+      [[ $verbose != "yes" ]] && quiet="yes"
       action_requested="list_profiles"
       ;;
     '')
@@ -1050,7 +1051,7 @@ function action_create {
 }
 
 function action_provision {
-  while getopts ":a:c:b:f:g:h:p:r:t:u:qv" action_setting; do
+  while getopts ":a:c:b:f:g:h:p:r:t:u:" action_setting; do
     case "$action_setting" in
       a)
         custom_profiles_repo_account="${OPTARG}"
@@ -1073,9 +1074,6 @@ function action_provision {
       p)
         export NEW_USER_PASSWORD_CLEARTEXT="${OPTARG}"
         ;;
-      q)
-        [[ $verbose != 'yes' ]] && quiet='yes'
-        ;;
       r)
         export SPLINTER_ROLE_PROFILE="${OPTARG}"
         ;;
@@ -1084,10 +1082,6 @@ function action_provision {
         ;;
       u)
         export NEW_USER_USERNAME="${OPTARG}"
-        ;;
-      v)
-        verbose='yes'
-        quiet='no'
         ;;
       \?)
         echo "[Error] Action '$action': Invalid setting '-${OPTARG}'" 1>&2
@@ -1119,6 +1113,14 @@ function main {
     -e|--env)
       python_provider="$2"
       shift 2
+      ;;
+    -v|--verbose)
+      [[ $quiet != 'yes' ]] && verbose='yes'
+      shift 1
+      ;;
+    -q|--quiet)
+      [[ $verbose != 'yes' ]] && quiet='yes'
+      shift 1
       ;;
     --help)
       eval show_usage

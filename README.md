@@ -193,8 +193,11 @@ To choose which python environment to run:
 
     usage: ./splinter [option] action [object] [settings]
 
+
     options:
            -e|--env conda|pyenv      List available profiles
+           -v|--verbose              Produce verbose output
+           -q|--quiet                Suppress all non-Ansible output (except errors and warnings)
            --help                    Print help
            --version                 Print Splinter version and release date
 
@@ -202,11 +205,9 @@ To choose which python environment to run:
            create package [settings] Create distributable package of your splinter project
            list profiles             List available profiles
            provision [settings]      Provision the host
-           update <object>           Update the <object>
-           export <object>           Export list of <object> packages
+           update <object>           Update the object
 
-    objects:
-           [ update ]
+    obejcts:
            conda                     Reinstall the most recent Miniconda Python environment available for splinter
            pyenv                     Reinstall Pyenv Python environment
            galaxy|galaxy-roles       Force update all the Ansible Galaxy roles
@@ -215,38 +216,25 @@ To choose which python environment to run:
            self|auto|splinter        Update Splinter itself (but not the tools or dependencies)
            profiles [settings]       Update the profiles from a online git repo (for now only github is supported)
 
-           [ export ]
-           brew [taps|packages|casks|all] Export list of brew taps, packages and casks
-           mackup [config|backup]         Export Mackup config file
-           macprefs [backup]              Export Macprefs backup
-           ruby [gems]                    Export list of user installed Ruby gems
-           mas [packages]                 Export list of installed apps from MacAppStore
-           npm [packages]                 Export list of Node.js packages
-           pip [packages]                 Export list of user installed Python packages from Pip
-           all                            Export all the above
-
     settings:
            [ provision ]
-           -c file                    Specify a custom configuration file
-           -u username                New user username (all lowercase  without spaces)
-           -f 'Full Name'             New user full name (quoted if has blank spaces)
-           -p 'cleartext password'    New user's password in cleartext (quoted if has blank spaces)
-           -t username                Target user username, if different than the new user (can be used to provision the current account)
-           -h Computer-Name           Computer host name no blank spaces allowed
-           -q                         Suppress all non-Ansible output (except errors and warnings), is overriden with '-v'
-           -v                         Produce verbose output
+           -c file                   Specify a custom configuration file
+           -u username               New user username (all lowercase  without spaces)
+           -f 'Full Name'            New user full name (quoted if has blank spaces)
+           -p 'cleartext password'   New user's password in cleartext (quoted if has blank spaces)
+           -t username               Target user username, if different than the new user (can be used to provision the current account)
+           -h Computer-Name          Computer host name no blank spaces allowed
 
            [ provision, update profiles ]
-           -a account_name            Specify the the Github account name for the custom `splinter-profiles` repo
-           -g git-repo-name           Specify the the Github repository name for the custom `splinter-profiles` repo
-           -b profile_name            Specify the the BASE profile to be used (default: 'default')
-           -r profile_name            Specify the the ROLE profile to be used
+           -a account_name           Specify the the Github account name for the custom `splinter-profiles` repo
+           -g git-repo-name          Specify the the Github repository name for the custom `splinter-profiles` repo
+           -b profile_name           Specify the the BASE profile to be used (default: 'default')
+           -r profile_name           Specify the the ROLE profile to be used
 
            [ create package ]
-           -n Package-Name            The name of the package (without extension)
-           -d directory_path          The destination directory where to place the package
-           -t dmg|zip                 The type of package
-
+           -n Package-Name           The name of the package (without extension)
+           -d directory_path         The destination directory where to place the package
+           -t dmg|zip                The type of package
 
     Create your own profiles in the './profiles' directory.
 
