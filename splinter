@@ -141,13 +141,13 @@ cat << 'EOF'
 
 options:
        -e|--env conda|pyenv      List available profiles
-       --help                    Print help\
+       --help                    Print help
        --version                 Print Splinter version and release date
 
 actions:
        create package [settings] Create distributable package of your splinter project
        list profiles             List available profiles
-       provision [settings]      Provision the host\
+       provision [settings]      Provision the host
        update <object>           Update the object
 
 obejcts:
@@ -182,7 +182,7 @@ settings:
        -t dmg|zip                 The type of package
 
 EOF
-  printf  "Create your own profiles in the '%s' directory.\n" "$profiles_path"
+  printf  "Create your own profiles in the project's profiles directory.\n"
   return 0
 }
 
@@ -302,6 +302,7 @@ function read_ini_value {
 function set_app_directories {
   project_dir="$(abs_path "$SPLINTER_PROJECT_DIR")"
   files_path="${project_dir}/files"
+  lists_path="${files_path}/lists"
   tools_path="${project_dir}/tools"
   profiles_path="${project_dir}/profiles"
   ansible_dir="${project_dir}/ansible"
@@ -314,6 +315,8 @@ function set_app_directories {
   ansible_inventory="${ansible_dir}/inventory"
   ansible_playbook="${ansible_dir}/playbook.yml"
   ansible_requirements="${ansible_dir}/requirements.yml"
+
+  export_tool_script="$tools_path/export-apps-lists.sh"
 }
 
 function update_splinter {
@@ -542,7 +545,7 @@ function check_install_path_permissions {
     fi
     if [[ $quiet == 'no' ]]; then
       _echo "Pausing for $pause_seconds seconds for you to read the above message..." 'a'
-      printf ">>>>>>>>> "
+      printf ">>>>>>>>>> "
       for ((i=1; i<=pause_seconds; i++)); do
         # running the countdown before resuming operations
         printf "..%s" "$i"
@@ -784,7 +787,7 @@ function ask_for_ansible_sudo_password {
   # so it can be used by Ansible throughout the whole execution
   if [[ -z $ANSIBLE_BECOME_PASS ]]; then
         _echo "Requesting the admin password to be used for 'sudo' throughout the deployment process" 'a'
-        read -r -p ">>>>>>>>> Insert the current user password: " -s ansible_become_pass
+        read -r -p ">>>>>>>>>> Insert the current user password: " -s ansible_become_pass
         export ANSIBLE_BECOME_PASS="${ansible_become_pass}"
         printf "\n"
   else
@@ -812,6 +815,17 @@ function setup_python {
   _echo "PIP_CONFIG_FILE: $PIP_CONFIG_FILE"
 }
 
+function export_apps_lists {
+  if [[ -f $export_tool_script ]];then
+    _echo "Exporting lists for $*" 'a'
+    _exec "$export_tool_script" "-d" "$lists_path" "$@"
+    _echo "Export successful!" 'r'
+  else
+    _echo "The script '$export_tool_script' is not installed in './tools'." 'e'
+    _echo "Run '$0 update tools' to install the latest version" 'e'
+  fi
+}
+
 function cleanup_tasks {
   eval restore_path_permissions
   eval disable_passwordless_sudo
@@ -819,7 +833,7 @@ function cleanup_tasks {
 
 function list_profiles {
   _echo "$profiles_path" 'r' 1>&2
-  _exec "find" "$profiles_path" "-maxdepth" "1" "-mindepth" "1" "-type" "directory" "-exec" "basename" "{" "\\" ";"
+  _exec "find" "$profiles_path" "-maxdepth" "1" "-mindepth" "1" "-type" "directory" "-exec" "basename" "{}" "\\" ";"
 }
 
 function install_dependencies {
@@ -845,6 +859,28 @@ function provision {
   eval cleanup_tasks
   _echo "Ending time $( date )" 'r'
   eval print_execution_time "${start_time}"
+}
+
+
+function action_export {
+  action_option=$1; # fetch the action's option
+  # Process package options
+  case $action_option in
+    '')
+      echo "[Error] Missing option for action '$action'" 1>&2
+      eval show_usage 1>&2
+      exit 1
+      ;;
+    -*)
+      echo "[Error] Incorrect option '$action_option' for action '$action'" 1>&2
+      eval show_usage 1>&2
+      exit 1
+      ;;
+    *)
+      action_requested="export_apps_lists"
+      action_requested_options=("$@") # assign as an array
+      ;;
+    esac
 }
 
 function action_list {
@@ -928,7 +964,7 @@ function action_update {
       fi
       if [[ -n $requested_profile ]];then
         action_requested="retrieve_profile"
-        action_requested_options="${requested_profile}"
+        action_requested_options=("$requested_profile") # assigne as an array
       else
         action_requested="update_profiles"
       fi
@@ -1105,6 +1141,9 @@ function main {
       verbose='yes' # `create` will always be verbose
       eval action_create "$@"
       ;;
+    export)
+      eval action_export "$@"
+      ;;
     list)
       eval action_list "$1"
       ;;
@@ -1131,7 +1170,7 @@ function main {
   [[ $quiet == 'no' ]] && eval show_title
   eval show_envs
   [[ -n $action_message ]] && _echo "$action_message" 'w'
-  [[ -n $action_requested ]] && eval "$action_requested" "$action_requested_options"
+  [[ -n $action_requested ]] && eval "$action_requested" "${action_requested_options[@]}" # read as an array
   exit 0
 }
 

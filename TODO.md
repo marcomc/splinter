@@ -82,9 +82,14 @@
   * [x] dmg
   * [x] zip
 * [x] write "Use cases"
+* [x] allow extra packages to be installed as target_user_id or for the current user
+* [x] add command to export extra packages lists
 
-* [ ] allow extra packages to be installed as target_user_id or for the current user
-* [ ] find what setting is showing the 'input menu in menu bar' to show the languages
+* [ ] add support for recovery-key-cert-generator
+
+* [ ] add support for Atom packages https://github.com/gantsign/ansible-role-atom-packages
+  * [ ] export lists tool
+  * [ ] splinter-extra-packages
 
 * [ ] write unit tests
   * [ ] bash
@@ -130,6 +135,17 @@
 # Future
 * [x] add splinter and splinter-tools to homebrew
 * [x] make conda to work: has issues linking libtinfo
+* [x] see if it is possible to prevent Xcode to request confirmation
+* [x] Add `update` action to the splinter.sh script that will download updated version of:
+  * [x] make backup and then update all the list below
+  * [x] requirements.yml
+  * [x] ansible.cfg
+  * [x] playbook.yml
+  * [x] README.md
+  * [x] CHANGELOG.md
+  * [x] splinter.sh
+  * [x] TODO.md
+  * [x] tools/
 
 * [ ] create a webpage that will allow to modify with a GUI a profile and to download it locally
 * [ ] distribute compiled version (made with `shc`)
@@ -142,14 +158,3 @@
     * if no version is specified will skip if the app is already installed
     * if 'upgrade' option is provided will install only if the version on the database is newer
     * if a version is specified it will install it if the version is available in the database
-* [x] see if it is possible to prevent Xcode to request confirmation
-* [x] Add `update` action to the splinter.sh script that will download updated version of:
-  * [x] make backup and then update all the list below
-  * [x] requirements.yml
-  * [x] ansible.cfg
-  * [x] playbook.yml
-  * [x] README.md
-  * [x] CHANGELOG.md
-  * [x] splinter.sh
-  * [x] TODO.md
-  * [x] tools/

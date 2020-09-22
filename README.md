@@ -195,16 +195,18 @@ To choose which python environment to run:
 
     options:
            -e|--env conda|pyenv      List available profiles
-           --help                    Print help\
+           --help                    Print help
            --version                 Print Splinter version and release date
 
     actions:
            create package [settings] Create distributable package of your splinter project
            list profiles             List available profiles
-           provision [settings]      Provision the host\
-           update <object>           Update the object
+           provision [settings]      Provision the host
+           update <object>           Update the <object>
+           export <object>           Export list of <object> packages
 
-    obejcts:
+    objects:
+           [ update ]
            conda                     Reinstall the most recent Miniconda Python environment available for splinter
            pyenv                     Reinstall Pyenv Python environment
            galaxy|galaxy-roles       Force update all the Ansible Galaxy roles
@@ -212,6 +214,16 @@ To choose which python environment to run:
            deps|dependencies         Update all the dependencies (Python envs and  Ansible Galaxy role)
            self|auto|splinter        Update Splinter itself (but not the tools or dependencies)
            profiles [settings]       Update the profiles from a online git repo (for now only github is supported)
+
+           [ export ]
+           brew [taps|packages|casks|all] Export list of brew taps, packages and casks
+           mackup [config|backup]         Export Mackup config file
+           macprefs [backup]              Export Macprefs backup
+           ruby [gems]                    Export list of user installed Ruby gems
+           mas [packages]                 Export list of installed apps from MacAppStore
+           npm [packages]                 Export list of Node.js packages
+           pip [packages]                 Export list of user installed Python packages from Pip
+           all                            Export all the above
 
     settings:
            [ provision ]
