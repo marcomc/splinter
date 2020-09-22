@@ -38,7 +38,7 @@ For example:
 
 `base` profile:
 * Common admin username and profile picture.
-* Corporate FileVault2 recovery key certificate.
+* Corporate FileVault2 recovery key certificate or keychain file.
 * Company unified desktop picture.
 * Default applications set: Slack, Skype, LastPass, Jira Client, Google Drive File Stream, Chrome, Firefox, Zoom...
 
@@ -169,6 +169,8 @@ Splinter support custom profiles stored in a Github repository.
 __This is helpful for a central support team to maintain profiles to be used company wise while letting the employees in a satellite office to run their own provisioning__
 
 #### Deployable packages
+> If you are deploying a FileVaultMaster keychain file, __make sure to remove the private key from it__
+
 Splinter can create deployable packages with pre-installed dependencies such as Python, Ansible, Galaxy roles and profiles to copied to the target machines.
 You could also include manually download installation packages for non-MacAppsStore applications (i.e. antivirus software)
 
@@ -202,39 +204,55 @@ To choose which python environment to run:
            --version                 Print Splinter version and release date
 
     actions:
-           create package [settings] Create distributable package of your splinter project
-           list profiles             List available profiles
-           provision [settings]      Provision the host
-           update <object>           Update the object
+           create <object> [settings]
+           list profiles              List available profiles
+           provision [settings]       Provision the host
+           update <object>            Update the <object>
+           export <object> [settings] Export list of <object> packages
 
-    obejcts:
-           conda                     Reinstall the most recent Miniconda Python environment available for splinter
-           pyenv                     Reinstall Pyenv Python environment
-           galaxy|galaxy-roles       Force update all the Ansible Galaxy roles
-           tools                     Update the splinter tools
-           deps|dependencies         Update all the dependencies (Python envs and  Ansible Galaxy role)
-           self|auto|splinter        Update Splinter itself (but not the tools or dependencies)
-           profiles [settings]       Update the profiles from a online git repo (for now only github is supported)
+    objects:
+           [ create ]
+           packages [settings]        Create distributable package of your splinter project
+           filevault-recovery-key     Create a FileVaultMaster recovery key in both Keychain and DER formats
+
+           [ export ]
+           brew [taps|packages|casks|all] Export list of brew taps, packages and casks
+           mackup [config|backup]         Export Mackup config file
+           macprefs [backup]              Export Macprefs backup
+           ruby [gems]                    Export list of user installed Ruby gems
+           mas [packages]                 Export list of installed apps from MacAppStore
+           npm [packages]                 Export list of Node.js packages
+           pip [packages]                 Export list of user installed Python packages from Pip
+           all                            Export all the above
+
+           [ update ]
+           conda                      Reinstall the most recent Miniconda Python environment available for splinter
+           pyenv                      Reinstall Pyenv Python environment
+           galaxy|galaxy-roles        Force update all the Ansible Galaxy roles
+           tools                      Update the splinter tools
+           deps|dependencies          Update all the dependencies (Python envs and  Ansible Galaxy role)
+           self|auto|splinter         Update Splinter itself (but not the tools or dependencies)
+           profiles [settings]        Update the profiles from a online git repo (for now only github is supported)
 
     settings:
            [ provision ]
-           -c file                   Specify a custom configuration file
-           -u username               New user username (all lowercase  without spaces)
-           -f 'Full Name'            New user full name (quoted if has blank spaces)
-           -p 'cleartext password'   New user's password in cleartext (quoted if has blank spaces)
-           -t username               Target user username, if different than the new user (can be used to provision the current account)
-           -h Computer-Name          Computer host name no blank spaces allowed
+           -c file                    Specify a custom configuration file
+           -u username                New user username (all lowercase  without spaces)
+           -f 'Full Name'             New user full name (quoted if has blank spaces)
+           -p 'cleartext password'    New user's password in cleartext (quoted if has blank spaces)
+           -t username                Target user username, if different than the new user (can be used to provision the current account)
+           -h Computer-Name           Computer host name no blank spaces allowed
 
            [ provision, update profiles ]
-           -a account_name           Specify the the Github account name for the custom `splinter-profiles` repo
-           -g git-repo-name          Specify the the Github repository name for the custom `splinter-profiles` repo
-           -b profile_name           Specify the the BASE profile to be used (default: 'default')
-           -r profile_name           Specify the the ROLE profile to be used
+           -a account_name            Specify the the Github account name for the custom `splinter-profiles` repo
+           -g git-repo-name           Specify the the Github repository name for the custom `splinter-profiles` repo
+           -b profile_name            Specify the the BASE profile to be used (default: 'default')
+           -r profile_name            Specify the the ROLE profile to be used
 
            [ create package ]
-           -n Package-Name           The name of the package (without extension)
-           -d directory_path         The destination directory where to place the package
-           -t dmg|zip                The type of package
+           -n Package-Name            The name of the package (without extension)
+           -d path/to/directory       The destination directory where to place the package
+           -t dmg|zip                 The type of package
 
     Create your own profiles in the './profiles' directory.
 
