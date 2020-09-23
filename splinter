@@ -835,6 +835,8 @@ function create_recovery_key {
     _echo "Creating FileVaultMaster recovery key" 'a'
     _exec "$tools_script_create_recovery_key" "-d" "$certificates_path" "$@"
     _echo "FileVaultMaster created successfully!" 'r'
+    _echo "Opening the certificates directory '$certificates_path' for review" 'a'
+    open "$certificates_path"
   else
     _echo "The script '$tools_script_export_apps_lists' is not installed in './tools'." 'e'
     _echo "Run '$0 update tools' to install the latest version" 'e'
