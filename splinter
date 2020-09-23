@@ -369,7 +369,7 @@ function update_tools {
   ls "$temp_dir"
 
   _echo "Installing Splinter tools to '$tools_path'" 'a'
-  _exec "rsync" "-rlWuv" "$temp_dir"/*/* "$tools_path"
+  _exec "rsync" "-rlWuv" "--exclude" "tests/" "$temp_dir"/*/* "$tools_path"
 
   _echo "Removing temporary files" 'a'
   _exec "rm" "-rf" "$temp_dir"
