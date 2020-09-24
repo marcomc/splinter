@@ -217,11 +217,11 @@ To choose which python environment to run:
 
            [ export ]
            brew [taps|packages|casks|all] Export list of brew taps, packages and casks
-           mackup [config|backup]         Export Mackup config file
-           macprefs [backup]              Export Macprefs backup
+           mackup [config|backup|all]     Export Mackup config file
+           macprefs [config|backup|all]   Export Macprefs backup
            ruby [gems]                    Export list of user installed Ruby gems
            mas [packages]                 Export list of installed apps from MacAppStore
-           npm [packages]                 Export list of Node.js packages
+           npm [packages]                 Export list of NPM packages
            pip [packages]                 Export list of user installed Python packages from Pip
            all                            Export all the above
 
