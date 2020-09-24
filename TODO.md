@@ -132,8 +132,8 @@
   * [ ] splinter-extra-packages
 
 
+
 # Future
-* [x] add splinter and splinter-tools to homebrew
 * [x] make conda to work: has issues linking libtinfo
 * [x] see if it is possible to prevent Xcode to request confirmation
 * [x] Add `update` action to the splinter.sh script that will download updated version of:
@@ -146,6 +146,8 @@
   * [x] splinter.sh
   * [x] TODO.md
   * [x] tools/
+
+* [ ] add splinter and splinter-tools to homebrew
 
 * [ ] create a webpage that will allow to modify with a GUI a profile and to download it locally
 * [ ] distribute compiled version (made with `shc`)
