@@ -87,6 +87,7 @@
 * [x] add support for filevault-recovery-key-generator
 
 * [ ] write unit tests
+  * [ ] add control to see if the script is run within the a unit test to prenvet `open "$certificates_path"`
   * [ ] bash
   * [ ] TravisCI
 
