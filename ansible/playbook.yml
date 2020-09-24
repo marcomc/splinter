@@ -59,7 +59,7 @@
       tags: ['extra-packages']
       ignore_errors: yes
 
-    - role: lafarer.osx_defaults
+    - role: lafarer.osx-defaults
       when: configure_system|bool
       tags: ['osx']
       ignore_errors: yes
