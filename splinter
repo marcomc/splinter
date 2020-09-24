@@ -112,6 +112,10 @@ function _echo {
 function show_version {
   echo "Splinter $version $release_date"
 }
+function _error {
+  printf "[Error] %s\n" "$1" 1>&2
+  printf "\n(Type 'splinter --help' for usage instructions)\n" 1>&2
+}
 
 function show_title {
 printf "\e[1;39m"
@@ -894,13 +898,11 @@ function action_export {
   # Process package options
   case $action_option in
     '')
-      echo "[Error] Missing option for action '$action'" 1>&2
-      eval show_usage 1>&2
+      _error "Missing option for action '$action'"
       exit 1
       ;;
     -*)
-      echo "[Error] Incorrect option '$action_option' for action '$action'" 1>&2
-      eval show_usage 1>&2
+      _error "Incorrect option '$action_option' for action '$action'"
       exit 1
       ;;
     *)
@@ -920,13 +922,11 @@ function action_list {
       action_requested="list_profiles"
       ;;
     '')
-      echo "[Error] Missing option for action '$action'" 1>&2
-      eval show_usage 1>&2
+      _error "Missing option for action '$action'"
       exit 1
       ;;
     *)
-      echo "[Error] Incorrect option '$action_option' for action '$action'" 1>&2
-      eval show_usage 1>&2
+      _error "Incorrect option '$action_option' for action '$action'"
       exit 1
       ;;
     esac
@@ -970,13 +970,11 @@ function action_update {
             requested_profile="${OPTARG}"
             ;;
           \?)
-            echo "[Error] Action '$action $action_option': Invalid setting '-${OPTARG}'" 1>&2
-            eval show_usage 1>&2
+            _error "Action '$action $action_option': Invalid setting '-${OPTARG}'"
             exit 1
             ;;
           :)
-            echo "[Error] Action '$action $action_option': setting '-${OPTARG}' is missing an argument" 1>&2
-            eval show_usage 1>&2
+            _error "Action '$action $action_option': setting '-${OPTARG}' is missing an argument"
             exit 1
             ;;
         esac
@@ -987,8 +985,7 @@ function action_update {
       if [[ -n $* ]];then
         # if it is NOT empty it means it interrupted before evaluating all the parameters
         # becaue it encountered a unexpected param or arg
-        echo "[Error] Provided unknow parameter: $1" 1>&2
-        eval show_usage 1>&2
+        _error "Provided unknow parameter: $1"
         exit 1
       fi
       if [[ -n $requested_profile ]];then
@@ -1012,13 +1009,11 @@ function action_update {
       action_requested="update_splinter"
       ;;
     '')
-      echo "[Error] Missing option for action '$action'" 1>&2
-      eval show_usage 1>&2
+      _error "Missing option for action '$action'"
       exit 1
       ;;
     *)
-      echo "[Error] Incorrect option '$action_option' for action '$action'" 1>&2
-      eval show_usage 1>&2
+      _error "Incorrect option '$action_option' for action '$action'"
       exit 1
       ;;
   esac
@@ -1047,13 +1042,11 @@ function action_create {
             package_type="${OPTARG}"
             ;;
           \?)
-            echo "[Error] Action '$action $action_option': Invalid setting '-${OPTARG}'" 1>&2
-            eval show_usage 1>&2
+            _error "Action '$action $action_option': Invalid setting '-${OPTARG}'"
             exit 1
             ;;
           :)
-            echo "[Error] Action '$action $action_option': setting '-${OPTARG}' is missing an argument" 1>&2
-            eval show_usage 1>&2
+            _error "Action '$action $action_option': setting '-${OPTARG}' is missing an argument"
             exit 1
             ;;
         esac
@@ -1064,20 +1057,17 @@ function action_create {
       if [[ -n $* ]];then
         # if it is NOT empty it means it interrupted before evaluating all the parameters
         # becaue it encountered a unexpected param or arg
-        echo "[Error] Provided unknow parameter: $1" 1>&2
-        eval show_usage 1>&2
+        _error "Provided unknow parameter: $1"
         exit 1
       fi
       action_requested="create_package"
       ;;
     '')
-      echo "[Error] Missing option for action '$action'" 1>&2
-      eval show_usage 1>&2
+      _error "Missing option for action '$action'"
       exit 1
       ;;
     *)
-      echo "[Error] Incorrect option '$action_option' for action '$action'" 1>&2
-      eval show_usage 1>&2
+      _error "Incorrect option '$action_option' for action '$action'"
       exit 1
       ;;
   esac
@@ -1117,13 +1107,11 @@ function action_provision {
         export NEW_USER_USERNAME="${OPTARG}"
         ;;
       \?)
-        echo "[Error] Action '$action': Invalid setting '-${OPTARG}'" 1>&2
-        eval show_usage 1>&2
+        _error "Action '$action': Invalid setting '-${OPTARG}'"
         exit 1
         ;;
       :)
-        echo "[Error] Action '$action': setting '-${OPTARG}' is missing an argument" 1>&2
-        eval show_usage 1>&2
+        _error "Action '$action': setting '-${OPTARG}' is missing an argument"
         exit 1
         ;;
     esac
@@ -1133,8 +1121,7 @@ function action_provision {
   if [[ -n $* ]];then
     # if it is NOT empty it means it interrupted before evaluating all the parameters
     # becaue it encountered a unexpected param or arg
-    echo "[Error] Provided unknow parameter: $1" 1>&2
-    eval show_usage 1>&2
+    _error "Provided unknow parameter: $1"
     exit 1
   fi
   action_requested="provision"
@@ -1165,13 +1152,14 @@ function main {
       exit 0
       ;;
     -*)
-      echo "[Error] Invalid option: $1" 1>&2
-      eval show_usage 1>&2
+      _error "Invalid option: $1"
       exit 1
       ;;
   esac
 
-  action="$1"; shift
+
+  action="$1";
+  [[ -n $action ]] && shift 1
   case "$action" in
     create)
       verbose='yes' # `create` will always be verbose
@@ -1191,13 +1179,11 @@ function main {
       eval action_provision "$@"
       ;;
     '')
-      echo "[Error] Missing action" 1>&2
-      eval show_usage 1>&2
+      _error "Missing action"
       exit 1
       ;;
     *)
-      echo "[Error] Invalid action '$action'" 1>&2
-      eval show_usage 1>&2
+      _error "Invalid action '$action'"
       exit 1
       ;;
   esac
