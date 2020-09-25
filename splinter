@@ -45,8 +45,8 @@ function _error {
 }
 
 if ! command -v "pv" >/dev/null 2>&1; then
-  # if pv is not installed we declare a function that does nothing
-  function pv { : ; }
+  # if pv is not installed we declare a function that bypass stdin
+  function pv { cat; }
 fi
 
 function _echo {
@@ -201,7 +201,6 @@ settings:
 
 EOF
   printf  "Create your own profiles in the project's profiles directory.\n"
-  return 0
 }
 
 function locate_config_file {
@@ -499,7 +498,10 @@ function create_package {
         "$project_dir"/* \
         "$source_dir" | pv -ples "$project_dir_number_of_files"  > /dev/null || rsync_failed="true"
 
-  [[ $rsync_failed == "true" ]] && _echo "Copying the project files failed" 'e' && exit 1
+  if [[ $rsync_failed == "true" ]]; then
+    _echo "Copying the project files failed" 'e'
+    exit 1
+  fi
 
   eval bundle_package "$package_type" "$source_dir" "$package_output"
 
@@ -530,7 +532,11 @@ function bundle_package {
       zip -r --symlinks \
           -X "$package_output" \
           "$source_project_dir" | pv -ples "$source_dir_number_of_files"  > /dev/null || zipping_failed="true"
-      [[ $zipping_failed == "true" ]] && _echo "Zipping the project files failed" 'e' && exit 1
+
+      if [[ $zipping_failed == "true" ]]; then
+        _echo "Zipping the project files failed" 'e'
+        exit 1
+      fi
     ;;
     dmg|*)
       _echo "Creating the Disk Image '$package_output'" 'a'
