@@ -46,12 +46,13 @@ function teardown {
 
 @test './splinter create package' {
   run ./splinter create package
-  assert_output --partial 'aaaa'
-  # assert_file_exist "$default_dmg_package"
+  assert_output --partial 'created successfully'
+  assert_file_exist "$default_dmg_package"
 }
 
 @test "./splinter create package -n CustomName" {
   run ./splinter create package -n "$custom_package_name"
+  assert_output --partial 'created successfully'
   assert_file_exist "$custom_dmg_package"
 }
 
@@ -62,6 +63,7 @@ function teardown {
 
 @test './splinter create package -d custom/path/to/directory' {
   run ./splinter create package -d "$custom_package_destination"
+  assert_output --partial 'created successfully'
   assert_file_exist "${custom_package_destination}/${default_dmg_package}"
 }
 
@@ -72,11 +74,13 @@ function teardown {
 
 @test './splinter create package -t dmg' {
   run ./splinter create package -t dmg
+  assert_output --partial 'created successfully'
   assert_file_exist "$default_dmg_package"
 }
 
 @test './splinter create package -t zip' {
   run ./splinter create package -t zip
+  assert_output --partial 'created successfully'
   assert_file_exist "$default_zip_package"
 }
 
@@ -87,6 +91,7 @@ function teardown {
 
 @test './splinter -n CustomName -t zip -d path/to/custom/directory' {
   run ./splinter create package -n "$custom_package_name" -t zip -d "$custom_package_destination"
+  assert_output --partial 'created successfully'
   assert_dir_exist  "$custom_package_destination"
   assert_file_exist "${custom_package_destination}/${custom_zip_package}"
 }
@@ -94,7 +99,7 @@ function teardown {
 @test './splinter create filevault-recovery-key' {
   run ./splinter update tools # required to install filevault-recovery-key-generator.sh
   run ./splinter create filevault-recovery-key
-  assert_output --partial 'aaaa'
+  assert_output --partial 'created successfully'
   assert_dir_exist  "$recovery_key_dir"
   assert_file_exist "$keychain_file"
   assert_file_exist "$der_cert"
