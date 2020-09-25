@@ -30,70 +30,81 @@ function teardown {
   if [[ -d $recovery_key_dir ]]; then rm -rf "$recovery_key_dir"; fi
 }
 
-#
-# @test './splinter create <missing-argument>' {
-#   run ./splinter create
-#   assert_output --partial '[Error]'
-# }
-#
-# @test './splinter create <invalid-argument>' {
-#   run ./splinter create 'invalid-argument'
-#   assert_output --partial 'Error'
-# }
-#
-# @test './splinter create package' {
-#   run ./splinter create package
-#   assert_output --partial 'created successfully'
-#   assert_file_exist "$default_dmg_package"
-# }
-#
-# @test "./splinter create package -n CustomName" {
-#   run ./splinter create package -n "$custom_package_name"
-#   assert_output --partial 'created successfully'
-#   assert_file_exist "$custom_dmg_package"
-# }
-#
-# @test './splinter create package -n <missing-argument>' {
-#   run ./splinter create package -n
-#   assert_output --partial 'Error'
-# }
-#
-# @test './splinter create package -d custom/path/to/directory' {
-#   run ./splinter create package -d "$custom_package_destination"
-#   assert_output --partial 'created successfully'
-#   assert_file_exist "${custom_package_destination}/${default_dmg_package}"
-# }
-#
-# @test './splinter create package -d invalid/path' {
-#   run ./splinter create package -d '/invalid/path/to/nowhere'
-#   assert_output --partial 'Cannot find the destination directory'
-# }
-#
-# @test './splinter create package -t dmg' {
-#   run ./splinter create package -t dmg
-#   assert_output --partial 'created successfully'
-#   assert_file_exist "$default_dmg_package"
-# }
 
-@test './splinter create package -t zip' {
+@test './splinter create <missing-argument> - expected to fail' {
+  run ./splinter create
+  assert_output --partial '[Error]'
+  assert_failure
+}
+
+@test './splinter create <invalid-argument> - expected to fail' {
+  run ./splinter create 'invalid-argument'
+  assert_output --partial 'Error'
+  assert_failure
+}
+
+@test './splinter create package - expected to create "SplinterProvision.dmg"' {
+  run ./splinter create package
+  assert_output --partial 'created successfully'
+  assert_file_exist "$default_dmg_package"
+  assert_success
+}
+
+@test './splinter create package -n CustomName - expected to create "CustomName.dmg"' {
+  run ./splinter create package -n "$custom_package_name"
+  assert_output --partial 'created successfully'
+  assert_file_exist "$custom_dmg_package"
+  assert_success
+}
+
+@test './splinter create package -n <missing-argument> - expected to fail' {
+  run ./splinter create package -n
+  assert_output --partial 'Error'
+  assert_failure
+}
+
+@test './splinter create package -d /custom/path - expected to create "/custom/path/SplinterProvision.dmg"' {
+  run ./splinter create package -d "$custom_package_destination"
+  assert_output --partial 'created successfully'
+  assert_file_exist "${custom_package_destination}/${default_dmg_package}"
+  assert_success
+}
+
+@test './splinter create package -d invalid/path - expected to fail' {
+  run ./splinter create package -d '/invalid/path/to/nowhere'
+  assert_output --partial 'Cannot find the destination directory'
+  assert_failure
+}
+
+@test './splinter create package -t dmg - expected to create "SplinterProvision.dmg"' {
+  run ./splinter create package -t dmg
+  assert_output --partial 'created successfully'
+  assert_file_exist "$default_dmg_package"
+  assert_success
+}
+
+@test './splinter create package -t zip - expected to create "SplinterProvision.zip"' {
   run ./splinter create package -t zip
   assert_output --partial 'created successfully'
   assert_file_exist "$default_zip_package"
+  assert_success
 }
 
-@test './splinter create package -t <missing-argument>' {
+@test './splinter create package -t <missing-argument> - expected to fail' {
   run ./splinter create package -t
   assert_output --partial 'Error'
+  assert_failure
 }
 
-@test './splinter -n CustomName -t zip -d path/to/custom/directory' {
+@test './splinter -n CustomName -t zip -d /custom/path - expected to create "/custom/path/SplinterProvision.zip"' {
   run ./splinter create package -n "$custom_package_name" -t zip -d "$custom_package_destination"
   assert_output --partial 'created successfully'
   assert_dir_exist  "$custom_package_destination"
   assert_file_exist "${custom_package_destination}/${custom_zip_package}"
+  assert_success
 }
 
-@test './splinter create filevault-recovery-key' {
+@test './splinter create filevault-recovery-key - expected to create keychain, DER and password files in ./certificates' {
   run ./splinter update tools # required to install filevault-recovery-key-generator.sh
   run ./splinter create filevault-recovery-key
   assert_output --partial 'created successfully'
@@ -101,4 +112,5 @@ function teardown {
   assert_file_exist "$keychain_file"
   assert_file_exist "$der_cert"
   assert_file_exist "$keychain_password_file"
+  assert_success
 }
