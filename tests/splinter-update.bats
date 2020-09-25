@@ -269,22 +269,16 @@ function valid_argument_test {
   assert_output --partial 'Upgrading PIP'
   assert_output --partial 'Installing Ansible Galaxy roles'
   assert_dir_exist "$conda_dir"
-  assert_file_exist "$brew_tool"
   assert_dir_exist "$splinter_toolkit_galaxy_role"
   assert_success
 }
 
 @test "./splinter -e pyenv update deps - expected to update all tools with 'pyenv'" {
   run ./splinter -e pyenv update deps
-  assert_output --partial 'Tools updated successfully'
   assert_output --partial 'Installing Pyenv Python'
   assert_output --partial 'Upgrading PIP'
-  assert_output --partial 'Upgrading PIP'
   assert_output --partial 'Installing Ansible Galaxy roles'
-  assert_file_exist "$tools_script_1"
-  assert_file_exist "$tools_script_2"
   assert_dir_exist "$pyenv_dir"
-  assert_file_exist "$brew_tool"
   assert_dir_exist "$splinter_toolkit_galaxy_role"
   assert_success
 }
