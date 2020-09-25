@@ -33,50 +33,50 @@ function teardown {
 @test './splinter is executable' {
   assert_file_executable './splinter'
 }
-
-@test './splinter create <missing-argument>' {
-  run ./splinter create
-  assert_output --partial '[Error]'
-}
-
-@test './splinter create <invalid-argument>' {
-  run ./splinter create 'invalid-argument'
-  assert_output --partial 'Error'
-}
-
-@test './splinter create package' {
-  run ./splinter create package
-  assert_output --partial 'created successfully'
-  assert_file_exist "$default_dmg_package"
-}
-
-@test "./splinter create package -n CustomName" {
-  run ./splinter create package -n "$custom_package_name"
-  assert_output --partial 'created successfully'
-  assert_file_exist "$custom_dmg_package"
-}
-
-@test './splinter create package -n <missing-argument>' {
-  run ./splinter create package -n
-  assert_output --partial 'Error'
-}
-
-@test './splinter create package -d custom/path/to/directory' {
-  run ./splinter create package -d "$custom_package_destination"
-  assert_output --partial 'created successfully'
-  assert_file_exist "${custom_package_destination}/${default_dmg_package}"
-}
-
-@test './splinter create package -d invalid/path' {
-  run ./splinter create package -d '/invalid/path/to/nowhere'
-  assert_output --partial 'Cannot find the destination directory'
-}
-
-@test './splinter create package -t dmg' {
-  run ./splinter create package -t dmg
-  assert_output --partial 'created successfully'
-  assert_file_exist "$default_dmg_package"
-}
+# 
+# @test './splinter create <missing-argument>' {
+#   run ./splinter create
+#   assert_output --partial '[Error]'
+# }
+#
+# @test './splinter create <invalid-argument>' {
+#   run ./splinter create 'invalid-argument'
+#   assert_output --partial 'Error'
+# }
+#
+# @test './splinter create package' {
+#   run ./splinter create package
+#   assert_output --partial 'created successfully'
+#   assert_file_exist "$default_dmg_package"
+# }
+#
+# @test "./splinter create package -n CustomName" {
+#   run ./splinter create package -n "$custom_package_name"
+#   assert_output --partial 'created successfully'
+#   assert_file_exist "$custom_dmg_package"
+# }
+#
+# @test './splinter create package -n <missing-argument>' {
+#   run ./splinter create package -n
+#   assert_output --partial 'Error'
+# }
+#
+# @test './splinter create package -d custom/path/to/directory' {
+#   run ./splinter create package -d "$custom_package_destination"
+#   assert_output --partial 'created successfully'
+#   assert_file_exist "${custom_package_destination}/${default_dmg_package}"
+# }
+#
+# @test './splinter create package -d invalid/path' {
+#   run ./splinter create package -d '/invalid/path/to/nowhere'
+#   assert_output --partial 'Cannot find the destination directory'
+# }
+#
+# @test './splinter create package -t dmg' {
+#   run ./splinter create package -t dmg
+#   assert_output --partial 'created successfully'
+#   assert_file_exist "$default_dmg_package"
+# }
 
 @test './splinter create package -t zip' {
   run ./splinter create package -t zip
