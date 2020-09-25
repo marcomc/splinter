@@ -30,10 +30,7 @@ function teardown {
   if [[ -d $recovery_key_dir ]]; then rm -rf "$recovery_key_dir"; fi
 }
 
-@test './splinter is executable' {
-  assert_file_executable './splinter'
-}
-# 
+#
 # @test './splinter create <missing-argument>' {
 #   run ./splinter create
 #   assert_output --partial '[Error]'
