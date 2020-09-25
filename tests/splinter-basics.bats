@@ -5,32 +5,32 @@ load 'test_helper.sh'
   assert_file_executable './splinter'
 }
 
-@test './splinter <missing-argument>' {
-  ./splinter
+@test './splinter <missing-argument> - expected to fail' {
+  run ./splinter
   assert_output --partial 'Error'
   assert_failure
 }
 
-@test './splinter --help' {
+@test './splinter --help - expected to print usage instructions' {
   run ./splinter --help
   assert_output --partial 'usage:'
   assert_success
 }
 
-@test './splinter --version' {
+@test './splinter --version - expected to show Splinter version' {
   run ./splinter --version
   assert_output --partial 'Splinter'
   assert_success
 }
 
-@test 'list profiles' {
-  run list profiles
+@test './splinter list profiles - expected to show list of profiles' {
+  run ./splinter list profiles
   refute_output --partial 'Error'
   assert_success
 }
 
-@test 'list  <invalid-argument>' {
-  run list invalid-argument
+@test './splinter list  <invalid-argument> - expected to fail' {
+  run ./splinter list invalid-argument
   assert_output --partial 'Error'
   assert_failure
 }
