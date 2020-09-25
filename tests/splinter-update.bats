@@ -274,8 +274,8 @@ function valid_argument_test {
   assert_success
 }
 
-@test "./splinter -n pyenv update deps - expected to update all tools with 'pyenv'" {
-  run ./splinter -n pyenv update deps
+@test "./splinter -e pyenv update deps - expected to update all tools with 'pyenv'" {
+  run ./splinter -e pyenv update deps
   assert_output --partial 'Tools updated successfully'
   assert_output --partial 'Installing Pyenv Python'
   assert_output --partial 'Upgrading PIP'
