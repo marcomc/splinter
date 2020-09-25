@@ -1021,7 +1021,7 @@ function action_update {
 
 function action_create {
   action_option="$1"; # fetch the action's option
-  shift
+  [[ -n $action_option ]] &&  shift
   case $action_option in
     filevault-recovery-key)
       [[ $verbose != "yes" ]] && quiet="yes"
