@@ -44,7 +44,7 @@ function _error {
   printf "\n(Type 'splinter --help' for usage instructions)\n" 1>&2
 }
 
-if ! command -v pv; then
+if ! command -v "pv" >/dev/null 2>&1; then
   # if pv is not installed we declare a function that does nothing
   function pv { : ; }
 fi
@@ -525,7 +525,7 @@ function bundle_package {
 
   case $package_type in
     zip)
-      _echo "Creting the ZIP package '$package_output'" 'a'
+      _echo "Creating the ZIP package '$package_output'" 'a'
       _exec "cd" "${source_dir}/.."
       zip -r --symlinks \
           -X "$package_output" \
