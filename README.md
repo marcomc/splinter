@@ -1,5 +1,4 @@
-
-
+[![Build Status](https://api.travis-ci.com/marcomc/splinter.png)](https://www.travis-ci.com/github/marcomc/splinter/builds)
 ```
   _______  _____         _____ __   _ _______ _______  ______
   |______ |_____] |        |   | \  |    |    |______ |_____/
