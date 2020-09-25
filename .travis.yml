@@ -21,6 +21,7 @@ jobs:
       # - travis_wait 30 bats tests/splinter-update.bats
     - stage: unit-test-advanced-options
       script:
+      - ./splinter update tools
       - travis_wait 30 bats tests/splinter-export.bats
       - travis_wait 60 bats tests/splinter-create.bats
     # - stage: unit-test-provisioning

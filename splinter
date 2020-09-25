@@ -855,6 +855,7 @@ function create_recovery_key {
   else
     _echo "The script '$tools_script_create_recovery_key' is not installed in './tools'." 'e'
     _echo "Run '$0 update tools' to install the latest version" 'e'
+    exit 1
   fi
 }
 
@@ -866,6 +867,7 @@ function export_apps_lists {
   else
     _echo "The script '$tools_script_export_apps_lists' is not installed in './tools'." 'e'
     _echo "Run '$0 update tools' to install the latest version" 'e'
+    exit 1
   fi
 }
 
@@ -913,7 +915,7 @@ function action_export {
       exit 1
       ;;
     -*)
-      _error "Incorrect option '$action_option' for action '$action'"
+      _error "Invalid option '$action_option' for action '$action'"
       exit 1
       ;;
     *)
@@ -937,7 +939,7 @@ function action_list {
       exit 1
       ;;
     *)
-      _error "Incorrect option '$action_option' for action '$action'"
+      _error "Invalid option '$action_option' for action '$action'"
       exit 1
       ;;
     esac
@@ -1024,7 +1026,7 @@ function action_update {
       exit 1
       ;;
     *)
-      _error "Incorrect option '$action_option' for action '$action'"
+      _error "Invalid option '$action_option' for action '$action'"
       exit 1
       ;;
   esac
@@ -1078,7 +1080,7 @@ function action_create {
       exit 1
       ;;
     *)
-      _error "Incorrect option '$action_option' for action '$action'"
+      _error "Invalid option '$action_option' for action '$action'"
       exit 1
       ;;
   esac

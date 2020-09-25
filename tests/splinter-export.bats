@@ -1,6 +1,7 @@
 #!/usr/bin/env bats
 load 'test_helper.sh'
 
+
 function setup {
   lists_dir='files/lists'
   homebrew_cask_apps_list="${lists_dir}/homebrew_cask_apps.txt"
@@ -29,6 +30,7 @@ function teardown {
 function invalid_argument_test {
   run ./splinter export "$1" invalid-argument
   assert_output --partial 'ERROR'
+  assert_output --partial 'Invalid'
   assert_failure
 }
 
@@ -48,7 +50,7 @@ function valid_argument_test {
 
 @test './splinter export (no argument) - expected to fail' {
   run ./splinter export
-  assert_output --partial 'Error'
+  assert_output --partial 'Missing option'
   assert_failure
 }
 
