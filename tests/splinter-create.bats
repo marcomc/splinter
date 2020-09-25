@@ -92,6 +92,7 @@ function teardown {
 }
 
 @test './splinter create filevault-recovery-key' {
+  run ./splinter update tools # required to install filevault-recovery-key-generator.sh
   run ./splinter create filevault-recovery-key
   assert_output --partial 'aaaa'
   assert_dir_exist  "$recovery_key_dir"
