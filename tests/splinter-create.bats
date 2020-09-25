@@ -45,8 +45,9 @@ function teardown {
 }
 
 @test './splinter create package' {
-  run ./splinter 'create' 'package'
-  assert_file_exist "$default_dmg_package"
+  run ./splinter create package
+  assert_output --partial 'aaaa'
+  # assert_file_exist "$default_dmg_package"
 }
 
 @test "./splinter create package -n CustomName" {
@@ -92,6 +93,7 @@ function teardown {
 
 @test './splinter create filevault-recovery-key' {
   run ./splinter create filevault-recovery-key
+  assert_output --partial 'aaaa'
   assert_dir_exist  "$recovery_key_dir"
   assert_file_exist "$keychain_file"
   assert_file_exist "$der_cert"
