@@ -39,6 +39,15 @@ function abs_path {
   absolute_path="$(cd "$directory"|| exit 1; pwd )"
   echo "${absolute_path}/$(basename "$file")"
 }
+function _error {
+  printf "[Error] %s\n" "$1" 1>&2
+  printf "\n(Type 'splinter --help' for usage instructions)\n" 1>&2
+}
+
+if ! command -v pv; then
+  # if pv is not installed we declare a function that does nothing
+  function pv { : ; }
+fi
 
 function _echo {
   local bright="0"
@@ -111,10 +120,6 @@ function _echo {
 
 function show_version {
   echo "Splinter $version $release_date"
-}
-function _error {
-  printf "[Error] %s\n" "$1" 1>&2
-  printf "\n(Type 'splinter --help' for usage instructions)\n" 1>&2
 }
 
 function show_title {
@@ -524,7 +529,7 @@ function bundle_package {
       _exec "cd" "${source_dir}/.."
       zip -r --symlinks \
           -X "$package_output" \
-          "$source_project_dir" |  pv -ples "$source_dir_number_of_files"  > /dev/null || zipping_failed="true"
+          "$source_project_dir" | pv -ples "$source_dir_number_of_files"  > /dev/null || zipping_failed="true"
       [[ $zipping_failed == "true" ]] && _echo "Zipping the project files failed" 'e' && exit 1
     ;;
     dmg|*)
