@@ -1,0 +1,17 @@
+os:
+  - osx
+
+osx_image:
+# OS X 10.15
+  - xcode12
+# OS X 10.14
+  - xcode11.2
+
+language: bash
+
+before_install:
+  - brew update
+  - brew install bats-core mas
+
+script:
+  - bats tests
