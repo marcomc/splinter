@@ -48,7 +48,7 @@ function valid_argument_test {
   assert_success
 }
 
-@test './splinter export (no argument) - expected to fail' {
+@test './splinter export (no arguments) - expected to fail' {
   run ./splinter export
   assert_output --partial 'Missing option'
   assert_failure
@@ -71,7 +71,7 @@ function valid_argument_test {
   # to add mackup
 }
 
-@test './splinter export brew (no argument) - expected to create taps, packages and casks lists in ./files/lists' {
+@test './splinter export brew (no arguments) - expected to create taps, packages and casks lists in ./files/lists' {
   run ./splinter export brew
   assert_file_exist "$homebrew_packages_list"
   assert_file_exist "$homebrew_cask_apps_list"
@@ -105,7 +105,7 @@ function valid_argument_test {
   eval invalid_argument_test 'brew'
 }
 
-@test './splinter export ruby (no argument) - expected to create ./files/lists/ruby_gems.txt' {
+@test './splinter export ruby (no arguments) - expected to create ./files/lists/ruby_gems.txt' {
   eval no_argument_test 'ruby' "$ruby_gems_list"
 }
 
@@ -117,7 +117,7 @@ function valid_argument_test {
   eval invalid_argument_test 'ruby'
 }
 
-@test './splinter export mas (no argument) - expected to create ./files/lists/mas_apps.txt' {
+@test './splinter export mas (no arguments) - expected to create ./files/lists/mas_apps.txt' {
   eval no_argument_test 'mas' "$mas_apps_list"
 }
 
@@ -129,7 +129,7 @@ function valid_argument_test {
   eval invalid_argument_test 'mas'
 }
 
-@test './splinter export npm (no argument) - expected to create ./files/lists/npm_global_packages.txt' {
+@test './splinter export npm (no arguments) - expected to create ./files/lists/npm_global_packages.txt' {
   eval no_argument_test 'npm' "$npm_global_packages_list"
 }
 
@@ -141,7 +141,7 @@ function valid_argument_test {
   eval invalid_argument_test 'npm'
 }
 
-@test './splinter export pip (no argument) - expected to create ./files/lists/pip_packages.txt' {
+@test './splinter export pip (no arguments) - expected to create ./files/lists/pip_packages.txt' {
   eval no_argument_test 'pip' "$pip_packages_list"
 }
 

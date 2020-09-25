@@ -1,11 +1,10 @@
-os:
-  - osx
+os: osx
 
 osx_image:
 # OS X 10.15
   - xcode12
-# OS X 10.14
-  - xcode11.2
+# # OS X 10.14
+#   - xcode11.2
 
 language: bash
 
@@ -13,19 +12,10 @@ before_install:
   # - brew update
   - brew install bats-core mas
 
-jobs:
-  include:
-    - osx_image: xcode12
-      stage:
-        - name: unit-test-basic-options
-          script:
-            - travis_wait 30 bats tests/splinter-basics.bats
-      # - travis_wait 30 bats tests/splinter-update.bats
-        - name: unit-test-advanced-options
-          script:
-          - ./splinter update tools
-          - travis_wait 30 bats tests/splinter-export.bats
-          - travis_wait 60 bats tests/splinter-create.bats
-    # - stage: unit-test-provisioning
-    #   script:
-    #   - travis_wait 30 bats tests/splinter-provision.bats
+script:
+  - travis_wait 30 bats tests/splinter-basics.bats
+  - travis_wait 30 bats tests/splinter-update.bats
+  - ./splinter update tools
+  - travis_wait 30 bats tests/splinter-export.bats
+  - travis_wait 60 bats tests/splinter-create.bats
+  # - travis_wait 30 bats tests/splinter-provision.bats

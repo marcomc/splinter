@@ -6,7 +6,6 @@
 *backup*
 *bk*
 *iniconda*.sh
-*test*
 splinter.cfg
 
 # exclude these directories patterns
@@ -22,8 +21,8 @@ tools/
 
 # exceptios
 !*.md
-!splinter_*
 !files/*/
 !files/*/MarcoMC_Apple_Sketch_Round.png
 !profiles/default-example/
 !profiles/example/
+!splinter_*
