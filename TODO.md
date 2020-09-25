@@ -160,3 +160,4 @@
     * if no version is specified will skip if the app is already installed
     * if 'upgrade' option is provided will install only if the version on the database is newer
     * if a version is specified it will install it if the version is available in the database
+* [ ] source the tools script as libraries instead of calling them as commands
