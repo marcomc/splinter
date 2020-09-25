@@ -842,7 +842,7 @@ function create_recovery_key {
     _echo "Opening the certificates directory '$certificates_path' for review" 'a'
     open "$certificates_path"
   else
-    _echo "The script '$tools_script_export_apps_lists' is not installed in './tools'." 'e'
+    _echo "The script '$tools_script_create_recovery_key' is not installed in './tools'." 'e'
     _echo "Run '$0 update tools' to install the latest version" 'e'
   fi
 }
