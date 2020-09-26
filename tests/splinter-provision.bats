@@ -76,13 +76,13 @@ function teardown {
   assert_success
 }
 
-@test './splinter provision <invalid-argument>' {
+@test './splinter provision <invalid-argument> - expected to fail' {
   run ./splinter provision 'invalid-argument'
   assert_output --partial 'Provided unknow parameter'
   assert_failure
 }
 
-@test './splinter provision -c example-config.cfg' {
+@test "./splinter provision -c example-config.cfg - expected to create the user 'newuser'" {
   if [[ -d $default_profile_example ]]; then
     cp -a "$default_profile_example" "$default_profile"
   fi
@@ -101,7 +101,7 @@ function teardown {
   assert_failure
 }
 
-@test "./splinter provision -u utonto -f 'U\ Tonto' -p password -t utonto -h Computer-Name" {
+@test "./splinter provision -u utonto -f 'U\ Tonto' -p password -t utonto -h Computer-Name - expected to create the user 'utonto'" {
   if [[ -d $default_profile_example ]]; then
     cp -a "$default_profile_example" "$default_profile"
   fi
