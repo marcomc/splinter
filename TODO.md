@@ -149,6 +149,12 @@
 
 * [ ] add splinter and splinter-tools to homebrew
 
+* [ ] replace `-e none` with `-e local` to user local version of python
+  * [ ] verify that local version of pythong is 3.x
+  * [ ] will install ansible in the local python
+  * [ ] will not include any python component in the `Splinter package`
+  * [ ] modify BATS unit tests that use `-e none` to use `-e local`
+
 * [ ] create a webpage that will allow to modify with a GUI a profile and to download it locally
 * [ ] distribute compiled version (made with `shc`)
 * [ ] filevault2 role: if FV is already enabled, check if the newuser is already added to Filevault, if not, add it
