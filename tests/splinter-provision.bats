@@ -2,7 +2,7 @@
 load 'test_helper.sh'
 
 function setup {
-  export ANSIBLE_BECOME_PASS="password"
+  export ANSIBLE_BECOME_PASS="travis"
   default_profile_example="./profiles/default-example"
   default_profile="./profiles/default"
   example_splinter_config="example-splinter.cfg"
