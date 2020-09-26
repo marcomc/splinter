@@ -32,7 +32,7 @@ function teardown {
 }
 
 @test './splinter -q provision (quite, no default profile)' {
-  run ./splinter provision
+  run ./splinter -q provision
   refute_output --partial '[SPLINTER]'
   refute_output --partial '[ACTION..]'
   refute_output --partial '[INFO....]'
@@ -88,7 +88,6 @@ function teardown {
     cp -a "$default_profile_example" "$default_profile"
   fi
   run ./splinter provision -c "$example_splinter_config"
-  assert_output --partial 'PYENV PYTHON'
   assert_output --partial '[SPLINTER]'
   assert_output --partial '[ACTION..]'
   assert_output --partial 'Running Ansible provisioning'
