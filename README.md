@@ -409,7 +409,7 @@ MIT
 ## Copyright
 
 Marco Massari Calderone <marco@marcomc.com>
-The logo `MarcoMC_Apple_Sketch_Round` is a property and copyright of Marco Massari Calderone.
+The logo [MarcoMC_Apple_Sketch_Round](files/profile_pictures/MarcoMC_Apple_Sketch_Round.png) is a property and copyright of Marco Massari Calderone.
 
 ## Credits
 
