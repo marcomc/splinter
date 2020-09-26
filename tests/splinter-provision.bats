@@ -96,18 +96,22 @@ function teardown {
   assert_output --partial 'failed=0'
   assert_success
 }
+@test "./splinter provision -u utonto -f 'U Tonto' -p <missing-argument> - expected to fail" {
+  run ./splinter provision -u utonto -f 'U\ tonto' -p
+  assert_output --partial 'missing an argument'
+  assert_failure
+}
 
-# splinter provision -u username -f 'Full Name' -p 'cleartext password' -t username -h Computer-Name
-#
-#
-# VERBOSE
-# ANSIBLE_BECOME_PASS
-# SPLINTER_BASE_PROFILE
-# SPLINTER_ROLE_PROFILE
-# NEW_USER_USERNAME
-# NEW_USER_FULL_NAME
-# NEW_USER_PASSWORD_CLEARTEXT
-# CREATE_NEW_USER
-# COMPUTER_HOST_NAME
-# TARGET_USER_ID
-# SPLINTER_PROJECT_DIR
+@test "./splinter provision -u utonto -f 'U\ Tonto' -p password -t utonto -h Computer-Name" {
+  if [[ -d $default_profile_example ]]; then
+    cp -a "$default_profile_example" "$default_profile"
+  fi
+  run ./splinter provision -u utonto -f 'U\ tonto' -p 'password' -t utonto -h Computer-Name
+  assert_output --partial '[SPLINTER]'
+  assert_output --partial '[ACTION..]'
+  assert_output --partial 'Running Ansible provisioning'
+  assert_output --partial 'PLAY'
+  assert_output --partial 'Creating user "utonto"'
+  assert_output --partial 'failed=0'
+  assert_success
+}
