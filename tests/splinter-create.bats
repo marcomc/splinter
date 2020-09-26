@@ -2,6 +2,8 @@
 load 'test_helper.sh'
 
 function setup {
+  pyenv_dir='./pyenv'
+  conda_dir='./conda'
   default_package_name="SplinterProvision"
   default_dmg_package="${default_package_name}.dmg"
   default_zip_package="${default_package_name}.zip"
@@ -28,76 +30,79 @@ function teardown {
   if [[ -d $custom_package_destination ]]; then rm -rf "$custom_package_destination"; fi
 
   if [[ -d $recovery_key_dir ]]; then rm -rf "$recovery_key_dir"; fi
+
+  if [[ -d $pyenv_dir ]]; then rm -rf "$pyenv_dir"; fi
+  if [[ -d $conda_dir ]]; then rm -rf "$conda_dir"; fi
 }
 
 
-@test './splinter create <missing-argument> - expected to fail' {
-  run ./splinter create
+@test './splinter --env none create <missing-argument> - expected to fail' {
+  run ./splinter --env none create
   assert_output --partial '[Error]'
   assert_failure
 }
 
-@test './splinter create <invalid-argument> - expected to fail' {
-  run ./splinter create 'invalid-argument'
+@test './splinter --env none create <invalid-argument> - expected to fail' {
+  run ./splinter --env none create 'invalid-argument'
   assert_output --partial 'Error'
   assert_failure
 }
 
-@test './splinter create package - expected to create "SplinterProvision.dmg"' {
-  run ./splinter create package
+@test './splinter --env none create package - expected to create "SplinterProvision.dmg"' {
+  run ./splinter --env none create package
   assert_output --partial 'created successfully'
   assert_file_exist "$default_dmg_package"
   assert_success
 }
 
-@test './splinter create package -n CustomName - expected to create "CustomName.dmg"' {
-  run ./splinter create package -n "$custom_package_name"
+@test './splinter --env none create package -n CustomName - expected to create "CustomName.dmg"' {
+  run ./splinter --env none create package -n "$custom_package_name"
   assert_output --partial 'created successfully'
   assert_file_exist "$custom_dmg_package"
   assert_success
 }
 
-@test './splinter create package -n <missing-argument> - expected to fail' {
-  run ./splinter create package -n
+@test './splinter --env none create package -n <missing-argument> - expected to fail' {
+  run ./splinter --env none create package -n
   assert_output --partial 'Error'
   assert_failure
 }
 
-@test './splinter create package -d /custom/path - expected to create "/custom/path/SplinterProvision.dmg"' {
-  run ./splinter create package -d "$custom_package_destination"
+@test './splinter --env none create package -d /custom/path - expected to create "/custom/path/SplinterProvision.dmg"' {
+  run ./splinter --env none create package -d "$custom_package_destination"
   assert_output --partial 'created successfully'
   assert_file_exist "${custom_package_destination}/${default_dmg_package}"
   assert_success
 }
 
-@test './splinter create package -d invalid/path - expected to fail' {
-  run ./splinter create package -d '/invalid/path/to/nowhere'
+@test './splinter --env none create package -d invalid/path - expected to fail' {
+  run ./splinter --env none create package -d '/invalid/path/to/nowhere'
   assert_output --partial 'Cannot find the destination directory'
   assert_failure
 }
 
-@test './splinter create package -t dmg - expected to create "SplinterProvision.dmg"' {
-  run ./splinter create package -t dmg
+@test './splinter --env none create package -t dmg - expected to create "SplinterProvision.dmg"' {
+  run ./splinter --env none create package -t dmg
   assert_output --partial 'created successfully'
   assert_file_exist "$default_dmg_package"
   assert_success
 }
 
-@test './splinter create package -t zip - expected to create "SplinterProvision.zip"' {
-  run ./splinter create package -t zip
+@test './splinter --env none create package -t zip - expected to create "SplinterProvision.zip"' {
+  run ./splinter --env none create package -t zip
   assert_output --partial 'created successfully'
   assert_file_exist "$default_zip_package"
   assert_success
 }
 
-@test './splinter create package -t <missing-argument> - expected to fail' {
-  run ./splinter create package -t
+@test './splinter --env none create package -t <missing-argument> - expected to fail' {
+  run ./splinter --env none create package -t
   assert_output --partial 'Error'
   assert_failure
 }
 
 @test './splinter -n CustomName -t zip -d /custom/path - expected to create "/custom/path/SplinterProvision.zip"' {
-  run ./splinter create package -n "$custom_package_name" -t zip -d "$custom_package_destination"
+  run ./splinter --env none create package -n "$custom_package_name" -t zip -d "$custom_package_destination"
   assert_output --partial 'created successfully'
   assert_dir_exist  "$custom_package_destination"
   assert_file_exist "${custom_package_destination}/${custom_zip_package}"

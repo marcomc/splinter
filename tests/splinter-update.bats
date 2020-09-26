@@ -268,6 +268,7 @@ function valid_argument_test {
   assert_output --partial 'Downloading Miniconda'
   assert_output --partial 'Upgrading PIP'
   assert_output --partial 'Installing Ansible Galaxy roles'
+  assert_file_exist "$brew_tool"
   assert_dir_exist "$conda_dir"
   assert_dir_exist "$splinter_toolkit_galaxy_role"
   assert_success
@@ -278,6 +279,7 @@ function valid_argument_test {
   assert_output --partial 'Installing Pyenv Python'
   assert_output --partial 'Upgrading PIP'
   assert_output --partial 'Installing Ansible Galaxy roles'
+  assert_file_exist "$brew_tool"
   assert_dir_exist "$pyenv_dir"
   assert_dir_exist "$splinter_toolkit_galaxy_role"
   assert_success

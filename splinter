@@ -142,7 +142,7 @@ printf  "usage: %s [option] action [object] [settings]\n" "$my_name"
 cat << 'EOF'
 
 options:
-       -e|--env conda|pyenv      List available profiles
+       -e|--env conda|pyenv|none Chose the Python environemnt
        -v|--verbose              Produce verbose output
        -q|--quiet                Suppress all non-Ansible output (except errors and warnings)
        --help                    Print help
@@ -833,7 +833,7 @@ function setup_python {
   elif [[ $python_provider == 'conda' ]];then
     eval install_conda
     eval activate_conda
-  else
+  elif [[ $python_provider != 'none' ]]; then
     _echo "Unknow python provider '$python_provider'" 'e'
     exit 1
   fi
@@ -883,12 +883,14 @@ function list_profiles {
 
 function install_dependencies {
   eval install_brew
-  eval setup_python
-  if [[ $reinstall_conda == 'yes' ]] || [[ $reinstall_pyenv == 'yes' ]]; then
-    eval upgrade_pip
+  if [[ $python_provider != 'none' ]]; then
+    eval setup_python
+    if [[ $reinstall_conda == 'yes' ]] || [[ $reinstall_pyenv == 'yes' ]]; then
+      eval upgrade_pip
+    fi
+    eval install_pip_dependencies
+    eval install_ansible_galaxy_roles
   fi
-  eval install_pip_dependencies
-  eval install_ansible_galaxy_roles
   eval print_execution_time "${start_time}"
 }
 

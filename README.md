@@ -196,7 +196,7 @@ To choose which python environment to run:
 
 
     options:
-           -e|--env conda|pyenv      List available profiles
+           -e|--env conda|pyenv|none Chose the Python environemnt
            -v|--verbose              Produce verbose output
            -q|--quiet                Suppress all non-Ansible output (except errors and warnings)
            --help                    Print help
