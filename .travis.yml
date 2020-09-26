@@ -3,20 +3,30 @@ os: osx
 osx_image:
 # OS X 10.15
   - xcode12
-# # OS X 10.14
-#   - xcode11.2
+# OS X 10.14
+  - xcode11.2
 
 language: bash
+
 env:
   - ANSIBLE_BECOME_PASS="travis"
-before_install:
+install:
   # - brew update
   - brew install bats-core mas
+  - pip install ansible-lint
 
 script:
-  - travis_wait 30 bats tests/splinter-basics.bats
-  - travis_wait 30 bats tests/splinter-update.bats
-  - ./splinter -q update tools
-  - travis_wait 30 bats tests/splinter-export.bats
-  - travis_wait 120 bats tests/splinter-create.bats
-  - travis_wait 30 bats tests/splinter-provision.bats
+  - ansible-lint ./ansible/playbook.yml
+  - ./splinter --verbose provision -u newuser -f 'NewUser'
+
+# include:
+#   osx_image:
+#   # OS X 10.15
+#     - xcode12
+#   script:
+#     - travis_wait 30 bats tests/splinter-basics.bats
+#     - travis_wait 30 bats tests/splinter-update.bats
+#     - ./splinter -q update tools
+#     - travis_wait 30 bats tests/splinter-export.bats
+#     - travis_wait 120 bats tests/splinter-create.bats
+#     - travis_wait 30 bats tests/splinter-provision.bats
