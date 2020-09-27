@@ -24,7 +24,7 @@
   version: '1e52c49'
 
 - name: lafarer.osx-defaults
-  version: 'marcomc/trackpad-boolean-options-fix'
+  version: '59ba3a8'
 
 - name: macstadium.xcode
   version: '501d7ac'
