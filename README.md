@@ -158,7 +158,7 @@ __Ansible playbook__:
 * Install SetApp applications store (from which you can install additional apps)
 * Run custom post-provision tasks
 
-__You can can chose which of the above modules to run customising the the 'modules.yml' file in your profiles__
+__You can chose which of the above modules to run customising the the 'modules.yml' file in your profiles__
 
 ### Other Capabilities
 #### Custom Profiles repositories
