@@ -95,6 +95,23 @@ function teardown {
   assert_output --partial 'failed=0'
   assert_success
 }
+
+@test "splinter provision -c ./splinter/example-config.cfg - running from outside the project folder expected to create the user 'newuser'" {
+  PATH=$(pwd):"$PATH"
+  if [[ -d $default_profile_example ]]; then
+    cp -a "$default_profile_example" "$default_profile"
+  fi
+  cd ..
+  run splinter provision -c "./splinter/$example_splinter_config"
+  assert_output --partial '[SPLINTER]'
+  assert_output --partial '[ACTION..]'
+  assert_output --partial 'Running Ansible provisioning'
+  assert_output --partial 'PLAY'
+  assert_output --partial 'Creating user "newuser"'
+  assert_output --partial 'failed=0'
+  assert_success
+}
+
 @test "./splinter provision -u utonto -f 'U Tonto' -p <missing-argument> - expected to fail" {
   run ./splinter provision -u utonto -f 'U\ tonto' -p
   assert_output --partial 'missing an argument'
