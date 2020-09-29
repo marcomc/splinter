@@ -1,11 +1,11 @@
 ---
-configure_filevault:          no # Activate FileVault2, fine tuning in filevault_options.yml
-configure_sophos_endpoint:    no # Install Sophos Endpoint from your organisation
-configure_homebrew:           no # Install and Configure homebrew to be used by all accounts
-configure_system:             no # Set default settings for the Operating Sysntem, fine tuning in osx_config.yml
-configure_dotfiles:           no # Import pre-set config files for your application, fine tuning in dotfiles_options.yml
-configure_extra_packages:     no # Allow installation of packages from Composer, Gem, NPM, PIP, , fine tuning in extra_packages.yml
-configure_setapp:             no # Install SetApp application store and launch it, you will to sing-in and download your favourites manually from tha app
-install_mas_apps:             no # Install apps from Mac App Store
-install_macos_apps:           no # Install apps from direct links
-                                 # apps not available in Mac App Store or as a Homebrew Cask)
+configure_filevault:            no # Activate FileVault2, fine tuning in filevault_options.yml
+configure_sophos_endpoint:      no # Install Sophos Endpoint from your organisation
+configure_homebrew:             no # Install and Configure homebrew to be used by all accounts
+configure_system:               no # Set default settings for the Operating Sysntem, fine tuning in osx_config.yml
+configure_dotfiles:             no # Import pre-set config files for your application, fine tuning in dotfiles_options.yml
+configure_extra_packages:       no # Allow installation of packages from Composer, Gem, NPM, PIP, , fine tuning in extra_packages.yml
+configure_setapp:               no # Install SetApp application store and launch it, you will to sing-in and download your favourites manually from tha app
+install_mas_apps:               no # Install apps from Mac App Store
+install_macos_apps:             no # Install apps from direct links
+                                   # (apps not available in Mac App Store or as a Homebrew Cask)

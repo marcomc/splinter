@@ -45,8 +45,8 @@
   src: https://github.com/marcomc/ansible-role-macos-new-user.git
   version: 'master'
 
-- name: marcomc.macos_macprefs_restore
-  src: https://github.com/marcomc/ansible-role-macprefs-restore.git
+- name: marcomc.macos_macprefs
+  src: https://github.com/marcomc/ansible-role-macos-macprefs.git
   version: 'master'
 
 - name: marcomc.macos_mackup

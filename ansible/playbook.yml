@@ -64,18 +64,24 @@
       tags: ['osx']
       ignore_errors: yes
 
-    - role: marcomc.macos_macprefs_restore
-      when: restore_dotfiles_with_macprefs|bool
+    - role: marcomc.macos_macprefs
+      when:
+        - configure_dotfiles|bool
+        - restore_dotfiles_with_macprefs|bool
       tags: ['dotfiles']
       ignore_errors: yes
 
     - role: marcomc.macos_mackup
-      when: restore_dotfiles_with_mackup|bool
+      when:
+        - configure_dotfiles|bool
+        - restore_dotfiles_with_mackup|bool
       tags: ['dotfiles']
       ignore_errors: yes
 
     - role: geerlingguy.dotfiles
-      when: configure_dotfiles|bool
+      when:
+        - configure_dotfiles|bool
+        - restore_dotfiles_with_git|bool
       tags: ['dotfiles']
       ignore_errors: yes
       become: "{{ target_user_id != ansible_user_id }}"
