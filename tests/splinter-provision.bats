@@ -9,6 +9,12 @@ function setup {
 
 function teardown {
   if [[ -d $default_profile ]]; then rm -rf "$default_profile"; fi
+  for user in newuser utonto; do
+    if [[ -d /Users/$user ]]; then
+      sudo /usr/bin/dscl . -delete "/Users/$user"
+      sudo rm -rf /Users/$user
+    fi
+  done
 }
 
 @test './splinter provision (no default profile)' {
