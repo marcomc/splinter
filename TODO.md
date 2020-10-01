@@ -85,15 +85,18 @@
 * [x] allow extra packages to be installed as target_user_id or for the current user
 * [x] add command to export extra packages lists
 * [x] add support for filevault-recovery-key-generator
-
-* [ ] write unit tests
-  * [ ] add control to see if the script is run within the a unit test to prenvet `open "$certificates_path"`
-  * [ ] bash
-  * [ ] TravisCI
+* [x] write unit tests
+  * [x] BATS
+  * [x] TravisCI
+  * [x] add matrix to execute one provisioning in two distinct systems 10.14 & 10.15
+* [x] macprefs:
+  * [x] find how ansible patch works:
+    - maybe there is no need for a condition
+    - or just make the condition to work properly
+  * [x] verify restore errors
 
 * [ ] Write step-by-step guides for each use case
 
-* [ ] BUG: after setting the taptoClick even if the checkbox is marked properly tapping is not working (tapBehavior), maybe there is some service to restart (but I don't think so), probably there is some other flag somewhere to set
 
 # When Provisioning the current user (and not a target user)
 * [x] dotfiles: export personal System Configs
@@ -109,29 +112,14 @@
   * [x] https://iconset.io/download#/mac.zip
   * [x] install Paragon NTFS for Mac
   * [x] install Paragon extFS for Mac
-
-- name: add login item
-  command: "loginitems -a '{{ item }}'"
-  changed_when: false
-  with_items: "{{ login_items }}"
-
-* [ ] iCloud login
-* [ ] Cron
-  * [ ] setup periodic export of app/pkg lists and mackup exports
-* [ ] App settings (with mackup?)
-* [ ] add ShareMouse config to Mackup
-* [ ] add ShareMouse config to Macprefs
-  * [ ] allow to specify which source to use for mackup
-* [ ] Internet login
-* [ ] Gmail account(s)
-* [ ] User Login items
-* [ ] TimeMachine Settings
-
-* [ ] add support for Atom packages https://github.com/gantsign/ansible-role-atom-packages
-  * [ ] export lists tool
-  * [ ] splinter-extra-packages
-
-
+* [x] iCloud login - must be done manually!
+* [x] setup Macprefs backup
+  * [*] recurring backup
+  * [*] restore during provisioning
+* [x] User Login items: are restored with Macprefs
+* [x] add ShareMouse config to Macprefs
+* [X] Internet login
+  * [X] Gmail account(s): done via Macpref's
 
 # Future
 * [x] make conda to work: has issues linking libtinfo
@@ -150,13 +138,17 @@
 * [ ] add splinter and splinter-tools to homebrew
 
 * [ ] replace `-e none` with `-e local` to user local version of python
-  * [ ] verify that local version of pythong is 3.x
+  * [ ] verify that local version of python is 3.x
   * [ ] will install ansible in the local python
   * [ ] will not include any python component in the `Splinter package`
   * [ ] modify BATS unit tests that use `-e none` to use `-e local`
+  
+* [ ] add support for Atom packages https://github.com/gantsign/ansible-role-atom-packages
+  * [ ] export lists tool
+  * [ ] splinter-extra-packages
 
 * [ ] create a webpage that will allow to modify with a GUI a profile and to download it locally
-* [ ] distribute compiled version (made with `shc`)
+* [ ] distribute compiled version (made with `shc`) ??
 * [ ] filevault2 role: if FV is already enabled, check if the newuser is already added to Filevault, if not, add it
 * [ ] user custom keyboards shortcuts, only my private set if macprefs doesn't restore them
 * [ ] convert mac-app-install into ansible-brew like repo
@@ -167,3 +159,11 @@
     * if 'upgrade' option is provided will install only if the version on the database is newer
     * if a version is specified it will install it if the version is available in the database
 * [ ] source the tools script as libraries instead of calling them as commands
+* [ ] port to ansible 2.10.1
+
+* [ ] name: add login item
+  command: "loginitems -a '{{ item }}'"
+  changed_when: false
+  with_items: "{{ login_items }}"
+# BUGS
+* [ ] BUG: after setting the taptoClick even if the checkbox is marked properly tapping is not working (tapBehavior), maybe there is some service to restart (but I don't think so), probably there is some other flag somewhere to set
