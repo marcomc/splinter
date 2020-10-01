@@ -157,13 +157,12 @@ actions:
 
 objects:
        [ create ]
-       packages [settings]        Create distributable package of your splinter project
+       package [settings]        Create distributable package of your splinter project
        filevault-recovery-key     Create a FileVaultMaster recovery key in both Keychain and DER formats
 
        [ export ]
+       preferences                    Export system preferences and user's dorfiles using Macprefs
        brew [taps|packages|casks|all] Export list of brew taps, packages and casks
-       mackup [config|backup]         Export Mackup config file
-       macprefs [backup]              Export Macprefs backup
        ruby [gems]                    Export list of user installed Ruby gems
        mas [packages]                 Export list of installed apps from MacAppStore
        npm [packages]                 Export list of NPM packages
@@ -322,6 +321,7 @@ function set_app_directories {
   files_path="${project_dir}/files"
   lists_path="${files_path}/lists"
   certificates_path="$files_path/certificates"
+  preferences_path="${files_path}/preferences"
 
   tools_path="${project_dir}/tools"
   profiles_path="${project_dir}/profiles"
@@ -336,8 +336,10 @@ function set_app_directories {
   ansible_playbook="${ansible_dir}/playbook.yml"
   ansible_requirements="${ansible_dir}/requirements.yml"
 
-  tools_script_export_apps_lists="$tools_path/export-apps-lists.sh"
-  tools_script_create_recovery_key="$tools_path/filevault-recovery-key-generator.sh"
+  tools_script_export_apps_lists="${tools_path}/export-apps-lists.sh"
+  tools_script_create_recovery_key="${tools_path}/filevault-recovery-key-generator.sh"
+  tools_script_export_system_preferences="${tools_path}/backup-system-preferences.sh"
+  tools_macprefs_path="${tools_path}/macprefs"
 
 }
 
@@ -374,10 +376,12 @@ function update_tools {
 
   _echo "Decompressing Splinter tools into '$temp_dir'" 'a'
   _exec "unzip" "-qq" "${temp_dir}/${splinter_tools_archive}" "-d" "$temp_dir"
-  ls "$temp_dir"
 
   _echo "Installing Splinter tools to '$tools_path'" 'a'
   _exec "rsync" "-rlWuv" "--exclude" ".git" "--exclude" ".gitmodules" "--exclude" ".gitignore" "--exclude" ".travis.yml" "--exclude" "tests/" "$temp_dir"/*/* "$tools_path"
+  if [[ -x "$tools_script_export_system_preferences" ]]; then
+    _exec "$tools_script_export_system_preferences" "-m" "$tools_macprefs_path" "install"
+  fi
 
   _echo "Removing temporary files" 'a'
   _exec "rm" "-rf" "$temp_dir"
@@ -859,6 +863,19 @@ function create_recovery_key {
   fi
 }
 
+function export_preferences {
+  if [[ -f $tools_script_export_system_preferences ]];then
+    _echo "Exporting system preferences and dotfiles" 'a'
+    _exec "$tools_script_export_system_preferences" "-d" "$preferences_path" "-m" "$tools_macprefs_path" "backup"
+    _echo "Export successful!" 'r'
+  else
+    _echo "The script '$tools_script_export_system_preferences' is not installed in './tools'." 'e'
+    _echo "Run '$0 update tools' to install the latest version" 'e'
+    exit 1
+  fi
+
+}
+
 function export_apps_lists {
   if [[ -f $tools_script_export_apps_lists ]];then
     _echo "Exporting lists for $*" 'a'
@@ -869,6 +886,11 @@ function export_apps_lists {
     _echo "Run '$0 update tools' to install the latest version" 'e'
     exit 1
   fi
+}
+
+function export_apps_lists_and_preferences {
+    eval export_preferences
+    eval export_apps_lists "$@"
 }
 
 function cleanup_tasks {
@@ -919,6 +941,15 @@ function action_export {
     -*)
       _error "Invalid option '$action_option' for action '$action'"
       exit 1
+      ;;
+    preferences)
+      [[ $verbose != "yes" ]] && quiet="yes"
+      action_requested="export_preferences"
+      ;;
+    all)
+      [[ $verbose != "yes" ]] && quiet="yes"
+      action_requested="export_apps_lists_and_preferences"
+      action_requested_options=("$@") # assign as an array
       ;;
     *)
       [[ $verbose != "yes" ]] && quiet="yes"
@@ -976,13 +1007,13 @@ function action_update {
       while getopts ":a:b:g:r:" profiles_setting; do
         case "$profiles_setting" in
           a)
-            custom_profiles_repo_account="${OPTARG}"
+            custom_profiles_repo_account="$OPTARG"
             ;;
           g)
-            export CUSTOM_PROFILES_REPO="${OPTARG}"
+            export CUSTOM_PROFILES_REPO="$OPTARG"
             ;;
           b|r)
-            requested_profile="${OPTARG}"
+            requested_profile="$OPTARG"
             ;;
           \?)
             _error "Action '$action $action_option': Invalid setting '-${OPTARG}'"
@@ -1056,13 +1087,13 @@ function action_create {
       while getopts ":d:n:t:" create_setting; do
         case $create_setting in
           d)
-            package_destination="${OPTARG}"
+            package_destination="$OPTARG"
             ;;
           n)
-            package_name="${OPTARG}"
+            package_name="$OPTARG"
             ;;
           t)
-            package_type="${OPTARG}"
+            package_type="$OPTARG"
             ;;
           \?)
             _error "Action '$action $action_option': Invalid setting '-${OPTARG}'"
@@ -1100,34 +1131,34 @@ function action_provision {
   while getopts ":a:c:b:f:g:h:p:r:t:u:" action_setting; do
     case "$action_setting" in
       a)
-        custom_profiles_repo_account="${OPTARG}"
+        custom_profiles_repo_account="$OPTARG"
         ;;
       c)
-        splinter_config_file="${OPTARG}"
+        splinter_config_file="$OPTARG"
         ;;
       b)
-        export SPLINTER_BASE_PROFILE="${OPTARG}"
+        export SPLINTER_BASE_PROFILE="$OPTARG"
         ;;
       f)
-        export NEW_USER_FULL_NAME="${OPTARG}"
+        export NEW_USER_FULL_NAME="$OPTARG"
         ;;
       g)
-        export CUSTOM_PROFILES_REPO="${OPTARG}"
+        export CUSTOM_PROFILES_REPO="$OPTARG"
         ;;
       h)
-        export COMPUTER_HOST_NAME="${OPTARG}"
+        export COMPUTER_HOST_NAME="$OPTARG"
         ;;
       p)
-        export NEW_USER_PASSWORD_CLEARTEXT="${OPTARG}"
+        export NEW_USER_PASSWORD_CLEARTEXT="$OPTARG"
         ;;
       r)
-        export SPLINTER_ROLE_PROFILE="${OPTARG}"
+        export SPLINTER_ROLE_PROFILE="$OPTARG"
         ;;
       t)
-        export TARGET_USER_ID="${OPTARG}"
+        export TARGET_USER_ID="$OPTARG"
         ;;
       u)
-        export NEW_USER_USERNAME="${OPTARG}"
+        export NEW_USER_USERNAME="$OPTARG"
         ;;
       \?)
         _error "Action '$action': Invalid setting '-${OPTARG}'"

@@ -4,6 +4,8 @@ load 'test_helper.sh'
 
 function setup {
   lists_dir='files/lists'
+  preferences_dir='files/preferences'
+  macprefs_dir='tools/macprefs'
   homebrew_cask_apps_list="${lists_dir}/homebrew_cask_apps.txt"
   homebrew_packages_list="${lists_dir}/homebrew_packages.txt"
   homebrew_taps_list="${lists_dir}/homebrew_taps.txt"
@@ -11,8 +13,6 @@ function setup {
   npm_global_packages_list="${lists_dir}/npm_global_packages.json"
   pip_packages_list="${lists_dir}/pip_packages.txt"
   ruby_gems_list="${lists_dir}/ruby_gems.txt"
-  # to add macprefs
-  # to add mackup
 }
 
 function teardown {
@@ -23,8 +23,8 @@ function teardown {
   if [[ -f $npm_global_packages_list ]]; then rm "$npm_global_packages_list"; fi
   if [[ -f $pip_packages_list ]]; then rm "$pip_packages_list"; fi
   if [[ -f $ruby_gems_list ]]; then rm "$ruby_gems_list"; fi
-  # to add macprefs
-  # to add mackup
+  if [[ -d $preferences_dir ]]; then rm -rf "$preferences_dir"; fi
+  if [[ -d $macprefs_dir ]]; then rm -rf "$macprefs_dir"; fi
 }
 
 function invalid_argument_test {
@@ -67,8 +67,9 @@ function valid_argument_test {
   assert_file_exist "$npm_global_packages_list"
   assert_file_exist "$pip_packages_list"
   assert_file_exist "$ruby_gems_list"
-  # to add macprefs
-  # to add mackup
+  assert_dir_exist  "$preferences_dir"
+  assert_dir_exist  "$macprefs_dir"
+  assert_success
 }
 
 @test './splinter export brew (no arguments) - expected to create taps, packages and casks lists in ./files/lists' {
@@ -153,12 +154,11 @@ function valid_argument_test {
   eval invalid_argument_test 'pip'
 }
 
-#
-# ./splinter export mackup
-# ./splinter export mackup config
-# ./splinter export mackup backup
-# ./splinter export mackup all
-# ./splinter export macprefs
-# ./splinter export macprefs config
-# ./splinter export macprefs backup
-# ./splinter export macprefs all
+@test './splinter export preferences - expected to create ./files/preferences and ./tools/macprefs' {
+  run ./splinter export preferences
+  assert_dir_exist "$macprefs_dir"
+  assert_dir_exist "$preferences_dir"
+  assert_output --partial 'Installing Macprefs'
+  assert_output --partial 'Running macprefs backup'
+  assert_success
+}
