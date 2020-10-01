@@ -131,7 +131,7 @@ printf "\e[1;39m"
 EOF
 printf "\e[0;39m"
 cat << 'EOF'
-        2020 (c) MarcMC - github.com/marcomc/splinter
+        2020 (c) MarcoMC - github.com/marcomc/splinter
 An opinionated provisioning tool for macOS automated with Ansible
 
 EOF

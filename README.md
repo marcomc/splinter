@@ -4,7 +4,7 @@
   |______ |_____] |        |   | \  |    |    |______ |_____/
   ______| |       |_____ __|__ |  \_|    |    |______ |    \_
 
-         2020 (c) MarcMC - github.com/marcomc/splinter
+         2020 (c) MarcoMC - github.com/marcomc/splinter
 An opinionated provisioning tool for macOS automated with Ansible
 ```
 # Install Splinter
