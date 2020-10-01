@@ -212,7 +212,7 @@ To choose which python environment to run:
     objects:
            [ create ]
            package [settings]        Create distributable package of your splinter project
-           filevault-recovery-key     Create a FileVaultMaster recovery key in both Keychain and DER formats
+           filevault-recovery-key    Create a FileVaultMaster recovery key in both Keychain and DER formats
 
            [ export ]
            preferences                    Export system preferences and user's dorfiles using Macprefs
@@ -244,7 +244,7 @@ To choose which python environment to run:
            [ provision, update profiles ]
            -a account_name            Specify the the Github account name for the custom `splinter-profiles` repo
            -g git-repo-name           Specify the the Github repository name for the custom `splinter-profiles` repo
-           -b profile_name            Specify the the BASE profile to be used (default: 'default')
+           -b profile_name            Specify the the BASE profile to be used (default: 'base')
            -r profile_name            Specify the the ROLE profile to be used
 
            [ create package ]
@@ -262,7 +262,7 @@ __On the old machine:__
   * personalise `splinter.cfg`.
 
 __On the new machine:__
-2.  Login in the new machine as the company admin account, the first account you create in the machine, *not the new employee user account* (that will be created by this script).
+2.  Login in the new machine as the company admin account, the first account you create in the machine, *not the new employee user account* (that will be created by `splinter` according to the profile settings).
 
 3. Add the `Terminal` application (located in `/Applications/Utilities/`) to the "Full Disk Access" policy.
 
@@ -278,7 +278,7 @@ __On the new machine:__
 The required configuration settings are:
 
       verbose="no"
-      base_profile="default"
+      base_profile="base"
       ; this is the profile to be used as base of all your profiles.
       ; The project already includes one default profile set that you can customise
       ; you can rename and copy the default profile and have multiple different `default` profiles

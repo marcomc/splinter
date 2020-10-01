@@ -190,7 +190,7 @@ settings:
        [ provision, update profiles ]
        -a account_name            Specify the the Github account name for the custom `splinter-profiles` repo
        -g git-repo-name           Specify the the Github repository name for the custom `splinter-profiles` repo
-       -b profile_name            Specify the the BASE profile to be used (default: 'default')
+       -b profile_name            Specify the the BASE profile to be used (default: 'base')
        -r profile_name            Specify the the ROLE profile to be used
 
        [ create package ]

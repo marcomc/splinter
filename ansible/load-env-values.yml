@@ -4,7 +4,7 @@
     verbose: "{{ lookup('env','VERBOSE') if lookup('env','VERBOSE')|length > 0 else no }}"
     ansible_become_pass: "{{ lookup('env','ANSIBLE_BECOME_PASS') if lookup('env','ANSIBLE_BECOME_PASS')|length > 0 else omit  }}"
     project_dir: "{{ lookup('env','SPLINTER_PROJECT_DIR') if lookup('env','SPLINTER_PROJECT_DIR')| length > 0 else playbook_dir + '/..' }}"
-    base_profile: "{{ lookup('env','SPLINTER_BASE_PROFILE') if lookup('env','SPLINTER_BASE_PROFILE')|length > 0 else 'default' }}"
+    base_profile: "{{ lookup('env','SPLINTER_BASE_PROFILE') if lookup('env','SPLINTER_BASE_PROFILE')|length > 0 else 'base' }}"
     role_profile: "{{ lookup('env','SPLINTER_ROLE_PROFILE') if lookup('env','SPLINTER_ROLE_PROFILE')|length > 0 else '' }}"
     new_user_username: "{{ lookup('env','NEW_USER_USERNAME') if lookup('env','NEW_USER_USERNAME')|length > 0 else '' }}"
     new_user_fullname: "{{ lookup('env','NEW_USER_FULL_NAME') if lookup('env','NEW_USER_FULL_NAME')|length > 0 else 'My-New-Mac' }}"

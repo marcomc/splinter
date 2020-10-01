@@ -4,9 +4,9 @@ filevault_user_password:     "{{ ansible_become_pass }}"
 filevault_showrecoverykey:  yes # Show the recovery on screen when the installation completes
                                 # It is necessary to show the recovery key if you want to produce
                                 # the filevault_recovery_key_output_file
-filevault_norecoverykey:     no # To specify that only the FileVaultMaster keychain be used as the recovery key
+filevault_norecoverykey:     no # if set to `yes` specify that only the FileVaultMaster keychain be used as the recovery key. When set to `no` a personal recovery key will be generated even if you are using an institutional recovery key trough a certificate
 filevault_certificate:       no
-filevault_certificate_file: 'files/FileVaultMaster.der.cer'
+filevault_certificate_file: 'files/certificates/FileVaultMaster.der.cer'
 
 filevault_additional_users_and_passwords:
    - { username: "{{ new_user_username }}", password: "{{ new_user_password_cleartext }}"}

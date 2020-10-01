@@ -2,13 +2,13 @@
 load 'test_helper.sh'
 
 function setup {
-  default_profile_example="./profiles/default-example"
-  default_profile="./profiles/default"
+  base_profile_example="./profiles/base-example"
+  base_profile="./profiles/base"
   example_splinter_config="example-splinter.cfg"
 }
 
 function teardown {
-  if [[ -d $default_profile ]]; then rm -rf "$default_profile"; fi
+  if [[ -d $base_profile ]]; then rm -rf "$base_profile"; fi
   for user in newuser utonto; do
     if [[ -d /Users/$user ]]; then
       sudo /usr/bin/dscl . -delete "/Users/$user"
@@ -17,7 +17,7 @@ function teardown {
   done
 }
 
-@test './splinter provision (no default profile)' {
+@test './splinter provision (no base profile)' {
   run ./splinter provision
   assert_output --partial '[SPLINTER]'
   assert_output --partial '[ACTION..]'
@@ -27,7 +27,7 @@ function teardown {
   assert_success
 }
 
-@test './splinter -v provision (verbos, no default profile)' {
+@test './splinter -v provision (verbos, no base profile)' {
   run ./splinter -v provision
   assert_output --partial '[INFO....]'
   assert_output --partial 'Running Ansible provisioning'
@@ -36,7 +36,7 @@ function teardown {
   assert_success
 }
 
-@test './splinter -q provision (quite, no default profile)' {
+@test './splinter -q provision (quite, no base profile)' {
   run ./splinter -q provision
   refute_output --partial '[SPLINTER]'
   refute_output --partial '[ACTION..]'
@@ -47,9 +47,9 @@ function teardown {
   assert_success
 }
 
-@test './splinter provision (with default profile)' {
-  if [[ -d $default_profile_example ]]; then
-    cp -a "$default_profile_example" "$default_profile"
+@test './splinter provision (with base profile)' {
+  if [[ -d $base_profile_example ]]; then
+    cp -a "$base_profile_example" "$base_profile"
   fi
   run ./splinter provision
   assert_output --partial '[SPLINTER]'
@@ -89,8 +89,8 @@ function teardown {
 }
 
 @test "./splinter provision -c example-config.cfg - expected to create the user 'newuser'" {
-  if [[ -d $default_profile_example ]]; then
-    cp -a "$default_profile_example" "$default_profile"
+  if [[ -d $base_profile_example ]]; then
+    cp -a "$base_profile_example" "$base_profile"
   fi
   run ./splinter provision -c "$example_splinter_config"
   assert_output --partial '[SPLINTER]'
@@ -104,8 +104,8 @@ function teardown {
 
 @test "splinter provision -c ./splinter/example-config.cfg - running from outside the project folder expected to create the user 'newuser'" {
   PATH=$(pwd):"$PATH"
-  if [[ -d $default_profile_example ]]; then
-    cp -a "$default_profile_example" "$default_profile"
+  if [[ -d $base_profile_example ]]; then
+    cp -a "$base_profile_example" "$base_profile"
   fi
   cd ..
   run splinter provision -c "./splinter/$example_splinter_config"
@@ -125,8 +125,8 @@ function teardown {
 }
 
 @test "./splinter provision -u utonto -f 'U\ Tonto' -p password -t utonto -h Computer-Name - expected to create the user 'utonto'" {
-  if [[ -d $default_profile_example ]]; then
-    cp -a "$default_profile_example" "$default_profile"
+  if [[ -d $base_profile_example ]]; then
+    cp -a "$base_profile_example" "$base_profile"
   fi
   run ./splinter provision -u utonto -f 'U\ tonto' -p 'password' -t utonto -h Computer-Name
   assert_output --partial '[SPLINTER]'

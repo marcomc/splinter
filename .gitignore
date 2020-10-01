@@ -23,6 +23,6 @@ tools/
 !*.md
 !files/*/
 !files/*/MarcoMC_Apple_Sketch_Round.png
-!profiles/default-example/
+!profiles/base-example/
 !profiles/example/
 !splinter_*
