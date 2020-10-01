@@ -100,7 +100,6 @@
 
 # When Provisioning the current user (and not a target user)
 * [x] dotfiles: export personal System Configs
-* [x] dotfiles: import personal System Configs (mackup?)
 * [x] zsh
 * [x] bash
 * [x] fish
@@ -142,7 +141,7 @@
   * [ ] will install ansible in the local python
   * [ ] will not include any python component in the `Splinter package`
   * [ ] modify BATS unit tests that use `-e none` to use `-e local`
-  
+
 * [ ] add support for Atom packages https://github.com/gantsign/ansible-role-atom-packages
   * [ ] export lists tool
   * [ ] splinter-extra-packages
