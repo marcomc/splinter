@@ -49,10 +49,6 @@
   src: https://github.com/marcomc/ansible-role-macos-macprefs.git
   version: 'master'
 
-- name: marcomc.macos_mackup
-  src: https://github.com/marcomc/ansible-role-mackup.git
-  version: 'master'
-
 - name: marcomc.macos_setapp
   src: https://github.com/marcomc/ansible-role-setapp.git
   version: 'master'

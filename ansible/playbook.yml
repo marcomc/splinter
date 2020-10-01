@@ -64,29 +64,6 @@
       tags: ['osx']
       ignore_errors: yes
 
-    - role: marcomc.macos_macprefs
-      when:
-        - configure_dotfiles|bool
-        - restore_dotfiles_with_macprefs|bool
-      tags: ['dotfiles']
-      ignore_errors: yes
-
-    - role: marcomc.macos_mackup
-      when:
-        - configure_dotfiles|bool
-        - restore_dotfiles_with_mackup|bool
-      tags: ['dotfiles']
-      ignore_errors: yes
-
-    - role: geerlingguy.dotfiles
-      when:
-        - configure_dotfiles|bool
-        - restore_dotfiles_with_git|bool
-      tags: ['dotfiles']
-      ignore_errors: yes
-      become: "{{ target_user_id != ansible_user_id }}"
-      become_user: "{{ target_user_id }}"
-
     - role: juju4.macos_apps_install
       when: install_macos_apps|bool
       tags: ['non_mas']
@@ -102,6 +79,21 @@
       when: install_mas_apps|bool
       tags: ['mas']
       ignore_errors: yes
+
+    - role: marcomc.macos_macprefs
+      when:
+        - macprefs_regular_backup|int > 0
+      tags: ['dotfiles']
+      ignore_errors: yes
+
+    - role: geerlingguy.dotfiles
+      when:
+        - configure_dotfiles|bool
+        - restore_dotfiles_with_git|bool
+      tags: ['dotfiles']
+      ignore_errors: yes
+      become: "{{ target_user_id != ansible_user_id }}"
+      become_user: "{{ target_user_id }}"
 
   tasks:
     - name: Load the Splinter post provision tasks.

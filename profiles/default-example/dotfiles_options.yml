@@ -1,21 +1,16 @@
 ---
-#
-# YOU CAN CREATE XXX_LIST_FILES USING tools/export-apps-lists.sh
-#
-#     'configure_dotfiles'
-# and 'restore_dotfiles_with_mackup'
-# and 'restore_dotfiles_with_macprefs
-# can be used together
-#
 # 'configure_dotfiles' is helpful to install default company values of dotfiles
 # especially if we are setting up a machine for a new user (but not limited to)
-restore_dotfiles_with_macprefs: no
-restore_dotfiles_with_mackup: no
-restore_dotfiles_with_git: no
-# you can choose to uninstall Mackup after the dotfiles restore
 
-mackup_engine: icloud
-mackup_action: restore-only
-macprefs_backup_dir: ~/Library/Mobile Documents/com~apple~CloudDocs/Macprefs/
+restore_preferences_and_dotfiles_from_export: no
+# this option requires you to run from your old machine
+# > splinter export preferences
+# and will createa a dotfiles and preferences backup dir in
+# ./splinter/files/preferences
+
+restore_dotfiles_with_git: no
+
+# System Preferences and dotfiles regular backup via Macprefs on Cronjob
+macprefs_backup_dir: ~/Dropbox
 macprefs_update_for_all_shell_types: no
 macprefs_regular_backup: 0
