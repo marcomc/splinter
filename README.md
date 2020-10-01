@@ -211,13 +211,12 @@ To choose which python environment to run:
 
     objects:
            [ create ]
-           packages [settings]        Create distributable package of your splinter project
+           package [settings]        Create distributable package of your splinter project
            filevault-recovery-key     Create a FileVaultMaster recovery key in both Keychain and DER formats
 
            [ export ]
+           preferences                    Export system preferences and user's dorfiles using Macprefs
            brew [taps|packages|casks|all] Export list of brew taps, packages and casks
-           mackup [config|backup|all]     Export Mackup config file
-           macprefs [config|backup|all]   Export Macprefs backup
            ruby [gems]                    Export list of user installed Ruby gems
            mas [packages]                 Export list of installed apps from MacAppStore
            npm [packages]                 Export list of NPM packages
