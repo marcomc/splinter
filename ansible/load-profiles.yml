@@ -2,5 +2,5 @@
 - name: "Loading settings from profiles"
   include_vars: "{{ item }}"
   with_fileglob:
-    - "{{ splinter_project_dir + '/profiles/' + base_profile + '/*.yml' if base_profile|length>0 }}"
-    - "{{ splinter_project_dir + '/profiles/' + role_profile + '/*.yml' if role_profile|length>0 }}"
+    - "{{ project_dir + '/profiles/' + base_profile + '/*.yml' if base_profile|length>0 }}"
+    - "{{ project_dir + '/profiles/' + role_profile + '/*.yml' if role_profile|length>0 }}"
