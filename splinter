@@ -142,11 +142,11 @@ printf  "usage: %s [option] action [object] [settings]\n" "$my_name"
 cat << 'EOF'
 
 options:
-       -e|--env conda|pyenv|none Chose the Python environemnt
-       -v|--verbose              Produce verbose output
-       -q|--quiet                Suppress all non-Ansible output (except errors and warnings)
-       --help                    Print help
-       --version                 Print Splinter version and release date
+       -e|--env conda|pyenv|none  Chose the Python environemnt
+       -v|--verbose               Produce verbose output
+       -q|--quiet                 Suppress all non-Ansible output (except errors and warnings)
+       --help                     Print help
+       --version                  Print Splinter version and release date
 
 actions:
        create <object> [settings]
@@ -157,7 +157,7 @@ actions:
 
 objects:
        [ create ]
-       package [settings]        Create distributable package of your splinter project
+       package [settings]         Create distributable package of your splinter project
        filevault-recovery-key     Create a FileVaultMaster recovery key in both Keychain and DER formats
 
        [ export ]
