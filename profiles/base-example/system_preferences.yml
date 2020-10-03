@@ -2,32 +2,33 @@
 mh_computername: "{{ computer_name }}"
 mh_localhostname: "{{ computer_name }}"
 
-ActivityMonitor_Enabled:     yes # Enable ActivityMonitor configuration
-AppStore_Enabled:            yes # Enable AppStore configuration
-ApplicationFirewall_Enabled: yes # Enable Application Firewall
-Bluetooth_Enabled:           yes # Enable Bluetooth configuration
-Dashboard_Enabled:           yes # Enable Dashboard configuration
-DateTime_Enabled:            yes # Enable Date Time configuration
-DesktopScreenSaver_Enabled:  yes # Enable Desktop and Screen Saver configuration
-DiskImages_Enabled:          yes # Enable DiskImages configuration
-Displays_Enabled:            yes # Enable Displays configuration
-Dock_Enabled:                yes # Enable Dock configuration
-EnergySaver_Enabled:         yes # Enable Energy Saver configuration
-Finder_Enabled:              yes # Enable Finder configuration
-General_Enabled:             yes # Enable General configuration
-HotCorners_Enabled:          yes # Enable Hot Corners configurations
-ICloud_Enabled:               no # Enable iCloud configuration
-Keyboard_Enabled:            yes # Enable Keyboard configuration
-LanguageRegion_Enabled:      yes # Enable Language and Region configuration
-LaunchServices_Enabled:      yes # Enable Launch Services configuration
-LoginWindow_Enabled:         yes # Enable Launch Services configuration
-MissionControl_Enabled:      yes # Enable Mission Control configuration
-Safari_Enabled:              yes # Enable Safari configuration
-SetupAssistant_Enabled:      yes # Enable Setup Assitant configuration
-Spotlight_Enabled:           yes # Enable Spotlight configuration
-Trackpad_Enabled:            yes # Enable Trackpad configuration
+# You need to toggle on these system settings for the respective attributes to be applied
+Configure_ActivityMonitor:     yes # Enable ActivityMonitor configurations
+Configure_AppStore :            yes # Enable AppStore configurations
+Configure_ApplicationFirewall: yes # Enable Application Firewall
+Configure_Bluetooth:           yes # Enable Bluetooth configurations
+Configure_Dashboard:           yes # Enable Dashboard configurations
+Configure_DateTime:            yes # Enable Date Time configurations
+Configure_DesktopScreenSaver:  yes # Enable Desktop and Screen Saver configurations
+Configure_DiskImages:          yes # Enable DiskImages configurations
+Configure_Displays:            yes # Enable Displays configurations
+Configure_Dock:                yes # Enable Dock configurations
+Configure_EnergySaver:         yes # Enable Energy Saver configurations
+Configure_EnergySaver:              yes # Enable Finder configurations
+Configure_General:             yes # Enable General configurations
+Configure_HotCorners:          yes # Enable Hot Corners configurations
+Configure_iCloud:              yes # Enable iCloud configurations
+Configure_Keyboard:            yes # Enable Keyboard configurations
+Configure_LanguageRegion:      yes # Enable Language and Region configurations
+Configure_LaunchServices:      yes # Enable Launch Services configurations
+Configure_LoginWindow:         yes # Enable Launch Services configurations
+Configure_MissionControl:      yes # Enable Mission Control configurations
+Configure_Safari:              yes # Enable Safari configurations
+Configure_SetupAssistant:      yes # Enable Setup Assistant configurations
+Configure_Spotlight:           yes # Enable Spotlight configurations
+Configure_Trackpad:            yes # Enable Trackpad configurations
 
-# when the above configuration toggles are enables then you can fine-tune each services with specific options here below
+# when the above configurations toggles are enables then you can fine-tune each services with specific options here below
 
 ActivityMonitor_OpenMainWindow: "Disabled" # Show the main window when launching Activity Monitor
 ActivityMonitor_IconType:       "Show CPU Usage" # Activity Monitor Dock icon
@@ -79,7 +80,7 @@ DateTime_DateFormat: "HH" # Menu bar clock format ("h:mm": Default, "HH": Use a 
 DateTime_FlashDateSeparators: no # Flash the time separators
 DateTime_IsAnalog: no # Analog menu bar clock
 
-DesktopScreenSaver_BackGroundImage: "files/desktop_pictures/splinter_desktop.jpg" # Background iamge
+DesktopScreenSaver_BackGroundImage: "files/desktop_pictures/splinter_desktop.jpg" # Background image
 #/Users/eric/src/github/lafarer/osx-ansible-config/images/toy-story-02.jpg
 DesktopScreenSaver_askForPassword: "Enabled" # Require password after sleep or screen saver begins
 

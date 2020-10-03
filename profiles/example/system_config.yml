@@ -1,28 +1,28 @@
 ---
-ActivityMonitor_Enabled:     yes # Enable ActivityMonitor configuration
-AppStore_Enabled:            yes # Enable AppStore configuration
-ApplicationFirewall_Enabled: yes # Enable Application Firewall
-Bluetooth_Enabled:           yes # Enable Bluetooth configuration
-Dashboard_Enabled:           yes # Enable Dashboard configuration
-DateTime_Enabled:            no # Enable Date Time configuration
-DesktopScreenSaver_Enabled:  yes # Enable Desktop and Screen Saver configuration
-DiskImages_Enabled:          yes # Enable DiskImages configuration
-Displays_Enabled:            yes # Enable Displays configuration
-Dock_Enabled:                yes # Enable Dock configuration
-EnergySaver_Enabled:         yes # Enable Energy Saver configuration
-Finder_Enabled:              yes # Enable Finder configuration
-General_Enabled:             yes # Enable General configuration
-HotCorners_Enabled:          yes # Enable Hot Corners configurations
-ICloud_Enabled:              yes # Enable iCloud configuration
-Keyboard_Enabled:            yes # Enable Keyboard configuration
-LanguageRegion_Enabled:      no # Enable Language and Region configuration
-LaunchServices_Enabled:      yes # Enable Launch Services configuration
-LoginWindow_Enabled:         yes # Enable Launch Services configuration
-MissionControl_Enabled:      yes # Enable Mission Control configuration
-Safari_Enabled:              yes # Enable Safari configuration
-SetupAssistant_Enabled:      yes # Enable Setup Assitant configuration
-Spotlight_Enabled:           yes # Enable Spotlight configuration
-Trackpad_Enabled:            yes # Enable Trackpad configuration
+Configure_ActivityMonitor:     yes # Enable ActivityMonitor configuration
+Configure_AppStore :            yes # Enable AppStore configuration
+Configure_ApplicationFirewall: yes # Enable Application Firewall
+Configure_Bluetooth:           yes # Enable Bluetooth configuration
+Configure_Dashboard:           yes # Enable Dashboard configuration
+Configure_DateTime:            no # Enable Date Time configuration
+Configure_DesktopScreenSaver:  yes # Enable Desktop and Screen Saver configuration
+Configure_DiskImages:          yes # Enable DiskImages configuration
+Configure_Displays:            yes # Enable Displays configuration
+Configure_Dock:                yes # Enable Dock configuration
+Configure_EnergySaver:         yes # Enable Energy Saver configuration
+Configure_EnergySaver:              yes # Enable Finder configuration
+Configure_General:             yes # Enable General configuration
+Configure_HotCorners:          yes # Enable Hot Corners configurations
+Configure_iCloud:              yes # Enable iCloud configuration
+Configure_Keyboard:            yes # Enable Keyboard configuration
+Configure_LanguageRegion:      no # Enable Language and Region configuration
+Configure_LaunchServices:      yes # Enable Launch Services configuration
+Configure_LoginWindow:         yes # Enable Launch Services configuration
+Configure_MissionControl:      yes # Enable Mission Control configuration
+Configure_Safari:              yes # Enable Safari configuration
+Configure_SetupAssistant:      yes # Enable Setup Assistant configuration
+Configure_Spotlight:           yes # Enable Spotlight configuration
+Configure_Trackpad:            yes # Enable Trackpad configuration
 
 DesktopScreenSaver_BackGroundImage: "files/desktop_pictures/splinter_desktop.jpg"
 LoginWindow_DesktopPicture: "files/desktop_pictures/splinter_desktop.jpg" # Change login screen background
