@@ -3,31 +3,30 @@ mh_computername: "{{ computer_name }}"
 mh_localhostname: "{{ computer_name }}"
 
 # You need to toggle on these system settings for the respective attributes to be applied
-Configure_ActivityMonitor:     yes # Enable ActivityMonitor configurations
-Configure_AppStore :            yes # Enable AppStore configurations
+Configure_ActivityMonitor:     yes # Enable ActivityMonitor configuration
+Configure_AppStore :           yes # Enable AppStore configuration
 Configure_ApplicationFirewall: yes # Enable Application Firewall
-Configure_Bluetooth:           yes # Enable Bluetooth configurations
-Configure_Dashboard:           yes # Enable Dashboard configurations
-Configure_DateTime:            yes # Enable Date Time configurations
-Configure_DesktopScreenSaver:  yes # Enable Desktop and Screen Saver configurations
-Configure_DiskImages:          yes # Enable DiskImages configurations
-Configure_Displays:            yes # Enable Displays configurations
-Configure_Dock:                yes # Enable Dock configurations
-Configure_EnergySaver:         yes # Enable Energy Saver configurations
-Configure_Finder:              yes # Enable Finder configurations
-Configure_General:             yes # Enable General configurations
+Configure_Bluetooth:           yes # Enable Bluetooth configuration
+Configure_Dashboard:           yes # Enable Dashboard configuration
+Configure_DateTime:            yes # Enable Date Time configuration
+Configure_DesktopScreenSaver:  yes # Enable Desktop and Screen Saver configuration
+Configure_DiskImages:          yes # Enable DiskImages configuration
+Configure_Displays:            yes # Enable Displays configuration
+Configure_Dock:                yes # Enable Dock configuration
+Configure_EnergySaver:         yes # Enable Energy Saver configuration
+Configure_Finder:              yes # Enable Finder configuration
+Configure_General:             yes # Enable General configuration
 Configure_HotCorners:          yes # Enable Hot Corners configurations
-Configure_iCloud:              yes # Enable iCloud configurations
-Configure_Keyboard:            yes # Enable Keyboard configurations
-Configure_LanguageRegion:      yes # Enable Language and Region configurations
-Configure_LaunchServices:      yes # Enable Launch Services configurations
-Configure_LoginWindow:         yes # Enable Launch Services configurations
-Configure_MissionControl:      yes # Enable Mission Control configurations
-Configure_Safari:              yes # Enable Safari configurations
-Configure_SetupAssistant:      yes # Enable Setup Assistant configurations
-Configure_Spotlight:           yes # Enable Spotlight configurations
-Configure_Trackpad:            yes # Enable Trackpad configurations
-
+Configure_iCloud:              yes  # Enable iCloud configuration
+Configure_Keyboard:            yes # Enable Keyboard configuration
+Configure_LanguageRegion:      yes # Enable Language and Region configuration
+Configure_LaunchServices:      yes # Enable Launch Services configuration
+Configure_LoginWindow:         yes # Enable Launch Services configuration
+Configure_MissionControl:      yes # Enable Mission Control configuration
+Configure_Safari:              yes # Enable Safari configuration
+Configure_SetupAssistant:      yes # Enable Setup Assitant configuration
+Configure_Spotlight:           yes # Enable Spotlight configuration
+Configure_Trackpad:            yes # Enable Trackpad configuration
 # when the above configurations toggles are enables then you can fine-tune each services with specific options here below
 
 ActivityMonitor_OpenMainWindow: "Disabled" # Show the main window when launching Activity Monitor
