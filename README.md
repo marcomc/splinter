@@ -34,7 +34,7 @@ __You can customise your provisioning activating toggling modules and modifying 
 
 # Use cases (with step-by-step instructions)
 
-1. [Build a Mac for a new employee](#build-a-mac-for-a-new-employee)
+1. [Provision a Mac for a new employee](#provision-a-mac-for-a-new-employee)
 2. [Build a backup Mac](https://github.com/marcomc/splinter/wiki/Build-a-backup-Mac)
 3. [Migrate to a new Mac](https://github.com/marcomc/splinter/wiki/Migrate-to-a-new-Mac)
 4. [Rebuild a Mac to a clean state](https://github.com/marcomc/splinter/wiki/Rebuild-a-Mac-to-a-clean-state)
