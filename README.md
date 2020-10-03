@@ -8,7 +8,7 @@
 An opinionated provisioning tool for macOS automated with Ansible
 ```
 * [Install Splinter](#install-splinter)
-* [Use cases with step-by-step instructions](#use-cases)
+* [Use cases with step-by-step instructions](#use-cases-with-step-by-step-instructions)
 * [Profiles](#profiles)
 * [Usage](#usage)
 * [License & Copyright](#license-copyright)
