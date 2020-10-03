@@ -80,7 +80,7 @@ DateTime_DateFormat: "HH" # Menu bar clock format ("h:mm": Default, "HH": Use a 
 DateTime_FlashDateSeparators: no # Flash the time separators
 DateTime_IsAnalog: no # Analog menu bar clock
 
-DesktopScreenSaver_BackGroundImage: "files/desktop_pictures/splinter_desktop.jpg" # Background image
+#DesktopScreenSaver_BackGroundImage: "files/desktop_pictures/splinter_desktop.jpg" # Background image
 #/Users/eric/src/github/lafarer/osx-ansible-config/images/toy-story-02.jpg
 DesktopScreenSaver_askForPassword: "Enabled" # Require password after sleep or screen saver begins
 

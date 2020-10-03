@@ -24,7 +24,7 @@ Configure_SetupAssistant:      yes # Enable Setup Assistant configuration
 Configure_Spotlight:           yes # Enable Spotlight configuration
 Configure_Trackpad:            yes # Enable Trackpad configuration
 
-DesktopScreenSaver_BackGroundImage: "files/desktop_pictures/splinter_desktop.jpg"
+
 LoginWindow_DesktopPicture: "files/desktop_pictures/splinter_desktop.jpg" # Change login screen background
 
 DateTime_TimeZone: "Europe/London" # Set the timezone; see `systemsetup -listtimezones` for other values

@@ -4,3 +4,16 @@
   with_fileglob:
     - "{{ project_dir + '/profiles/' + base_profile + '/*.yml' if base_profile|length>0 }}"
     - "{{ project_dir + '/profiles/' + role_profile + '/*.yml' if role_profile|length>0 }}"
+
+- name: Set background image
+  set_fact:
+    DesktopScreenSaver_BackGroundImage: "{{ item.background_image }}"
+    Configure_DesktopScreenSaver: yes
+  loop:
+    - user: "{{ ansible_user_id }}"
+      background_image: "{{ current_user_desktop_picture }}"
+    - user: "{{ new_user_username }}"
+      background_image: "{{ new_user_desktop_picture }}"
+  when:
+    - item.user == target_user_id
+    - background_image | length > 0

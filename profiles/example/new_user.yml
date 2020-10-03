@@ -1,4 +1,5 @@
 ---
+new_user_reset_password_on_login: yes
 new_user_random_profile_picture: no
 new_user_profile_picture_path: 'files/profile_pictures/MarcoMC_Apple_Sketch_Round.png'
-new_user_reset_password_on_login: yes
+new_user_desktop_picture: "files/desktop_pictures/splinter_desktop.jpg"

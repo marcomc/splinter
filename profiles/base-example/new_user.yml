@@ -5,3 +5,4 @@ new_user_is_admin: yes
 new_user_update_path_for_all_shell_types: yes
 new_user_random_profile_picture:          no
 new_user_profile_picture_path: 'files/profile_pictures/MarcoMC_Apple_Sketch_Round.png'
+new_user_desktop_picture: "files/desktop_pictures/splinter_desktop.jpg"
