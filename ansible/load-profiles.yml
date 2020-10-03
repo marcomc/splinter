@@ -16,4 +16,4 @@
       background_image: "{{ new_user_desktop_picture | default('') }}"
   when:
     - item.user == target_user_id
-    - background_image | length > 0
+    - item.background_image | length > 0
