@@ -145,7 +145,7 @@
 * [ ] add support for Atom packages https://github.com/gantsign/ansible-role-atom-packages
   * [ ] export lists tool
   * [ ] splinter-extra-packages
-
+* [ ] replace the task "Set background image" with a proper task (in splinter_toolkit) to install the background image for the current user
 * [ ] create a webpage that will allow to modify with a GUI a profile and to download it locally
 * [ ] distribute compiled version (made with `shc`) ??
 * [ ] filevault2 role: if FV is already enabled, check if the newuser is already added to Filevault, if not, add it

@@ -11,9 +11,9 @@
     Configure_DesktopScreenSaver: yes
   loop:
     - user: "{{ ansible_user_id }}"
-      background_image: "{{ current_user_desktop_picture }}"
+      background_image: "{{ current_user_desktop_picture | default('') }}"
     - user: "{{ new_user_username }}"
-      background_image: "{{ new_user_desktop_picture }}"
+      background_image: "{{ new_user_desktop_picture | default('') }}"
   when:
     - item.user == target_user_id
     - background_image | length > 0
