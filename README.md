@@ -59,6 +59,8 @@ Splinter supports 3 levels of profile listed here from least to most important:
 
     > i.e. `finance`, `developer`, `devops`, `fe-developer`, `marketing`
 
+Review the instruction about how to [create a custom profiles repository](https://github.com/marcomc/splinter/wiki/Create-a-custom-profiles-repository) and store it in GitHub.
+
 # Usage
 
     usage: ./splinter [option] action [object] [settings]
