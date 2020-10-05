@@ -127,7 +127,7 @@ Review the instruction about how to [create a custom profiles repository](https:
 
 # License & Copyright
 
-License: [MIT](LICENSE)
+License: [GPLv2](LICENSE)
 
 2020 (c) Marco Massari Calderone <marco@marcomc.com>
 The logo [MarcoMC_Apple_Sketch_Round](files/profile_pictures/MarcoMC_Apple_Sketch_Round.png) is a property and copyright of Marco Massari Calderone.
