@@ -1,5 +1,6 @@
 # Version: 0.5.1-beta
 * remove unnecessary use of 'eval'
+* rename tests/ to test/
 
 # Version: 0.5-beta
 * brew cleanup
