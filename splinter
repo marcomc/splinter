@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e # Exit immediately if anything returns a non-zero status.
-version="0.5-beta"
+version="0.5.1-beta"
 release_date="20200912"
 my_name="$(basename "$0")"
 start_time=$(date +%s)
@@ -223,13 +223,13 @@ function locate_config_file {
 
 function setup_environment {
   # This order must be respected
-  eval export_envs         # step 1
-  eval set_app_directories # step 2
-  eval export_ansible_envs # step 3
+  export_envs         # step 1
+  set_app_directories # step 2
+  export_ansible_envs # step 3
 }
 
 function export_envs {
-  eval locate_config_file
+  locate_config_file
   if [[ -n $splinter_config_file ]] && [[ -f $splinter_config_file ]]; then
     # if a config file exist we will check the environemnts one by one
     # if no value comes from the command line we will load the value in the config
@@ -265,7 +265,7 @@ function export_ansible_envs {
 }
 
 function show_envs {
-  _echo "$(eval show_version)"
+  _echo "$(show_version)"
   _echo "action: $action $action_option"
   _echo "VERBOSE: $VERBOSE"
   [[ -n $SPLINTER_PROJECT_DIR ]]          && _echo "SPLINTER_PROJECT_DIR: $SPLINTER_PROJECT_DIR"
@@ -478,9 +478,9 @@ function create_package {
     exit 1
   fi
 
-  [[ -n $SPLINTER_BASE_PROFILE ]] && eval retrieve_profile "$SPLINTER_BASE_PROFILE"
-  [[ -n $SPLINTER_ROLE_PROFILE ]] && eval retrieve_profile "$SPLINTER_ROLE_PROFILE"
-  eval install_dependencies
+  [[ -n $SPLINTER_BASE_PROFILE ]] && retrieve_profile "$SPLINTER_BASE_PROFILE"
+  [[ -n $SPLINTER_ROLE_PROFILE ]] && retrieve_profile "$SPLINTER_ROLE_PROFILE"
+  install_dependencies
 
   project_dir_number_of_files=$(find "$project_dir" -not -name ".gitignore" -not -path '*/\.git*' -not -name "*.dmg" -not -name "*.zip" -not -name ".DS_Store" |wc -l)
   temp_dir=$(mktemp -d)
@@ -507,7 +507,7 @@ function create_package {
     exit 1
   fi
 
-  eval bundle_package "$package_type" "$source_dir" "$package_output"
+  bundle_package "$package_type" "$source_dir" "$package_output"
 
   _echo "Removing temporary files" 'a'
   _exec "rm" "-rf" "$temp_dir"
@@ -614,7 +614,7 @@ function retrieve_profile {
     fi
 
     if [[ -n $custom_profiles_repo_account ]]; then
-      eval update_profiles "${requested_profile}"
+      update_profiles "${requested_profile}"
     else
       [[ $action != 'update' ]] && _echo "The profile '$requested_profile' not found in '$profiles_path'" 'e'
       _echo "No account name was provided to fetch '$requested_profile' from a repository. Use '-a <account_name>' option" 'e'
@@ -739,7 +739,7 @@ function install_pyenv {
   if ! command -v "pyenv" >/dev/null 2>&1; then
     _echo "Installing Pyenv" 'a'
     # install pyenv with homebrew
-    eval update_brew
+    update_brew
     _exec "brew" "install" "pyenv"
   else
     tool_version=$(command -v "pyenv")
@@ -789,7 +789,7 @@ function upgrade_pip {
 function install_ansible {
   if ! command -v 'ansible' >/dev/null 2>&1; then
     _echo "Ansible not installed" w
-    eval install_pip_ansible
+    install_pip_ansible
   else
     _echo "Ansible is already installed"
     _exec "ansible" "--version"
@@ -831,12 +831,12 @@ function ask_for_ansible_sudo_password {
 
 function setup_python {
   if [[ $python_provider == 'pyenv' ]];then
-    eval install_pyenv
-    eval activate_pyenv
-    eval install_pyenv_python
+    install_pyenv
+    activate_pyenv
+    install_pyenv_python
   elif [[ $python_provider == 'conda' ]];then
-    eval install_conda
-    eval activate_conda
+    install_conda
+    activate_conda
   elif [[ $python_provider != 'none' ]]; then
     _echo "Unknow python provider '$python_provider'" 'e'
     exit 1
@@ -889,13 +889,13 @@ function export_apps_lists {
 }
 
 function export_apps_lists_and_preferences {
-    eval export_preferences
-    eval export_apps_lists "$@"
+    export_preferences
+    export_apps_lists "$@"
 }
 
 function cleanup_tasks {
-  eval restore_path_permissions
-  eval disable_passwordless_sudo
+  restore_path_permissions
+  disable_passwordless_sudo
 }
 
 function list_profiles {
@@ -904,30 +904,30 @@ function list_profiles {
 }
 
 function install_dependencies {
-  eval install_brew
+  install_brew
   if [[ $python_provider != 'none' ]]; then
-    eval setup_python
+    setup_python
     if [[ $reinstall_conda == 'yes' ]] || [[ $reinstall_pyenv == 'yes' ]]; then
-      eval upgrade_pip
+      upgrade_pip
     fi
-    eval install_pip_dependencies
-    eval install_ansible_galaxy_roles
+    install_pip_dependencies
+    install_ansible_galaxy_roles
   fi
-  eval print_execution_time "${start_time}"
+  print_execution_time "${start_time}"
 }
 
 function provision {
   _echo "Starting time $( date )" 'r'
-  eval ask_for_ansible_sudo_password
-  eval enable_passwordless_sudo
-  eval check_install_path_permissions
-  [[ -n $SPLINTER_BASE_PROFILE ]] && eval retrieve_profile "$SPLINTER_BASE_PROFILE"
-  [[ -n $SPLINTER_ROLE_PROFILE ]] && eval retrieve_profile "$SPLINTER_ROLE_PROFILE"
-  eval install_dependencies
-  eval run_ansible_playbook
-  eval cleanup_tasks
+  ask_for_ansible_sudo_password
+  enable_passwordless_sudo
+  check_install_path_permissions
+  [[ -n $SPLINTER_BASE_PROFILE ]] && retrieve_profile "$SPLINTER_BASE_PROFILE"
+  [[ -n $SPLINTER_ROLE_PROFILE ]] && retrieve_profile "$SPLINTER_ROLE_PROFILE"
+  install_dependencies
+  run_ansible_playbook
+  cleanup_tasks
   _echo "Ending time $( date )" 'r'
-  eval print_execution_time "${start_time}"
+  print_execution_time "${start_time}"
 }
 
 function action_export {
@@ -1198,11 +1198,11 @@ function main {
       shift 1
       ;;
     --help)
-      eval show_usage
+      show_usage
       exit 0
       ;;
     --version)
-      eval show_version
+      show_version
       exit 0
       ;;
     -*)
@@ -1217,20 +1217,20 @@ function main {
   case "$action" in
     create)
       verbose='yes' # `create` will always be verbose
-      eval action_create "$@"
+      action_create "$@"
       ;;
     export)
-      eval action_export "$@"
+      action_export "$@"
       ;;
     list)
-      eval action_list "$1"
+      action_list "$1"
       ;;
     update)
       verbose='yes' # `update` will always be verbose
-      eval action_update "$@"
+      action_update "$@"
       ;;
     provision)
-      eval action_provision "$@"
+      action_provision "$@"
       ;;
     '')
       _error "Missing action"
@@ -1242,9 +1242,9 @@ function main {
       ;;
   esac
 
-  eval setup_environment
-  [[ $quiet == 'no' ]] && eval show_title
-  eval show_envs
+  setup_environment
+  [[ $quiet == 'no' ]] && show_title
+  show_envs
   [[ -n $action_message ]] && _echo "$action_message" 'w'
   [[ -n $action_requested ]] && eval "$action_requested" "${action_requested_options[@]}" # read as an array
   exit 0
