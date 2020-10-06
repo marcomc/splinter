@@ -50,7 +50,7 @@ function valid_argument_test {
 }
 
 @test "./splinter update <invalid-argument> - expected to fail" {
-  eval invalid_argument_test
+  invalid_argument_test invalid-argument
 }
 
 @test "./splinter update profiles (no arguments) - expected to fail" {
@@ -224,7 +224,7 @@ function valid_argument_test {
 }
 
 @test "./splinter update conda <invalid-argument> - expected to fail" {
-  eval invalid_argument_test 'conda'
+  invalid_argument_test 'conda'
 }
 
 @test "./splinter update pyenv - expected to create/update ./pyenv directory" {
@@ -236,7 +236,7 @@ function valid_argument_test {
 }
 
 @test "./splinter update pyenv <invalid-argument> - expected to fail" {
-  eval invalid_argument_test 'pyenv'
+  invalid_argument_test 'pyenv'
 }
 
 @test "./splinter update galaxy - expected to create/update './ansile/roles/marcomc.splinter_toolkit' directory" {
@@ -248,7 +248,7 @@ function valid_argument_test {
 }
 
 @test "./splinter update galaxy <invalid-argument> - expected to fail" {
-  eval invalid_argument_test 'galaxy'
+  invalid_argument_test 'galaxy'
 }
 
 @test "./splinter update tools - expected to create/update './tools/*.sh' scripts" {
@@ -260,7 +260,7 @@ function valid_argument_test {
 }
 
 @test "./splinter update tools <invalid-argument> - expected to fail" {
-  eval invalid_argument_test 'tools'
+  invalid_argument_test 'tools'
 }
 
 @test "./splinter update deps - expected to update all tools with 'conda'" {
@@ -286,7 +286,7 @@ function valid_argument_test {
 }
 
 @test "./splinter update deps <invalid-argument> - expected to fail" {
-  eval invalid_argument_test 'deps'
+  invalid_argument_test 'deps'
 }
 
 @test "./splinter update self - install the latest version of splinter" {
@@ -304,5 +304,5 @@ function valid_argument_test {
 }
 
 @test "./splinter update self <invalid-argument> - expected to fail" {
-  eval invalid_argument_test 'deps'
+  invalid_argument_test 'deps'
 }

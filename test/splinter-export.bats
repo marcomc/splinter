@@ -55,7 +55,7 @@ function valid_argument_test {
 }
 
 @test './splinter export <invalid-argument> - expected to fail' {
-  eval invalid_argument_test
+  invalid_argument_test invalid-argument
 }
 
 @test './splinter export all - expected to create all lists in ./files/lists' {
@@ -91,67 +91,67 @@ function valid_argument_test {
 }
 
 @test './splinter export brew taps - expected to create ./files/lists/homebrew_taps.txt' {
-  eval valid_argument_test 'brew' 'taps' "$homebrew_taps_list"
+  valid_argument_test 'brew' 'taps' "$homebrew_taps_list"
 }
 
 @test './splinter export brew packages - expected to create ./files/lists/homebrew_packages.txt' {
-  eval valid_argument_test 'brew' 'packages' "$homebrew_packages_list"
+  valid_argument_test 'brew' 'packages' "$homebrew_packages_list"
 }
 
 @test './splinter export brew casks - expected to create ./files/lists/homebrew_casks.txt' {
-  eval valid_argument_test 'brew' 'casks' "$homebrew_cask_apps_list"
+  valid_argument_test 'brew' 'casks' "$homebrew_cask_apps_list"
 }
 
 @test './splinter export brew <invalid-argument> - expected to fail' {
-  eval invalid_argument_test 'brew'
+  invalid_argument_test 'brew'
 }
 
 @test './splinter export ruby (no arguments) - expected to create ./files/lists/ruby_gems.txt' {
-  eval no_argument_test 'ruby' "$ruby_gems_list"
+  no_argument_test 'ruby' "$ruby_gems_list"
 }
 
 @test './splinter export ruby gems - expected to create ./files/lists/ruby_gems.txt' {
-  eval valid_argument_test 'ruby' 'gems' "$ruby_gems_list"
+  valid_argument_test 'ruby' 'gems' "$ruby_gems_list"
 }
 
 @test './splinter export ruby <invalid-argument> - expected to fail' {
-  eval invalid_argument_test 'ruby'
+  invalid_argument_test 'ruby'
 }
 
 @test './splinter export mas (no arguments) - expected to create ./files/lists/mas_apps.txt' {
-  eval no_argument_test 'mas' "$mas_apps_list"
+  no_argument_test 'mas' "$mas_apps_list"
 }
 
 @test './splinter export mas packages - expected to create ./files/lists/mas_apps.txt' {
-  eval valid_argument_test 'mas' 'packages' "$mas_apps_list"
+  valid_argument_test 'mas' 'packages' "$mas_apps_list"
 }
 
 @test './splinter export mas <invalid-argument> - expected to fail' {
-  eval invalid_argument_test 'mas'
+  invalid_argument_test 'mas'
 }
 
 @test './splinter export npm (no arguments) - expected to create ./files/lists/npm_global_packages.txt' {
-  eval no_argument_test 'npm' "$npm_global_packages_list"
+  no_argument_test 'npm' "$npm_global_packages_list"
 }
 
 @test './splinter export npm packages - expected to create ./files/lists/npm_global_packages.txt' {
-  eval valid_argument_test 'npm' 'packages' "$npm_global_packages_list"
+  valid_argument_test 'npm' 'packages' "$npm_global_packages_list"
 }
 
 @test './splinter export npm <invalid-argument> - expected to fail' {
-  eval invalid_argument_test 'npm'
+  invalid_argument_test 'npm'
 }
 
 @test './splinter export pip (no arguments) - expected to create ./files/lists/pip_packages.txt' {
-  eval no_argument_test 'pip' "$pip_packages_list"
+  no_argument_test 'pip' "$pip_packages_list"
 }
 
 @test './splinter export pip packages - expected to create ./files/lists/pip_packages.txt' {
-  eval valid_argument_test 'pip' 'packages' "$pip_packages_list"
+  valid_argument_test 'pip' 'packages' "$pip_packages_list"
 }
 
 @test './splinter export pip <invalid-argument> - expected to fail' {
-  eval invalid_argument_test 'pip'
+  invalid_argument_test 'pip'
 }
 
 @test './splinter export preferences - expected to create ./files/preferences and ./tools/macprefs' {
