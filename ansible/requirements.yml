@@ -42,8 +42,7 @@
   version: 'master'
 
 - name: marcomc.macos_new_user
-  src: https://github.com/marcomc/ansible-role-macos-new-user.git
-  version: 'master'
+  version: '1.0'
 
 - name: marcomc.macos_macprefs
   src: https://github.com/marcomc/ansible-role-macos-macprefs.git
