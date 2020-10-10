@@ -135,6 +135,8 @@ Review the instruction about how to [create a custom profiles repository](https:
 
 [![Build Status](https://travis-ci.com/marcomc/ansible-role-macos-new-user.svg?branch=master)](https://travis-ci.com/marcomc/ansible-role-macos-new-user) -  [marcomc.macos_new_user](https://github.com/marcomc/ansible-role-macos-new-user)
 
+[![Build Status](https://travis-ci.com/marcomc/ansible-role-user-ssh-config.svg?branch=master)](https://travis-ci.com/marcomc/ansible-role-user-ssh-config) -  [marcomc.user_ssh_config](https://github.com/marcomc/ansible-role-user-ssh-config)
+
 # License & Copyright
 
 

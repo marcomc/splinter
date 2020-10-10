@@ -63,5 +63,4 @@
   version: 'master'
 
 - name: marcomc.user_ssh_config
-  src: https://github.com/marcomc/ansible-role-user-ssh-config.git
-  version: 'master'
+  version: '1.0'
