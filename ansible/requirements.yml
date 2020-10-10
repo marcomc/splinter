@@ -1,15 +1,16 @@
 ---
-- name: geerlingguy.dotfiles
-  version: '1.2.1'
-# - name: geerlingguy.homebrew
-#   version: '3.1.0'
-#
 - name: ctorgalson.macos_hostname
   src: https://github.com/marcomc/ansible-role-macos-hostname.git
   # version: 'v0.2.3'
 
 - name: elliotweiser.osx-command-line-tools
   version: '2.3.0'
+
+- name: geerlingguy.dotfiles
+  version: '1.2.1'
+# - name: geerlingguy.homebrew
+#   version: '3.1.0'
+#
 
 - name: geerlingguy.homebrew
   src: https://github.com/marcomc/ansible-role-homebrew.git
@@ -30,8 +31,7 @@
   version: '501d7ac'
 
 - name: marcomc.macos_filevault2
-  src: https://github.com/marcomc/ansible-role-filevault2.git
-  version: 'master'
+  version: '1.0'
 
 - name: marcomc.homebrew_autoupdate
   src: https://github.com/marcomc/ansible-role-homebrew-autoupdate.git
@@ -53,9 +53,8 @@
   src: https://github.com/marcomc/ansible-role-setapp.git
   version: 'master'
 
-- name: marcomc.sophos_endpoint
-  src: https://github.com/marcomc/ansible-role-sophos-endpoint.git
-  version: 'master'
+- name: marcomc.macos_sophos_endpoint
+  version: '1.0'
 
 - name: marcomc.splinter_toolkit
   src: https://github.com/marcomc/ansible-role-splinter-toolkit.git
