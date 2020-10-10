@@ -130,7 +130,12 @@ Review the instruction about how to [create a custom profiles repository](https:
 [![Build Status](https://travis-ci.com/marcomc/ansible-role-macos-filevault2.svg?branch=master)](https://travis-ci.com/marcomc/ansible-role-macos-filevault2) -  [marcomc.macos_filevault2](https://github.com/marcomc/ansible-role-macos-filevault2)
 
 [![Build Status](https://travis-ci.com/marcomc/ansible-role-macos-sophos-endpoint.svg?branch=master)](https://travis-ci.com/marcomc/ansible-role-macos-sophos-endpoint) -  [marcomc.macos_sophos_endpoint](https://github.com/marcomc/ansible-role-macos-sophos-endpoint)
+
+[![Build Status](https://travis-ci.com/marcomc/ansible-role-macos-setapp.svg?branch=master)](https://travis-ci.com/marcomc/ansible-role-macos-setapp) -  [marcomc.macos_setapp](https://github.com/marcomc/ansible-role-macos-setapp)
+
 # License & Copyright
+
+
 
 License: [GPLv2](LICENSE.md)
 

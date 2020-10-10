@@ -31,7 +31,7 @@
   version: '501d7ac'
 
 - name: marcomc.macos_filevault2
-  version: '1.0'
+  version: '1.1'
 
 - name: marcomc.homebrew_autoupdate
   src: https://github.com/marcomc/ansible-role-homebrew-autoupdate.git
@@ -50,11 +50,10 @@
   version: 'master'
 
 - name: marcomc.macos_setapp
-  src: https://github.com/marcomc/ansible-role-setapp.git
-  version: 'master'
+  version: '1.0'
 
 - name: marcomc.macos_sophos_endpoint
-  version: '1.0'
+  version: '1.1'
 
 - name: marcomc.splinter_toolkit
   src: https://github.com/marcomc/ansible-role-splinter-toolkit.git
