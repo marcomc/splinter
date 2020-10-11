@@ -52,8 +52,7 @@
   version: '1.1'
 
 - name: marcomc.splinter_toolkit
-  src: https://github.com/marcomc/ansible-role-splinter-toolkit.git
-  version: 'master'
+  version: '1.0'
 
 - name: marcomc.splinter_extra_packages
   version: '1.0'

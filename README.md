@@ -151,6 +151,8 @@ Review the instruction about how to [create a custom profiles repository](https:
 
 [![Build Status](https://travis-ci.com/marcomc/ansible-role-splinter-extra-packages.svg?branch=master)](https://travis-ci.com/marcomc/ansible-role-splinter-extra-packages) -  [marcomc.splinter_extra_packages](https://github.com/marcomc/ansible-role-splinter-extra-packages)
 
+[![Build Status](https://travis-ci.com/marcomc/ansible-role-splinter-toolkit.svg?branch=master)](https://travis-ci.com/marcomc/ansible-role-splinter-toolkit) -  [marcomc.splinter_toolkit](https://github.com/marcomc/ansible-role-splinter-toolkit)
+
 [![Build Status](https://travis-ci.com/marcomc/ansible-role-user-ssh-config.svg?branch=master)](https://travis-ci.com/marcomc/ansible-role-user-ssh-config) -  [marcomc.user_ssh_config](https://github.com/marcomc/ansible-role-user-ssh-config)
 
 # License & Copyright
