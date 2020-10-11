@@ -128,6 +128,11 @@ Review the instruction about how to [create a custom profiles repository](https:
     Create your own profiles in the './profiles' directory.
 
 # Dependencies
+
+[![Build Status](https://travis-ci.com/marcomc/splinter-tools.svg?branch=master)](https://travis-ci.com/marcomc/splinter-tools) - [splinter-tools](https://github.com/marcomc/splinter-tools) - Additional tools for Splinter provisioning
+
+[![Build Status](https://travis-ci.com/marcomc/splinter-conda.svg?branch=master)](https://travis-ci.com/marcomc/splinter-conda) - [splinter-conda](https://github.com/marcomc/splinter-conda) - Miniconda pre-packed for Splinter provisioning (provides working Ansible)
+
 ## Ansible Galaxy
 
 [![Build Status](https://travis-ci.com/marcomc/ansible-role-homebrew-autoupdate.svg?branch=master)](https://travis-ci.com/marcomc/ansible-role-homebrew-autoupdate) -  [marcomc.homebrew_autoupdate](https://github.com/marcomc/ansible-role-homebrew-autoupdate)
