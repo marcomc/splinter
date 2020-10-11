@@ -38,8 +38,7 @@
   version: 'master'
 
 - name: marcomc.homebrew_multi_user
-  src: https://github.com/marcomc/ansible-role-homebrew-multi-user.git
-  version: 'master'
+  version: '1.0'
 
 - name: marcomc.macos_new_user
   version: '1.0'
