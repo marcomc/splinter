@@ -56,8 +56,7 @@
   version: 'master'
 
 - name: marcomc.splinter_extra_packages
-  src: https://github.com/marcomc/ansible-role-splinter-extra-packages.git
-  version: 'master'
+  version: '1.0'
 
 - name: marcomc.user_ssh_config
   version: '1.0'
