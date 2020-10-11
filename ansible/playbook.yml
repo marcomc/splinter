@@ -18,7 +18,7 @@
       tags: ['osx']
       ignore_errors: yes
 
-    - role: marcomc.sophos_endpoint
+    - role: marcomc.macos_sophos_endpoint
       when: configure_sophos_endpoint|bool
       tags: ['non_mas']
       ignore_errors: yes
