@@ -135,25 +135,33 @@ Review the instruction about how to [create a custom profiles repository](https:
 
 ## Ansible Galaxy
 
-[![Build Status](https://travis-ci.com/marcomc/ansible-role-homebrew-autoupdate.svg?branch=master)](https://travis-ci.com/marcomc/ansible-role-homebrew-autoupdate) -  [marcomc.homebrew_autoupdate](https://github.com/marcomc/ansible-role-homebrew-autoupdate)
+- ctorgalson.macos_hostname
+- elliotweiser.osx-command-line-tools
+- geerlingguy.dotfiles
+- geerlingguy.homebrew
+- geerlingguy.mas
+- juju4.macos_apps_install
+- lafarer.osx-defaults
 
-[![Build Status](https://travis-ci.com/marcomc/ansible-role-homebrew-multi-user.svg?branch=master)](https://travis-ci.com/marcomc/ansible-role-homebrew-multi-user) -  [marcomc.homebrew_multi_user](https://github.com/marcomc/ansible-role-homebrew-multi-user)
+- [marcomc.homebrew_autoupdate](https://github.com/marcomc/ansible-role-homebrew-autoupdate) [![Build Status](https://travis-ci.com/marcomc/ansible-role-homebrew-autoupdate.svg?branch=master)](https://travis-ci.com/marcomc/ansible-role-homebrew-autoupdate)
 
-[![Build Status](https://travis-ci.com/marcomc/ansible-role-macos-filevault2.svg?branch=master)](https://travis-ci.com/marcomc/ansible-role-macos-filevault2) -  [marcomc.macos_filevault2](https://github.com/marcomc/ansible-role-macos-filevault2)
+- [marcomc.homebrew_multi_user](https://github.com/marcomc/ansible-role-homebrew-multi-user) [![Build Status](https://travis-ci.com/marcomc/ansible-role-homebrew-multi-user.svg?branch=master)](https://travis-ci.com/marcomc/ansible-role-homebrew-multi-user)
 
-[![Build Status](https://travis-ci.com/marcomc/ansible-role-macos-macprefs.svg?branch=master)](https://travis-ci.com/marcomc/ansible-role-macos-macprefs) -  [marcomc.macos_macprefs](https://github.com/marcomc/ansible-role-macos-macprefs)
+- [marcomc.macos_filevault2](https://github.com/marcomc/ansible-role-macos-filevault2) [![Build Status](https://travis-ci.com/marcomc/ansible-role-macos-filevault2.svg?branch=master)](https://travis-ci.com/marcomc/ansible-role-macos-filevault2)
 
-[![Build Status](https://travis-ci.com/marcomc/ansible-role-macos-new-user.svg?branch=master)](https://travis-ci.com/marcomc/ansible-role-macos-new-user) -  [marcomc.macos_new_user](https://github.com/marcomc/ansible-role-macos-new-user)
+- [marcomc.macos_macprefs](https://github.com/marcomc/ansible-role-macos-macprefs) [![Build Status](https://travis-ci.com/marcomc/ansible-role-macos-macprefs.svg?branch=master)](https://travis-ci.com/marcomc/ansible-role-macos-macprefs)
 
-[![Build Status](https://travis-ci.com/marcomc/ansible-role-macos-setapp.svg?branch=master)](https://travis-ci.com/marcomc/ansible-role-macos-setapp) -  [marcomc.macos_setapp](https://github.com/marcomc/ansible-role-macos-setapp)
+- [marcomc.macos_new_user](https://github.com/marcomc/ansible-role-macos-new-user) [![Build Status](https://travis-ci.com/marcomc/ansible-role-macos-new-user.svg?branch=master)](https://travis-ci.com/marcomc/ansible-role-macos-new-user)
 
-[![Build Status](https://travis-ci.com/marcomc/ansible-role-macos-sophos-endpoint.svg?branch=master)](https://travis-ci.com/marcomc/ansible-role-macos-sophos-endpoint) -  [marcomc.macos_sophos_endpoint](https://github.com/marcomc/ansible-role-macos-sophos-endpoint)
+- [marcomc.macos_setapp](https://github.com/marcomc/ansible-role-macos-setapp) [![Build Status](https://travis-ci.com/marcomc/ansible-role-macos-setapp.svg?branch=master)](https://travis-ci.com/marcomc/ansible-role-macos-setapp)
 
-[![Build Status](https://travis-ci.com/marcomc/ansible-role-splinter-extra-packages.svg?branch=master)](https://travis-ci.com/marcomc/ansible-role-splinter-extra-packages) -  [marcomc.splinter_extra_packages](https://github.com/marcomc/ansible-role-splinter-extra-packages)
+- [marcomc.macos_sophos_endpoint](https://github.com/marcomc/ansible-role-macos-sophos-endpoint) [![Build Status](https://travis-ci.com/marcomc/ansible-role-macos-sophos-endpoint.svg?branch=master)](https://travis-ci.com/marcomc/ansible-role-macos-sophos-endpoint)
 
-[![Build Status](https://travis-ci.com/marcomc/ansible-role-splinter-toolkit.svg?branch=master)](https://travis-ci.com/marcomc/ansible-role-splinter-toolkit) -  [marcomc.splinter_toolkit](https://github.com/marcomc/ansible-role-splinter-toolkit)
+- [marcomc.splinter_extra_packages](https://github.com/marcomc/ansible-role-splinter-extra-packages) [![Build Status](https://travis-ci.com/marcomc/ansible-role-splinter-extra-packages.svg?branch=master)](https://travis-ci.com/marcomc/ansible-role-splinter-extra-packages)
 
-[![Build Status](https://travis-ci.com/marcomc/ansible-role-user-ssh-config.svg?branch=master)](https://travis-ci.com/marcomc/ansible-role-user-ssh-config) -  [marcomc.user_ssh_config](https://github.com/marcomc/ansible-role-user-ssh-config)
+- [marcomc.splinter_toolkit](https://github.com/marcomc/ansible-role-splinter-toolkit) [![Build Status](https://travis-ci.com/marcomc/ansible-role-splinter-toolkit.svg?branch=master)](https://travis-ci.com/marcomc/ansible-role-splinter-toolkit)
+
+- [marcomc.user_ssh_config](https://github.com/marcomc/ansible-role-user-ssh-config) [![Build Status](https://travis-ci.com/marcomc/ansible-role-user-ssh-config.svg?branch=master)](https://travis-ci.com/marcomc/ansible-role-user-ssh-config)
 
 # License & Copyright
 
