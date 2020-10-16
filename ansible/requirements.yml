@@ -8,13 +8,11 @@
 
 - name: geerlingguy.dotfiles
   version: '1.2.1'
-# - name: geerlingguy.homebrew
-#   version: '3.1.0'
-#
 
 - name: geerlingguy.homebrew
   src: https://github.com/marcomc/ansible-role-homebrew.git
   version: 'feature/retry-failed-cask'
+  #version: '3.1.0'
 
 - name: geerlingguy.mas
   src: https://github.com/marcomc/ansible-role-mas
@@ -25,7 +23,7 @@
   version: '1e52c49'
 
 - name: lafarer.osx-defaults
-  version: 'marcomc/modules-toggles-rename'
+  version: '132a9d7'
 
 - name: macstadium.xcode
   version: '501d7ac'

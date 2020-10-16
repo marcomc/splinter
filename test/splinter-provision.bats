@@ -12,7 +12,7 @@ function teardown {
   for user in newuser utonto; do
     if [[ -d /Users/$user ]]; then
       sudo /usr/bin/dscl . -delete "/Users/$user"
-      sudo rm -rf /Users/$user
+      sudo rm -rf "/Users/$user"
     fi
   done
 }

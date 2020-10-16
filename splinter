@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e # Exit immediately if anything returns a non-zero status.
-version="0.6.0-beta"
+version="0.6.1-beta"
 release_date="20200912"
 my_name="$(basename "$0")"
 start_time=$(date +%s)
