@@ -22,7 +22,7 @@
     * if a version is specified it will install it if the version is available in the database
 * [ ] source the tools script as libraries instead of calling them as commands
 * [ ] port to ansible 2.10.1
-
+* [ ] ad support for 'erase-reinstall': https://github.com/grahampugh/erase-install
 * [ ] name: add login item
   command: "loginitems -a '{{ item }}'"
   changed_when: false
