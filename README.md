@@ -7,7 +7,7 @@
          2020 (c) MarcoMC - github.com/marcomc/splinter
 An opinionated provisioning tool for macOS automated with Ansible
 ```
-# How to rovision a Mac with Ansible
+# How to Provision a Mac with Ansible
 
 * [Install Splinter](#install-splinter)
 * [Use cases with step-by-step instructions](#use-cases-with-step-by-step-instructions)
